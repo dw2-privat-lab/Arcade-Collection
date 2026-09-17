@@ -1,7 +1,7 @@
-public class Enemy {
+public class SpaceInvaders_Enemy {
     private int x,y;
-    private int width,height;
-    public Enemy(int x,int y,int width,int height) {
+    private final int width,height;
+    public SpaceInvaders_Enemy(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
