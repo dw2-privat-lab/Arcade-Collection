@@ -50,14 +50,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
         timer.start();
     }
 
-    public void addActionListener(ActionListener l) {
-        listenerList.add(ActionListener.class, l);
-    }
-    public void removeActionListener(ActionListener l) {
-        listenerList.remove(ActionListener.class, l);
-    }
-
-    protected void fireActionPerformed(String command) {
+    protected void fireActionPerformed() {
 
         Object[] listeners = listenerList.getListenerList();
 
@@ -67,7 +60,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
         for (int i = listeners.length - 2; i >= 0; i -= 2) {
             if (listeners[i] == ActionListener.class) {
                 if (event == null) {
-                    event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command);
+                    event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "return");
                 }
                 ((ActionListener) listeners[i + 1]).actionPerformed(event);
             }
@@ -127,6 +120,17 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
             pressedRight = true;
         if(e.getKeyCode() == KeyEvent.VK_SPACE)
             pressedSpace = true;
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            if(running){
+                running = false;
+                spaceInvadersEnemyController.timer.stop();
+                repaint();
+            }
+            else {
+                spaceInvadersEnemyController.timer.start();
+                running=true;
+            }
+        }
     }
 
     @Override
@@ -166,7 +170,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
 
         ArrayList<Rectangle> enemiesBullets = spaceInvadersEnemyController.getBullets();
         for(Rectangle bullet: enemiesBullets){
-            g.drawRect(bullet.x,bullet.y,bullet.width,bullet.height);
+            g.fillRect(bullet.x,bullet.y,bullet.width,bullet.height);
         }
 
         for(Point p:destroyAnimation){
@@ -183,7 +187,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
         }
         Rectangle[] playershots = spaceInvadersPlayer.getBullets();
         for(Rectangle p: playershots){
-            g.drawRect(p.x,p.y,p.width,p.height);
+            g.fillRect(p.x,p.y,p.width,p.height);
         }
         for(int i = 0; i<hearts;i++){
             g.drawImage(playerImg,(hearts+playerWidth+4)*i+4*scale,10, (int) (playerWidth*0.75), (int) (playerHeight*0.75),null);
@@ -242,13 +246,13 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
                 if(gameOver)
                     reset();
                 else{
-                    spaceInvadersEnemyController.timer.stop();
+                    spaceInvadersEnemyController.timer.start();
                     running=true;
                 }
             }
                 highlighted = 2;
             if(new Rectangle((int) ((double) getWidth() /2 +6*scale),100+12*scale,9*scale,9*scale).contains(e.getPoint())){
-                fireActionPerformed("return");
+                fireActionPerformed();
             }
         }
     }

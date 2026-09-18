@@ -13,10 +13,10 @@ public class SpaceInvaders_EnemyController implements ActionListener {
 
     private directions currentdirection = directions.RIGHT;
     private int x = 0;
-    private int yOffset;
+    private final int yOffset;
 
-    private final int bulletwidth = 5;
-    private final int bulletheight = 10;
+    private final int bulletwidth = 8;
+    private final int bulletheight = 24;
 
     private boolean firstFrame = true;
 
@@ -36,7 +36,7 @@ public class SpaceInvaders_EnemyController implements ActionListener {
     {
         x = 0;
         firstFrame = true;
-        enemies = new ArrayList();
+        enemies = new ArrayList<>();
         for(int i=0;i<5;i++){
             for(int j=0;j<11;j++) {
                 enemies.add(new SpaceInvaders_Enemy((spacing+enemywidth)*j+(i==0?enemywidth/6:0),(spacing+enemyheight)*i+yOffset,enemywidth-(i==0?enemywidth/3:0),enemyheight,(i==0?3:(i<3?2:1))));
@@ -73,11 +73,11 @@ public class SpaceInvaders_EnemyController implements ActionListener {
         return firstFrame;
     }
 
-    public void removeEnemies(Object o){
-        enemies.remove(o);
+    public void removeEnemies(SpaceInvaders_Enemy e){
+        enemies.remove(e);
     }
-    public void removeBullet(Object o){
-        bullets.remove(o);
+    public void removeBullet(Rectangle r){
+        bullets.remove(r);
     }
 
     @Override
@@ -105,8 +105,5 @@ public class SpaceInvaders_EnemyController implements ActionListener {
                     timer.setDelay(timer.getDelay()-25);
             }
         }
-    }
-    public void setMovementSpeed(int speed){
-        timer.setDelay(speed);
     }
 }

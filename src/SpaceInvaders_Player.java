@@ -6,7 +6,7 @@ public class SpaceInvaders_Player {
     private final int y;
     private final int playerWidth;
     private final int gameWidth;
-    public final int bulletSize = 10;
+    public final int bulletSize = 12;
     private final ArrayList <Rectangle> bullets = new ArrayList<>();
 
     public SpaceInvaders_Player(int x, int y, int playerWidth, int gameWidth) {
@@ -33,8 +33,8 @@ public class SpaceInvaders_Player {
         if(bullets.isEmpty())
             bullets.add(new Rectangle(x+ playerWidth /2-bulletSize/2,y,bulletSize,bulletSize));
     }
-    public void removeShot(Object o) {
-        bullets.remove(o);
+    public void removeShot(Rectangle r) {
+        bullets.remove(r);
     }
 
 
