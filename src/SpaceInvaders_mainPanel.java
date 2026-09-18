@@ -1,37 +1,86 @@
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
-public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, ActionListener {
+public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, ActionListener, MouseListener, MouseMotionListener {
     boolean pressedLeft = false;
     boolean pressedRight = false;
     boolean pressedSpace = false;
 
-    private final int scale = 5;
+    private final int scale = 4;
     private final int playerWidth = 13*scale;
     private final int playerHeight = 8*scale;
-    SpaceInvaders_Player spaceInvadersPlayer = new SpaceInvaders_Player(200,500,playerWidth);
+    private final SpaceInvaders_Player spaceInvadersPlayer;
     private int hearts = 3;
+    private double enemiedifficulty = 0.995;
 
+    private int score = 0;
+    private int highlighted = 3;
+
+    ArrayList<Point> destroyAnimation = new ArrayList<>();
 
     boolean running = true;
+    boolean gameOver = false;
 
     Image playerImg = new ImageIcon("resources/spaceInvaders/ship.png").getImage();
+    Image explosion = new ImageIcon("resources/spaceInvaders/explosion.png").getImage();
+    Image gameOverImg = new ImageIcon("resources/spaceInvaders/gameOver.png").getImage();
+    Image pausedImg = new ImageIcon("resources/spaceInvaders/paused.png").getImage();
+    Image quitImg = new ImageIcon("resources/spaceInvaders/quit.png").getImage();
+    Image resumeImg = new ImageIcon("resources/spaceInvaders/resume.png").getImage();
+    Image returnImg = new ImageIcon("resources/spaceInvaders/return.png").getImage();
+    Image scoreImg = new ImageIcon("resources/spaceInvaders/score.png").getImage();
 
-    SpaceInvaders_EnemyController spaceInvadersEnemyController = new SpaceInvaders_EnemyController(10*scale,12*scale,8*scale,4*scale);
+    SpaceInvaders_EnemyController spaceInvadersEnemyController = new SpaceInvaders_EnemyController(15*scale,12*scale,8*scale,4*scale);
+    EventListenerList  listenerList = new EventListenerList();
 
-    public SpaceInvaders_mainPanel()
+    public SpaceInvaders_mainPanel(ActionListener actionListener)
     {
-        setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
+        listenerList.add(ActionListener.class, actionListener);
+        setPreferredSize(new Dimension(224*scale,150*scale));
         setFocusable(true);
         addKeyListener(this);
         spaceInvadersEnemyController.resetEnemies();
-        Timer timer = new Timer(5,this);
+        spaceInvadersPlayer  = new SpaceInvaders_Player(getPreferredSize().width/2-playerWidth/2,getPreferredSize().height-2*playerHeight,playerWidth,getPreferredSize().width);
+        addMouseListener(this);
+        addMouseMotionListener(this);
+        Timer timer = new Timer(20,this);
         timer.start();
+    }
+
+    public void addActionListener(ActionListener l) {
+        listenerList.add(ActionListener.class, l);
+    }
+    public void removeActionListener(ActionListener l) {
+        listenerList.remove(ActionListener.class, l);
+    }
+
+    protected void fireActionPerformed(String command) {
+
+        Object[] listeners = listenerList.getListenerList();
+
+        ActionEvent event = null;
+
+
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == ActionListener.class) {
+                if (event == null) {
+                    event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command);
+                }
+                ((ActionListener) listeners[i + 1]).actionPerformed(event);
+            }
+        }
+    }
+    public void reset(){
+        running = true;
+        gameOver = false;
+        score = 0;
+        hearts = 3;
+        enemiedifficulty = 0.995;
+        spaceInvadersEnemyController.resetEnemies();
+        spaceInvadersEnemyController.timer.start();
     }
 
 
@@ -42,6 +91,11 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
             if(bullet.intersects(new Rectangle(spaceInvadersPlayer.getX(), spaceInvadersPlayer.getY(),playerWidth,playerHeight))) {
                 hearts--;
                 spaceInvadersEnemyController.removeBullet(bullet);
+                if(hearts <= -1) {
+                    gameOver = true;
+                    running = false;
+                    spaceInvadersEnemyController.timer.stop();
+                }
             }
         }
     }
@@ -50,15 +104,16 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
     {
         ArrayList <SpaceInvaders_Enemy> enemies = spaceInvadersEnemyController.getEnemies();
         Rectangle[] bullets = spaceInvadersPlayer.getBullets();
-        for(Rectangle bullet:bullets){
+        if(bullets.length>0)
             for(SpaceInvaders_Enemy e:enemies){
-                if(new Rectangle(e.getX(),e.getY(),e.getWidth(),e.getHeight()).intersects(bullet)){
-                    spaceInvadersEnemyController.removeEnemie(e);
-                    spaceInvadersPlayer.removeShot(bullet);
+                if(new Rectangle(e.getX(),e.getY(),e.getWidth(),e.getHeight()).intersects(bullets[0])){
+                    destroyAnimation.add(new Point(e.getX(),e.getY()));
+                    score+=e.getType()*10;
+                    spaceInvadersEnemyController.removeEnemies(e);
+                    spaceInvadersPlayer.removeShot(bullets[0]);
                     break;
                 }
             }
-        }
     }
 
     @Override
@@ -109,21 +164,44 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
             g.drawImage(EnemyTile.getImage(),e.getX(),e.getY(),e.getWidth(),e.getHeight(),null);
         }
 
-        ArrayList<Rectangle> enemieBullets = spaceInvadersEnemyController.getBullets();
-        for(Rectangle bullet:enemieBullets){
+        ArrayList<Rectangle> enemiesBullets = spaceInvadersEnemyController.getBullets();
+        for(Rectangle bullet: enemiesBullets){
             g.drawRect(bullet.x,bullet.y,bullet.width,bullet.height);
         }
 
+        for(Point p:destroyAnimation){
+            g.drawImage(explosion,p.x,p.y,13*scale,8*scale,null);
+        }
+        destroyAnimation.clear();
+
         g.drawImage(playerImg,spaceInvadersPlayer.getX(),spaceInvadersPlayer.getY(),playerWidth,playerHeight,null);
 
+        String renderedScore = score+"";
+        for(int i=0;i<renderedScore.length();i++){
+            g.drawImage(scoreImg,800-34*scale,5,34*scale,8*scale,null);
+            g.drawImage(new ImageIcon("resources/spaceInvaders/numbers/"+renderedScore.charAt(i)+".png").getImage(),i*8*scale+800,5,8*scale,8*scale,null);
+        }
         Rectangle[] playershots = spaceInvadersPlayer.getBullets();
         for(Rectangle p: playershots){
             g.drawRect(p.x,p.y,p.width,p.height);
         }
-
-        g.setColor(Color.RED);
         for(int i = 0; i<hearts;i++){
-            g.drawRect(10+i*40,10,20,20);
+            g.drawImage(playerImg,(hearts+playerWidth+4)*i+4*scale,10, (int) (playerWidth*0.75), (int) (playerHeight*0.75),null);
+        }
+
+        if(!running||gameOver){
+            g.setColor(new Color(46, 46, 46, 102));
+            g.fillRect(0,0,getWidth(),getHeight());
+            g.drawImage((gameOver?gameOverImg:pausedImg),getWidth()/2-((gameOver?61:43)*scale)/2,99,(gameOver?61:43)*scale,11*scale,null);
+            if(highlighted==1)
+                g.drawImage(quitImg, (int) ((double) getWidth() /2-16*scale),100+11*scale,11*scale,11*scale,null);
+            else g.drawImage(quitImg, (int) ((double) getWidth() /2-15*scale),100+12*scale,9*scale,9*scale,null);
+            if(highlighted==2)
+                g.drawImage(resumeImg, (int) ((double) getWidth() /2 -5.5*scale),100+11*scale,11*scale,11*scale,null);
+            else g.drawImage(resumeImg, (int) ((double) getWidth() /2 -4.5*scale),100+12*scale,9*scale,9*scale,null);
+            if(highlighted==3)
+                g.drawImage(returnImg, (int) ((double) getWidth() /2 +5*scale),100+11*scale,11*scale,11*scale,null);
+            else g.drawImage(returnImg, (int) ((double) getWidth() /2 +6*scale),100+12*scale,9*scale,9*scale,null);
         }
     }
 
@@ -132,8 +210,9 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
         if(running) {
             spaceInvadersPlayer.move(pressedLeft, pressedRight);
 
-            if (Math.random() > 0.995)
+            if (Math.random() > enemiedifficulty)
                 spaceInvadersEnemyController.randomShot();
+            enemiedifficulty -= 0.000005;
 
             spaceInvadersPlayer.moveBullets();
             spaceInvadersEnemyController.moveBullets();
@@ -141,12 +220,68 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
             checkPlayersBulletCollision();
             checkEnemiesBulletCollision();
 
-
             if (pressedSpace)
                 spaceInvadersPlayer.shoot();
 
 
             repaint();
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        if(e.getButton()==MouseEvent.BUTTON1){
+            if(new Rectangle((int) ((double) getWidth() /2-15*scale),100+12*scale,9*scale,9*scale).contains(e.getPoint()))
+                System.exit(1);
+            if(new Rectangle((int) ((double) getWidth() /2-4.5*scale),100+12*scale,9*scale,9*scale).contains(e.getPoint())){
+                if(gameOver)
+                    reset();
+                else{
+                    spaceInvadersEnemyController.timer.stop();
+                    running=true;
+                }
+            }
+                highlighted = 2;
+            if(new Rectangle((int) ((double) getWidth() /2 +6*scale),100+12*scale,9*scale,9*scale).contains(e.getPoint())){
+                fireActionPerformed("return");
+            }
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        highlighted = -1;
+        if(new Rectangle((int) ((double) getWidth() /2-15*scale),100+12*scale,9*scale,9*scale).contains(e.getPoint()))
+            highlighted = 1;
+        if(new Rectangle((int) ((double) getWidth() /2-4.5*scale),100+12*scale,9*scale,9*scale).contains(e.getPoint()))
+            highlighted = 2;
+        if(new Rectangle((int) ((double) getWidth() /2 +6*scale),100+12*scale,9*scale,9*scale).contains(e.getPoint()))
+            highlighted = 3;
+        repaint();
     }
 }

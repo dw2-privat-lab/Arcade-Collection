@@ -28,12 +28,13 @@ public class SpaceInvaders_EnemyController implements ActionListener {
         this.spacing = spacing;
         this.yOffset = yOffset;
 
-        timer = new Timer(500,this);
+        timer = new Timer(300,this);
         timer.start();
     }
 
     public void resetEnemies()
     {
+        x = 0;
         firstFrame = true;
         enemies = new ArrayList();
         for(int i=0;i<5;i++){
@@ -43,8 +44,7 @@ public class SpaceInvaders_EnemyController implements ActionListener {
         }
     }
 
-    public void randomShot()
-    {
+    public void randomShot(){
         int i = (int) (Math.random()*enemies.size());
         SpaceInvaders_Enemy chosen = enemies.get(i);
         bullets.add(new Rectangle(chosen.getX(),chosen.getY(),bulletwidth,bulletheight));
@@ -73,7 +73,7 @@ public class SpaceInvaders_EnemyController implements ActionListener {
         return firstFrame;
     }
 
-    public void removeEnemie(Object o){
+    public void removeEnemies(Object o){
         enemies.remove(o);
     }
     public void removeBullet(Object o){
@@ -84,7 +84,7 @@ public class SpaceInvaders_EnemyController implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (currentdirection == directions.RIGHT) {
             x++;
-            int max = 55;
+            int max = 52;
             if (x <= max) {
                 moveEnemies(directions.RIGHT);
             } else {
@@ -101,6 +101,8 @@ public class SpaceInvaders_EnemyController implements ActionListener {
                 x = 0;
                 currentdirection = directions.RIGHT;
                 moveEnemies(directions.DOWN);
+                if(timer.getDelay()>=75)
+                    timer.setDelay(timer.getDelay()-25);
             }
         }
     }
