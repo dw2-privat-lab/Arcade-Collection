@@ -12,6 +12,6 @@ public class MainFrame extends JFrame {
         runselectedGame();
     }
     private void runselectedGame(){
-        panel.run();
+
     }
 }

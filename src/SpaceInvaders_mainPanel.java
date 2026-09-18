@@ -1,60 +1,39 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class SpaceInvaders_mainPanel extends JPanel implements KeyListener {
+public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, ActionListener {
     boolean pressedLeft = false;
     boolean pressedRight = false;
     boolean pressedSpace = false;
-    private final int playerWidth = 50;
-    private final int playerHeight = 50;
+
+    private final int scale = 5;
+    private final int playerWidth = 13*scale;
+    private final int playerHeight = 8*scale;
     SpaceInvaders_Player spaceInvadersPlayer = new SpaceInvaders_Player(200,500,playerWidth);
     private int hearts = 3;
-    private int shootCooldown;
 
 
-    SpaceInvaders_EnemyController spaceInvadersEnemyController = new SpaceInvaders_EnemyController(20,10,20);
+    boolean running = true;
+
+    Image playerImg = new ImageIcon("resources/spaceInvaders/ship.png").getImage();
+
+    SpaceInvaders_EnemyController spaceInvadersEnemyController = new SpaceInvaders_EnemyController(10*scale,12*scale,8*scale,4*scale);
 
     public SpaceInvaders_mainPanel()
     {
         setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
         setFocusable(true);
         addKeyListener(this);
-        spaceInvadersEnemyController.addEnemies(100,10);
+        spaceInvadersEnemyController.resetEnemies();
+        Timer timer = new Timer(5,this);
+        timer.start();
     }
 
-    public void run()
-    {
-        while(true)
-        {
-            if(Math.random()>0.995)
-                spaceInvadersEnemyController.randomShot();
-            tick();
-            repaint();
-        }
-    }
-
-    private void tick()
-    {
-        spaceInvadersPlayer.move(pressedLeft, pressedRight);
-        spaceInvadersPlayer.moveBullets();
-        spaceInvadersEnemyController.moveBullets();
-        checkPlayersBulletCollision();
-        checkEnemiesBulletCollision();
-        shootCooldown--;
-        if(pressedSpace&&shootCooldown<=0){
-            shootCooldown = 100;
-            spaceInvadersPlayer.shoot()  ;
-        }
-
-        try {
-            Thread.sleep(5);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private void checkEnemiesBulletCollision()
     {
@@ -83,9 +62,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
+    public void keyTyped(KeyEvent e) {}
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -119,8 +96,17 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener {
 
         ArrayList <SpaceInvaders_Enemy> renderedEnemies = spaceInvadersEnemyController.getEnemies();
         g.setColor(Color.WHITE);
+
+        boolean frame = spaceInvadersEnemyController.getFirstFrame();
         for(SpaceInvaders_Enemy e: renderedEnemies ){
-            g.drawRect(e.getX(),e.getY(),e.getWidth(),e.getHeight());
+            ImageIcon EnemyTile = new ImageIcon();
+            if(e.getType()==1)
+                EnemyTile = new ImageIcon("resources/spaceInvaders/octopusFrame"+(frame?1:2)+".png");
+            if(e.getType()==2)
+                EnemyTile = new ImageIcon("resources/spaceInvaders/crabFrame"+(frame?1:2)+".png");
+            if(e.getType()==3)
+                EnemyTile = new ImageIcon("resources/spaceInvaders/squidFrame"+(frame?1:2)+".png");
+            g.drawImage(EnemyTile.getImage(),e.getX(),e.getY(),e.getWidth(),e.getHeight(),null);
         }
 
         ArrayList<Rectangle> enemieBullets = spaceInvadersEnemyController.getBullets();
@@ -128,7 +114,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener {
             g.drawRect(bullet.x,bullet.y,bullet.width,bullet.height);
         }
 
-        g.drawRect(spaceInvadersPlayer.getX(), spaceInvadersPlayer.getY(),playerWidth,playerHeight);
+        g.drawImage(playerImg,spaceInvadersPlayer.getX(),spaceInvadersPlayer.getY(),playerWidth,playerHeight,null);
 
         Rectangle[] playershots = spaceInvadersPlayer.getBullets();
         for(Rectangle p: playershots){
@@ -138,6 +124,29 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener {
         g.setColor(Color.RED);
         for(int i = 0; i<hearts;i++){
             g.drawRect(10+i*40,10,20,20);
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(running) {
+            spaceInvadersPlayer.move(pressedLeft, pressedRight);
+
+            if (Math.random() > 0.995)
+                spaceInvadersEnemyController.randomShot();
+
+            spaceInvadersPlayer.moveBullets();
+            spaceInvadersEnemyController.moveBullets();
+
+            checkPlayersBulletCollision();
+            checkEnemiesBulletCollision();
+
+
+            if (pressedSpace)
+                spaceInvadersPlayer.shoot();
+
+
+            repaint();
         }
     }
 }

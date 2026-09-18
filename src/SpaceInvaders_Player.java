@@ -26,7 +26,8 @@ public class SpaceInvaders_Player {
     }
 
     public void shoot() {
-        bullets.add(new Rectangle(x+width/2-bulletSize/2,y,bulletSize,bulletSize));
+        if(bullets.isEmpty())
+            bullets.add(new Rectangle(x+width/2-bulletSize/2,y,bulletSize,bulletSize));
     }
     public void removeShot(Object o) {
         bullets.remove(o);

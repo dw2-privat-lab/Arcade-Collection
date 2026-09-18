@@ -1,16 +1,17 @@
 public class SpaceInvaders_Enemy {
     private int x,y;
     private final int width,height;
-    public SpaceInvaders_Enemy(int x, int y, int width, int height) {
+    private int type;
+    public SpaceInvaders_Enemy(int x, int y, int width, int height, int type) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.type = type;
     }
     public int getX() {
         return x;
     }
-
     public int getY() {
         return y;
     }
@@ -20,6 +21,10 @@ public class SpaceInvaders_Enemy {
     public int getHeight() {
         return height;
     }
+    public int getType() {
+        return type;
+    }
+
     public void move( directions direction,int stepSize){
         switch (direction){
             case LEFT:
@@ -29,7 +34,7 @@ public class SpaceInvaders_Enemy {
                 x += stepSize;
                 break;
             case DOWN:
-                y += stepSize;
+                y += height+stepSize;
         }
     }
 }

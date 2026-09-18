@@ -12,24 +12,35 @@ public class SpaceInvaders_EnemyController implements ActionListener {
     private final int spacing;
 
     private directions currentdirection = directions.RIGHT;
-    private final int max = 5;
     private int x = 0;
+    private int yOffset;
 
     private final int bulletwidth = 5;
     private final int bulletheight = 10;
 
-    public SpaceInvaders_EnemyController(int enemywidth, int enemyheight, int spacing) {
+    private boolean firstFrame = true;
+
+    Timer timer;
+
+    public SpaceInvaders_EnemyController(int yOffset,int enemywidth, int enemyheight, int spacing) {
         this.enemywidth = enemywidth;
         this.enemyheight = enemyheight;
         this.spacing = spacing;
+        this.yOffset = yOffset;
 
-        Timer timer = new Timer(1000,this);
+        timer = new Timer(500,this);
         timer.start();
     }
 
     public void resetEnemies()
     {
+        firstFrame = true;
         enemies = new ArrayList();
+        for(int i=0;i<5;i++){
+            for(int j=0;j<11;j++) {
+                enemies.add(new SpaceInvaders_Enemy((spacing+enemywidth)*j+(i==0?enemywidth/6:0),(spacing+enemyheight)*i+yOffset,enemywidth-(i==0?enemywidth/3:0),enemyheight,(i==0?3:(i<3?2:1))));
+            }
+        }
     }
 
     public void randomShot()
@@ -39,29 +50,11 @@ public class SpaceInvaders_EnemyController implements ActionListener {
         bullets.add(new Rectangle(chosen.getX(),chosen.getY(),bulletwidth,bulletheight));
     }
 
-    public void removeBullet(Object o){
-        bullets.remove(o);
-    }
-
-    public void addEnemies(int Amount,int rows){
-    boolean perfectAmount = Amount%rows==0;
-        for(int row=0;row+(perfectAmount?0:1)<rows;row++){
-            for(int indexOnRow=0;indexOnRow<rows-(perfectAmount?0:1)/Amount;indexOnRow++){
-                enemies.add(new SpaceInvaders_Enemy(indexOnRow*(enemywidth+spacing),row*(enemyheight+spacing),enemywidth,enemyheight));
-            }
-        }
-        if(!perfectAmount){
-            for(int i=0;i<Amount%rows;i++){
-                int customOffset = (rows-1/Amount)/(Amount%rows)-1;
-                enemies.add(new SpaceInvaders_Enemy((i+customOffset)*(enemywidth+spacing),(rows-1)*(enemyheight+spacing),enemywidth,enemyheight));
-            }
-        }
-    }
-
     public void moveEnemies(directions direction){
         for(SpaceInvaders_Enemy e:enemies){
-            e.move(direction,enemywidth);
+            e.move(direction,enemywidth/12);
         }
+        firstFrame=!firstFrame;
     }
     public void moveBullets(){
         for (Rectangle r: bullets){
@@ -76,15 +69,22 @@ public class SpaceInvaders_EnemyController implements ActionListener {
         return new ArrayList<>(bullets);
     }
 
+    public boolean getFirstFrame() {
+        return firstFrame;
+    }
+
     public void removeEnemie(Object o){
         enemies.remove(o);
+    }
+    public void removeBullet(Object o){
+        bullets.remove(o);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         if (currentdirection == directions.RIGHT) {
             x++;
+            int max = 55;
             if (x <= max) {
                 moveEnemies(directions.RIGHT);
             } else {
@@ -103,5 +103,8 @@ public class SpaceInvaders_EnemyController implements ActionListener {
                 moveEnemies(directions.DOWN);
             }
         }
+    }
+    public void setMovementSpeed(int speed){
+        timer.setDelay(speed);
     }
 }
