@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 public class MainFrame extends JFrame implements ActionListener {
     SpaceInvaders_mainPanel spaceInvaders_panel = new SpaceInvaders_mainPanel(this);
     MainPanel mainPanel = new MainPanel(this);
-    GamePanel snake_panel = new GamePanel();
+    GamePanel snake_panel = new GamePanel(this);
 
     public MainFrame() {
         add(mainPanel);

@@ -1,20 +1,36 @@
 package Snake;
 
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 
-public class GamePanel extends JPanel implements KeyListener {
+public class GamePanel extends JPanel implements KeyListener, MouseListener, MouseMotionListener {
     Snake snake = new Snake();
     Apple apple = new Apple();
     private int score = 0;
     private boolean paused = false;
+    private final int scale = 4;
 
-    public GamePanel() {
+    private int highlighted=-1;
+
+    EventListenerList listenerList = new EventListenerList();
+
+
+    Image gameOver = new ImageIcon("resources/spaceInvaders/gameOver.png").getImage();
+    Image pausedImg = new ImageIcon("resources/spaceInvaders/paused.png").getImage();
+    Image quitImg = new ImageIcon("resources/spaceInvaders/quit.png").getImage();
+    Image resumeImg = new ImageIcon("resources/spaceInvaders/resume.png").getImage();
+    Image returnImg = new ImageIcon("resources/spaceInvaders/return.png").getImage();
+
+    public GamePanel(ActionListener a) {
+        listenerList.add(ActionListener.class, a);
+
         this.setFocusable(true);
         this.addKeyListener(this);
-        this.setVisible(true);
+        addMouseListener(this);
+        addMouseMotionListener(this);
+
         this.setPreferredSize(new Dimension(GameOptions.WIDTH, GameOptions.HEIGHT));
 
         Timer timer;
@@ -69,17 +85,22 @@ public class GamePanel extends JPanel implements KeyListener {
         g.drawString("Score: " + score, 10, 30);
 
         if (paused || snake.isRestart()) { //Paused or Restart Overlay
-            g.setColor(GameOptions.pausedOverlayColor);
-            g.fillRect(0, 0, GameOptions.WIDTH, GameOptions.HEIGHT);
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 200));
 
-            if (snake.isRestart()) {
-                g.drawString("You died", (GameOptions.WIDTH / 2) - (g.getFontMetrics().stringWidth("You Died") / 2), (GameOptions.HEIGHT / 2) - ((int) g.getFont().getSize2D() / 2));
-            } else {
-                g.drawString("Paused", (GameOptions.WIDTH / 2) - (g.getFontMetrics().stringWidth("Paused") / 2), (GameOptions.HEIGHT / 2) - ((int) g.getFont().getSize2D() / 2));
-            }
-
+            g.setColor(new Color(46, 46, 46, 102));
+            g.fillRect(0, 0, getWidth(), getHeight());
+            g.drawImage((snake.isRestart() ? gameOver : pausedImg), getWidth() / 2 - ((snake.isRestart() ? 61 : 43) * scale) / 2, 99, (snake.isRestart() ? 61 : 43) * scale, 11 * scale, null);
+            if (highlighted == 1)
+                g.drawImage(quitImg, (int) ((double) getWidth() / 2 - 16 * scale), 100 + 11 * scale, 11 * scale, 11 * scale, null);
+            else
+                g.drawImage(quitImg, (int) ((double) getWidth() / 2 - 15 * scale), 100 + 12 * scale, 9 * scale, 9 * scale, null);
+            if (highlighted == 2)
+                g.drawImage(resumeImg, (int) ((double) getWidth() / 2 - 5.5 * scale), 100 + 11 * scale, 11 * scale, 11 * scale, null);
+            else
+                g.drawImage(resumeImg, (int) ((double) getWidth() / 2 - 4.5 * scale), 100 + 12 * scale, 9 * scale, 9 * scale, null);
+            if (highlighted == 3)
+                g.drawImage(returnImg, (int) ((double) getWidth() / 2 + 5 * scale), 100 + 11 * scale, 11 * scale, 11 * scale, null);
+            else
+                g.drawImage(returnImg, (int) ((double) getWidth() / 2 + 6 * scale), 100 + 12 * scale, 9 * scale, 9 * scale, null);
         }
     }
     public void reset(){
@@ -118,19 +139,90 @@ public class GamePanel extends JPanel implements KeyListener {
                     snake.setNextDirection(directions.RIGHT);
                 }
                 break;
-            case KeyEvent.VK_SPACE:
+            case KeyEvent.VK_ESCAPE:
                 paused = !paused;
                 if (snake.isRestart()) {
                     snake.reset();
                     snake.setRestart(false);
                     paused = false;
                 }
-                break;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        highlighted = -1;
+        if (new Rectangle((int) ((double) getWidth() / 2 - 15 * scale), 100 + 12 * scale, 9 * scale, 9 * scale).contains(e.getPoint()))
+            highlighted = 1;
+        if (new Rectangle((int) ((double) getWidth() / 2 - 4.5 * scale), 100 + 12 * scale, 9 * scale, 9 * scale).contains(e.getPoint()))
+            highlighted = 2;
+        if (new Rectangle((int) ((double) getWidth() / 2 + 6 * scale), 100 + 12 * scale, 9 * scale, 9 * scale).contains(e.getPoint()))
+            highlighted = 3;
+        repaint();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            if (new Rectangle((int) ((double) getWidth() / 2 - 15 * scale), 100 + 12 * scale, 9 * scale, 9 * scale).contains(e.getPoint()))
+                System.exit(1);
+            if (new Rectangle((int) ((double) getWidth() / 2 - 4.5 * scale), 100 + 12 * scale, 9 * scale, 9 * scale).contains(e.getPoint())) {
+                if (snake.isRestart())
+                    reset();
+                else {
+                    paused = false;
+                }
+            }
+            highlighted = 2;
+            if (new Rectangle((int) ((double) getWidth() / 2 + 6 * scale), 100 + 12 * scale, 9 * scale, 9 * scale).contains(e.getPoint())) {
+                fireActionPerformed();
+            }
+        }
+    }
+
+    private void fireActionPerformed() {
+        Object[] listeners = listenerList.getListenerList();
+
+        ActionEvent event = null;
+
+
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == ActionListener.class) {
+                if (event == null) {
+                    event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "return");
+                }
+                ((ActionListener) listeners[i + 1]).actionPerformed(event);
+            }
+        }
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 }
