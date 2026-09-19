@@ -8,12 +8,18 @@ public class MainPanel extends JPanel {
     protected EventListenerList listenerList = new EventListenerList();
 
     public MainPanel(ActionListener actionListener) {
-        setPreferredSize(new Dimension(100,100));
-        setSize(100,100);
         listenerList.add(ActionListener.class, actionListener);
-        Button button = new Button("Space Invaders");
-        button.addActionListener(e -> {fireActionPerformed("Space Invaders");});
-        add(button);
+        Button spaceInvaders = new Button("Space Invaders");
+        spaceInvaders.addActionListener(e -> {
+            fireActionPerformed("Space Invaders");
+        });
+        add(spaceInvaders);
+        Button snake = new Button("Snake");
+        snake.addActionListener(e -> {
+            fireActionPerformed("Snake");
+        });
+        add(snake);
+
 
     }
 
@@ -26,6 +32,7 @@ public class MainPanel extends JPanel {
     public void removeActionListener(ActionListener l) {
         listenerList.remove(ActionListener.class, l);
     }
+
     protected void fireActionPerformed(String command) {
         // Holt alle registrierten Listener und deren Typen als Array
         Object[] listeners = listenerList.getListenerList();

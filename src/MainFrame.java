@@ -1,11 +1,14 @@
+import Snake.GamePanel;
+import SpaceInvaders.SpaceInvaders_mainPanel;
+
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainFrame extends JFrame implements ActionListener {
-    SpaceInvaders_mainPanel panel = new SpaceInvaders_mainPanel(this);
+    SpaceInvaders_mainPanel spaceInvaders_panel = new SpaceInvaders_mainPanel(this);
     MainPanel mainPanel = new MainPanel(this);
+    GamePanel snake_panel = new GamePanel();
 
     public MainFrame() {
         add(mainPanel);
@@ -15,34 +18,31 @@ public class MainFrame extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
-        runselectedGame();
     }
 
-    private void runselectedGame() {
-
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals("return")) {
-
-            getContentPane().removeAll();
-            getContentPane().add(mainPanel);
-            getContentPane().revalidate();
-            pack();
-            setLocationRelativeTo(null);
-            getContentPane().repaint();
+        if (e.getActionCommand().equals("return")) {
+            renderPanel(mainPanel);
         }
 
-        if(e.getActionCommand().equals("Space Invaders")) {
-            getContentPane().removeAll();
-            getContentPane().add(panel);
-            getContentPane().revalidate();
-            pack();
-            setLocationRelativeTo(null);
-            getContentPane().repaint();
-            panel.requestFocusInWindow();
-            panel.reset();
+        if (e.getActionCommand().equals("Space Invaders")) {
+            renderPanel(spaceInvaders_panel);
+            spaceInvaders_panel.reset();
         }
+        if (e.getActionCommand().equals("Snake")) {
+            renderPanel(snake_panel);
+            snake_panel.reset();
+        }
+    }
+    private void renderPanel(JPanel panel) {
+        getContentPane().removeAll();
+        getContentPane().add(panel);
+        getContentPane().revalidate();
+        pack();
+        setLocationRelativeTo(null);
+        getContentPane().repaint();
+        panel.requestFocusInWindow();
     }
 }

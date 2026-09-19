@@ -1,3 +1,5 @@
+package SpaceInvaders;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,67 +7,64 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class SpaceInvaders_EnemyController implements ActionListener {
-    ArrayList <SpaceInvaders_Enemy>  enemies = new ArrayList<>();
-    ArrayList <Rectangle>  bullets = new ArrayList<>();
     private final int enemywidth;
     private final int enemyheight;
     private final int spacing;
-
-    private directions currentdirection = directions.RIGHT;
-    private int x = 0;
     private final int yOffset;
-
     private final int bulletwidth = 8;
     private final int bulletheight = 24;
-
+    ArrayList<SpaceInvaders_Enemy> enemies = new ArrayList<>();
+    ArrayList<Rectangle> bullets = new ArrayList<>();
+    Timer timer;
+    private directions currentdirection = directions.RIGHT;
+    private int x = 0;
     private boolean firstFrame = true;
 
-    Timer timer;
-
-    public SpaceInvaders_EnemyController(int yOffset,int enemywidth, int enemyheight, int spacing) {
+    public SpaceInvaders_EnemyController(int yOffset, int enemywidth, int enemyheight, int spacing) {
         this.enemywidth = enemywidth;
         this.enemyheight = enemyheight;
         this.spacing = spacing;
         this.yOffset = yOffset;
 
-        timer = new Timer(300,this);
+        timer = new Timer(300, this);
         timer.start();
     }
 
-    public void resetEnemies()
-    {
+    public void resetEnemies() {
         x = 0;
         firstFrame = true;
         enemies = new ArrayList<>();
-        for(int i=0;i<5;i++){
-            for(int j=0;j<11;j++) {
-                enemies.add(new SpaceInvaders_Enemy((spacing+enemywidth)*j+(i==0?enemywidth/6:0),(spacing+enemyheight)*i+yOffset,enemywidth-(i==0?enemywidth/3:0),enemyheight,(i==0?3:(i<3?2:1))));
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 11; j++) {
+                enemies.add(new SpaceInvaders_Enemy((spacing + enemywidth) * j + (i == 0 ? enemywidth / 6 : 0), (spacing + enemyheight) * i + yOffset, enemywidth - (i == 0 ? enemywidth / 3 : 0), enemyheight, (i == 0 ? 3 : (i < 3 ? 2 : 1))));
             }
         }
     }
 
-    public void randomShot(){
-        int i = (int) (Math.random()*enemies.size());
+    public void randomShot() {
+        int i = (int) (Math.random() * enemies.size());
         SpaceInvaders_Enemy chosen = enemies.get(i);
-        bullets.add(new Rectangle(chosen.getX(),chosen.getY(),bulletwidth,bulletheight));
+        bullets.add(new Rectangle(chosen.getX(), chosen.getY(), bulletwidth, bulletheight));
     }
 
-    public void moveEnemies(directions direction){
-        for(SpaceInvaders_Enemy e:enemies){
-            e.move(direction,enemywidth/12);
+    public void moveEnemies(directions direction) {
+        for (SpaceInvaders_Enemy e : enemies) {
+            e.move(direction, enemywidth / 12);
         }
-        firstFrame=!firstFrame;
+        firstFrame = !firstFrame;
     }
-    public void moveBullets(){
-        for (Rectangle r: bullets){
-            r.setLocation(r.x,r.y+2);
+
+    public void moveBullets() {
+        for (Rectangle r : bullets) {
+            r.setLocation(r.x, r.y + 2);
         }
     }
 
-    public ArrayList<SpaceInvaders_Enemy> getEnemies(){
+    public ArrayList<SpaceInvaders_Enemy> getEnemies() {
         return new ArrayList<>(enemies);
     }
-    public ArrayList<Rectangle> getBullets(){
+
+    public ArrayList<Rectangle> getBullets() {
         return new ArrayList<>(bullets);
     }
 
@@ -73,10 +72,11 @@ public class SpaceInvaders_EnemyController implements ActionListener {
         return firstFrame;
     }
 
-    public void removeEnemies(SpaceInvaders_Enemy e){
+    public void removeEnemies(SpaceInvaders_Enemy e) {
         enemies.remove(e);
     }
-    public void removeBullet(Rectangle r){
+
+    public void removeBullet(Rectangle r) {
         bullets.remove(r);
     }
 
@@ -92,8 +92,7 @@ public class SpaceInvaders_EnemyController implements ActionListener {
                 currentdirection = directions.LEFT;
                 moveEnemies(directions.DOWN);
             }
-        }
-        else if (currentdirection == directions.LEFT) {
+        } else if (currentdirection == directions.LEFT) {
             x--;
             if (x >= 0) {
                 moveEnemies(directions.LEFT);
@@ -101,8 +100,8 @@ public class SpaceInvaders_EnemyController implements ActionListener {
                 x = 0;
                 currentdirection = directions.RIGHT;
                 moveEnemies(directions.DOWN);
-                if(timer.getDelay()>=75)
-                    timer.setDelay(timer.getDelay()-25);
+                if (timer.getDelay() >= 75)
+                    timer.setDelay(timer.getDelay() - 25);
             }
         }
     }
