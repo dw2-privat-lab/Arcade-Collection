@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Apple {
-    private ArrayList<Rectangle> apples = new ArrayList<>();
+    private final ArrayList<Rectangle> apples = new ArrayList<>();
 
     public Apple() {
         ArrayList<Rectangle> temp = new ArrayList<>();
@@ -12,12 +12,8 @@ public class Apple {
             temp.add(new Rectangle(GameOptions.originX + i * GameOptions.tileSize, GameOptions.originY,GameOptions.tileSize,GameOptions.tileSize));
         }
         for (int i = 0; i < GameOptions.amountApples; i++) {
-            addApplePoint(temp);
+            addApple(temp);
         }
-    }
-
-    boolean touchesApple(Rectangle rectangle) {
-        return touches(rectangle,apples);
     }
     boolean touches(Rectangle rectangle,ArrayList<Rectangle> list) {
         for (Rectangle Element : list) {
@@ -37,13 +33,13 @@ public class Apple {
         return -1;
     }
 
-    void addApplePoint(ArrayList<Rectangle> snakeElements) {
+    void addApple(ArrayList<Rectangle> snakeElements) {
         int randomX;
         int randomY;
         do {
             randomX = (int) (Math.random() * GameOptions.WIDTH) / GameOptions.tileSize * GameOptions.tileSize;
             randomY = (int) (Math.random() * GameOptions.HEIGHT) / GameOptions.tileSize * GameOptions.tileSize;
-        } while (touchesApple(new Rectangle(randomX, randomY,GameOptions.tileSize, GameOptions.tileSize))||touches(new Rectangle(randomX, randomY,GameOptions.tileSize, GameOptions.tileSize), snakeElements));
+        } while (touches(new Rectangle(randomX, randomY,GameOptions.tileSize, GameOptions.tileSize),apples)||touches(new Rectangle(randomX, randomY,GameOptions.tileSize, GameOptions.tileSize), snakeElements));
 
         apples.add(new Rectangle(randomX, randomY,GameOptions.tileSize, GameOptions.tileSize));
     }

@@ -5,9 +5,9 @@ import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.event.*;
 
-public class GamePanel extends JPanel implements KeyListener, MouseListener, MouseMotionListener {
+public class Snake_mainPanel extends JPanel implements KeyListener, MouseListener, MouseMotionListener {
     Snake snake = new Snake();
-    Apple apple = new Apple();
+    Apple apples = new Apple();
     private int score = 0;
     private boolean paused = false;
     private final int scale = 4;
@@ -23,11 +23,11 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     Image resumeImg = new ImageIcon("resources/spaceInvaders/resume.png").getImage();
     Image returnImg = new ImageIcon("resources/spaceInvaders/return.png").getImage();
 
-    public GamePanel(ActionListener a) {
+    public Snake_mainPanel(ActionListener a) {
         listenerList.add(ActionListener.class, a);
 
-        this.setFocusable(true);
-        this.addKeyListener(this);
+        setFocusable(true);
+        addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
 
@@ -37,58 +37,56 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
         timer = new Timer(GameOptions.gameSpeed, _ -> {
             if (!paused) {
                 tick();
-            } else {
-                repaint();
             }
+            repaint();
+
         });
         timer.start();
     }
 
     public void tick() {
         snake.moveSnake();
-        int appleNumber = apple.getTouchingApple(snake.getSnakeList().getLast());
+        int appleNumber = apples.getTouchingApple(snake.getSnakeList().getLast());
         if (appleNumber >= 0) {
-            apple.getApples().remove(appleNumber);
-            apple.addApplePoint(snake.getSnakeList());
+            apples.getApples().remove(appleNumber);
+            apples.addApple(snake.getSnakeList());
             score++;
             snake.growSnake();
         }
-        if (snake.isRestart()) {
+        if (snake.isGameOver()) {
             paused = true;
-            score=0;
         }
-        repaint();
     }
 
-    public void paint(Graphics g) {
-        super.paint(g);//clear everything
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
         g.setColor(GameOptions.backgroundColor);//paint Background
         g.fillRect(0, 0, GameOptions.WIDTH, GameOptions.HEIGHT);
 
-        for (Rectangle applePoint : apple.getApples()) {
-            g.setColor(Color.RED);
-            g.drawOval((int) applePoint.getX(), (int) applePoint.getY(), (int) applePoint.getWidth(), (int) applePoint.getHeight());
+        g.setColor(Color.RED);
+        for (Rectangle apple : apples.getApples()) {
+            g.drawOval((int) apple.getX(), (int) apple.getY(), (int) apple.getWidth(), (int) apple.getHeight());
         }
 
-        for (Rectangle snakeElement : snake.getSnakeList()) {//Paint Snake.Snake
+        g.setColor(GameOptions.snakeBaseColor);
+        for (Rectangle snakeElement : snake.getSnakeList()) {
             if (snakeElement == snake.getSnakeList().getLast()) {
                 g.setColor(GameOptions.snakeHeadColor);
-            } else {
-                g.setColor(GameOptions.snakeBaseColor);
             }
             g.fillRect(snakeElement.x, snakeElement.y, (int) snakeElement.getWidth(), (int) snakeElement.getHeight());
         }
 
-        g.setColor(Color.black);//Paint Score
+        g.setColor(Color.black);
         g.setFont(new Font("Arial", Font.PLAIN, 20));
         g.drawString("Score: " + score, 10, 30);
 
-        if (paused || snake.isRestart()) { //Paused or Restart Overlay
+        if (paused || snake.isGameOver()) {
 
             g.setColor(new Color(46, 46, 46, 102));
             g.fillRect(0, 0, getWidth(), getHeight());
-            g.drawImage((snake.isRestart() ? gameOver : pausedImg), getWidth() / 2 - ((snake.isRestart() ? 61 : 43) * scale) / 2, 99, (snake.isRestart() ? 61 : 43) * scale, 11 * scale, null);
+
+            g.drawImage((snake.isGameOver() ? gameOver : pausedImg), getWidth() / 2 - ((snake.isGameOver() ? 61 : 43) * scale) / 2, 99, (snake.isGameOver() ? 61 : 43) * scale, 11 * scale, null);
             if (highlighted == 1)
                 g.drawImage(quitImg, (int) ((double) getWidth() / 2 - 16 * scale), 100 + 11 * scale, 11 * scale, 11 * scale, null);
             else
@@ -105,6 +103,10 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     }
     public void reset(){
         snake.reset();
+        paused =false;
+        snake.setGameOver(false);
+        score = 0;
+        apples=new Apple();
     }
 
     @Override
@@ -141,10 +143,8 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
                 break;
             case KeyEvent.VK_ESCAPE:
                 paused = !paused;
-                if (snake.isRestart()) {
-                    snake.reset();
-                    snake.setRestart(false);
-                    paused = false;
+                if (snake.isGameOver()) {
+                    reset();
                 }
         }
     }
@@ -182,7 +182,7 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
             if (new Rectangle((int) ((double) getWidth() / 2 - 15 * scale), 100 + 12 * scale, 9 * scale, 9 * scale).contains(e.getPoint()))
                 System.exit(1);
             if (new Rectangle((int) ((double) getWidth() / 2 - 4.5 * scale), 100 + 12 * scale, 9 * scale, 9 * scale).contains(e.getPoint())) {
-                if (snake.isRestart())
+                if (snake.isGameOver())
                     reset();
                 else {
                     paused = false;
@@ -198,15 +198,9 @@ public class GamePanel extends JPanel implements KeyListener, MouseListener, Mou
     private void fireActionPerformed() {
         Object[] listeners = listenerList.getListenerList();
 
-        ActionEvent event = null;
-
-
         for (int i = listeners.length - 2; i >= 0; i -= 2) {
             if (listeners[i] == ActionListener.class) {
-                if (event == null) {
-                    event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "return");
-                }
-                ((ActionListener) listeners[i + 1]).actionPerformed(event);
+                ((ActionListener) listeners[i + 1]).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "return"));
             }
         }
     }

@@ -1,4 +1,5 @@
-import Snake.GamePanel;
+import Pong.Pong_mainPanel;
+import Snake.Snake_mainPanel;
 import SpaceInvaders.SpaceInvaders_mainPanel;
 
 import javax.swing.*;
@@ -8,7 +9,8 @@ import java.awt.event.ActionListener;
 public class MainFrame extends JFrame implements ActionListener {
     SpaceInvaders_mainPanel spaceInvaders_panel = new SpaceInvaders_mainPanel(this);
     MainPanel mainPanel = new MainPanel(this);
-    GamePanel snake_panel = new GamePanel(this);
+    Snake_mainPanel snake_panel = new Snake_mainPanel(this);
+    Pong_mainPanel pong_panel = new Pong_mainPanel(this);
 
     public MainFrame() {
         add(mainPanel);
@@ -34,6 +36,10 @@ public class MainFrame extends JFrame implements ActionListener {
         if (e.getActionCommand().equals("Snake")) {
             renderPanel(snake_panel);
             snake_panel.reset();
+        }
+        if (e.getActionCommand().equals("Pong")) {
+            renderPanel(pong_panel);
+            pong_panel.reset();
         }
     }
     private void renderPanel(JPanel panel) {

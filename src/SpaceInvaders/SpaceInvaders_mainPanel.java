@@ -46,18 +46,11 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
     }
 
     protected void fireActionPerformed() {
-
         Object[] listeners = listenerList.getListenerList();
-
-        ActionEvent event = null;
-
 
         for (int i = listeners.length - 2; i >= 0; i -= 2) {
             if (listeners[i] == ActionListener.class) {
-                if (event == null) {
-                    event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "return");
-                }
-                ((ActionListener) listeners[i + 1]).actionPerformed(event);
+                ((ActionListener) listeners[i + 1]).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "return"));
             }
         }
     }

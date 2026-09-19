@@ -8,47 +8,27 @@ public class MainPanel extends JPanel {
     protected EventListenerList listenerList = new EventListenerList();
 
     public MainPanel(ActionListener actionListener) {
+        JLabel label = new JLabel("Select a Game:");
+        add(label);
+
         listenerList.add(ActionListener.class, actionListener);
         Button spaceInvaders = new Button("Space Invaders");
-        spaceInvaders.addActionListener(e -> {
-            fireActionPerformed("Space Invaders");
-        });
+        spaceInvaders.addActionListener(_ -> fireActionPerformed("Space Invaders"));
         add(spaceInvaders);
         Button snake = new Button("Snake");
-        snake.addActionListener(e -> {
-            fireActionPerformed("Snake");
-        });
+        snake.addActionListener(_ -> fireActionPerformed("Snake"));
         add(snake);
-
-
-    }
-
-    // Methode zum Registrieren eines Listeners
-    public void addActionListener(ActionListener l) {
-        listenerList.add(ActionListener.class, l);
-    }
-
-    // Methode zum Entfernen eines Listeners
-    public void removeActionListener(ActionListener l) {
-        listenerList.remove(ActionListener.class, l);
+        Button pong = new Button("Pong");
+        pong.addActionListener(_ -> fireActionPerformed("Pong"));
+        add(pong);
     }
 
     protected void fireActionPerformed(String command) {
-        // Holt alle registrierten Listener und deren Typen als Array
         Object[] listeners = listenerList.getListenerList();
 
-        ActionEvent event = null;
-
-        // Das Array enthält abwechselnd den Klassentyp und die Listener-Instanz
-        // Wir laufen von hinten nach vorne durch
         for (int i = listeners.length - 2; i >= 0; i -= 2) {
             if (listeners[i] == ActionListener.class) {
-                // Event erst erstellen, wenn mindestens ein Listener existiert (Lazy Instantiation)
-                if (event == null) {
-                    event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command);
-                }
-                // Listener aufrufen
-                ((ActionListener) listeners[i + 1]).actionPerformed(event);
+                ((ActionListener) listeners[i + 1]).actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command));
             }
         }
     }

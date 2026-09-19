@@ -8,7 +8,7 @@ public class Snake {
     private boolean growNextTick = false;
     private directions NextDirection = GameOptions.startingDirection;
     directions CurrentDirection = GameOptions.startingDirection;
-    private boolean restart = false;
+    private boolean gameOver = false;
 
     public Snake() {
         spawnFirstSnakeElements();
@@ -28,7 +28,7 @@ public class Snake {
         Rectangle last = snakeList.getLast();
         for (int i = 0; i < snakeList.size() - 1; i++) {
             if (snakeList.get(i).intersects(last))
-                restart = true;
+                gameOver = true;
         }
     }
 
@@ -47,11 +47,11 @@ public class Snake {
                 snakeList.add(new Rectangle((int) snakeList.getLast().getX() + GameOptions.tileSize, (int) snakeList.getLast().getY(), GameOptions.tileSize,GameOptions.tileSize));
         }
         if (!new Rectangle(GameOptions.WIDTH,GameOptions.HEIGHT).contains(snakeList.getLast()))
-            restart = true;
+            gameOver = true;
 
         if (!growNextTick)
             snakeList.remove(snakeList.getFirst());
-        else growNextTick = false;
+        growNextTick = false;
 
         isSnakeIntersectingItself();
         CurrentDirection = NextDirection;
@@ -64,22 +64,20 @@ public class Snake {
         CurrentDirection = GameOptions.startingDirection;
     }
 
-    public boolean isRestart() {
-        return restart;
+    public boolean isGameOver() {
+        return gameOver;
     }
     public ArrayList<Rectangle> getSnakeList() {
         return snakeList;
+    }
+    public directions getCurrentDirection() {
+        return CurrentDirection;
     }
 
     public void setNextDirection(directions directions) {
         NextDirection = directions;
     }
-
-    public directions getCurrentDirection() {
-        return CurrentDirection;
-    }
-
-    public void setRestart(boolean b) {
-        restart = b;
+    public void setGameOver(boolean b) {
+        gameOver = b;
     }
 }
