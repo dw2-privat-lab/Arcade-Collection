@@ -13,9 +13,9 @@ public class GameOptions {
     public static int amountApples = 5;
 
     public static final int gameSpeed = 75; //time for every tick
-    public static final Color snakeBaseColor = new Color(17, 151, 139);
-    public static Color snakeHeadColor = new Color(250, 147, 0);
-    public static Color backgroundColor = new Color(57, 57, 57);
+    public static final Color snakeBaseColor = new Color(112, 112, 112);
+    public static Color snakeHeadColor = new Color(255, 255, 255);
+    public static Color backgroundColor = new Color(0, 0, 0);
 }
 
 //here are some other themes:
