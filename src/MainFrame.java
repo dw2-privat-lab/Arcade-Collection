@@ -2,6 +2,7 @@ import Pong.Pong_mainPanel;
 import Snake.Snake_mainPanel;
 import SpaceInvaders.SpaceInvaders_mainPanel;
 import chess.Chess_Singleplayer_panel;
+import chess.ClientPanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -12,7 +13,7 @@ public class MainFrame extends JFrame implements ActionListener {
     MainPanel mainPanel = new MainPanel(this);
     Snake_mainPanel snake_panel = new Snake_mainPanel(this);
     Pong_mainPanel pong_panel = new Pong_mainPanel(this);
-    Chess_Singleplayer_panel chess_Singleplayer_panel = new Chess_Singleplayer_panel(this);
+    ClientPanel chess_Singleplayer_panel = new ClientPanel(this);
 
     public MainFrame() {
         add(mainPanel);
@@ -53,6 +54,7 @@ public class MainFrame extends JFrame implements ActionListener {
             chess_Singleplayer_panel.reset();
         }
     }
+
     private void renderPanel(JPanel panel) {
         getContentPane().removeAll();
         getContentPane().add(panel);

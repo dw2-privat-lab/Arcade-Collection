@@ -1,5 +1,4 @@
-import java.awt.*;
 
-void main() throws AWTException {
+void main() {
     MainFrame mainFrame = new MainFrame();
 }

@@ -404,6 +404,10 @@ public class Schachlogik {
         return (impossibleTiles != 8);
     }
 
+    public boolean isWhite(int x, int y) {
+        return Schachfeld[y][x] == 1;
+    }
+
     private boolean isStalemate(int pieceColor){
         if(kingInCheck(pieceColor))
             return false;

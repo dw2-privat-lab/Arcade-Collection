@@ -5,83 +5,84 @@ import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Chess_Singleplayer_panel extends JPanel implements MouseListener, MouseMotionListener {
-    public int tileSize = 70;
+    public int tileSize = 80;
+
+    private boolean highlighted ;
     int highlightX, highlightY ;
     int hoveredX, hoveredY ;
-    int x1, y1, x2, y2;
-    boolean firstClick = true;
-    Schachlogik spiel = new Schachlogik();
-    int Color;
-    private boolean customBackground = true;
-    private String Spritetype = "Neo";
-    private String backgroundName = "Burled_Wood";
 
     private boolean newGameHovered = false;
     private boolean mousePressed;
-    private boolean highlighted ;
     private int Menuhighlight = 1;
+
+    int x1, y1, x2, y2;
+    boolean firstClick = true;
+
+    Schachlogik spiel = new Schachlogik();
+    int Color;
+
+    private String Spritetype = "Neo";
+    private String backgroundName = "Green";
+    private boolean SettingsOpened = false;
+    private int settingsPieceSelected = 0;
+    private int settingsBoardSelected = 1;
+    private boolean firstSettingsTabOpened = false;
+
+    Color defaultGray = new Color(53, 57, 57, 255);
+
+    private Image boardImg;
+    private Image selectionImg;
+
+    private final Map<Integer, Image> spriteCache = new HashMap<>();
+    private final Image menuImage = new ImageIcon("resources/chess/Menu.png").getImage();
+    private final Image settingsImage = new ImageIcon("resources/chess/SettingsIcon.png").getImage();
+    private final Image resetImage = new ImageIcon("resources/chess/reset.png").getImage();
+    private final Image menuImageSelected = new ImageIcon("resources/chess/Menu_selected.png").getImage();
+    private final Image settingsImageSelected = new ImageIcon("resources/chess/SettingsIcon_selected.png").getImage();
+    private final Image resetImageSelected = new ImageIcon("resources/chess/reset_selected.png").getImage();
+
+
 
     EventListenerList listenerList = new EventListenerList();
 
     public Chess_Singleplayer_panel(ActionListener actionListener)  {
         listenerList.add(ActionListener.class, actionListener);
         spiel.reset();
+
+        reloadBoard();
+        reloadSprites();
         setPreferredSize(new Dimension(tileSize * 9, tileSize * 8));
         addMouseListener(this);
         addMouseMotionListener(this);
-        checkBackgroundFiles();
-        checkSpriteFiles();
         repaint();
     }
     public void reset(){
         spiel.reset();
     }
 
-    private void checkBackgroundFiles() {
-        if (customBackground) {
-            File tempBoard = new File("resources/chess/chess/backgrounds/" + backgroundName + "/board.png");
-            File tempSelection = new File("resources/chess/backgrounds/" + backgroundName + "/selection.png");
-            if (!(tempBoard.exists() && tempSelection.exists())) {
-                customBackground = false;
-                System.out.println("Required Image Files for Custom Background (no Tiles) not Found");
-            }
-        }
-        if (!customBackground) {
-            File tempdark = new File("resources/chess/backgrounds/" + backgroundName + "/dark.png");
-            File templight = new File("resources/chess/backgrounds/" + backgroundName + "/light.png");
-            if (!(tempdark.exists() && templight.exists())) {
-                System.out.println("Required Image Files for Custom Background (using Tiles) not Found");
-
-                File tempBoard = new File("resources/chess/backgrounds/" + backgroundName + "/board.png");
-                File tempSelection = new File("resources/chess/backgrounds/" + backgroundName + "/selection.png");
-                if (!(tempBoard.exists() && tempSelection.exists())) {
-                    backgroundName = "Example";
-                    System.out.println("No Image Files for Custom Background Found; reverting to Original Images");
-                }
-                customBackground = true;
-            }
-        }
-    }
-
-    private void checkSpriteFiles() {
-        int SpriteCount = 0;
+    public void reloadSprites(){
+        spriteCache.clear();
         for (int i = -6; i <= 6; i++) {
             File tempSprite = new File("resources/chess/Sprites/" + Spritetype + "/" + i + ".png");
-            if (tempSprite.exists())
-                SpriteCount++;
+            if (tempSprite.exists()) {
+                spriteCache.put(i, new ImageIcon(tempSprite.getPath()).getImage());
+            }
         }
-        if (SpriteCount != 12) {
-            System.out.println("Sprites not found");
-            Spritetype = "Example";
-        }
+        repaint();
     }
-
+    public void reloadBoard(){
+        boardImg = new ImageIcon("resources/chess/backgrounds/"+backgroundName+"/board.png").getImage();
+        selectionImg = new ImageIcon("resources/chess/backgrounds/"+backgroundName+"/selection.png").getImage();
+        repaint();
+    }
 
     @Override
     public void paintComponent(Graphics g) {
-        setBackground(new Color(53, 57, 57, 255));
+        setBackground(defaultGray);
         super.paintComponent(g);
         g.drawRect(0, 0, getWidth() , getHeight());
         paintGamefield(g);
@@ -93,34 +94,20 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         if (spiel.checkmate||spiel.stalemate)
             paintStopScreen(g);
         paintMenu(g);
+        if (SettingsOpened)
+            paintSettings(g);
     }
 
     private void paintGamefield(Graphics g) {
-        boolean whitebackground = true;
-        ImageIcon backgroundTile;
-        if (customBackground) {
-            backgroundTile = new ImageIcon("resources/chess/backgrounds/" + backgroundName + "/board.png");
-            g.drawImage(backgroundTile.getImage(), 0, 0, 8 * tileSize, 8 * tileSize, null);
-        }
+        g.drawImage(boardImg, 0, 0, 8 * tileSize, 8 * tileSize, null);
+
         for (int col = 0; col < spiel.Schachfeld.length; col++) {
-            whitebackground = !whitebackground;
             for (int row = 0; row < spiel.Schachfeld[0].length; row++) {
-                whitebackground = !whitebackground;
-
-                if (!customBackground) {
-                    if (whitebackground)
-                        backgroundTile = new ImageIcon("resources/chess/backgrounds/" + backgroundName + "/light.png");
-                    else
-                        backgroundTile = new ImageIcon("resources/chess/backgrounds/" + backgroundName + "/dark.png");
-                    g.drawImage(backgroundTile.getImage(), col * tileSize , row * tileSize, tileSize, tileSize, null);
-                }
-
-                ImageIcon tileimage = new ImageIcon("resources/chess/Sprites/" + Spritetype + "/" + spiel.Schachfeld[row][col] + ".png");
                 if ((highlightX == col && highlightY == row&& highlighted) || ((hoveredX == col && hoveredY == row) && !spiel.chooseNewPiece)) {
                     if(!mousePressed)
-                        g.drawImage(tileimage.getImage(), col * tileSize - 5 , row * tileSize - 5 , tileSize + 10, tileSize + 10, null);
+                        g.drawImage(spriteCache.get(spiel.Schachfeld[row][col]), col * tileSize - 5 , row * tileSize - 5 , tileSize + 10, tileSize + 10, null);
                 } else {
-                    g.drawImage(tileimage.getImage(), col * tileSize , row * tileSize , tileSize, tileSize, null);
+                    g.drawImage(spriteCache.get(spiel.Schachfeld[row][col]), col * tileSize , row * tileSize , tileSize, tileSize, null);
                 }
             }
         }
@@ -130,49 +117,30 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         g.setColor(new Color(46, 45, 45, 160));
         g.fillRect(0, 0, getWidth(), getHeight());
 
+        g.drawImage(selectionImg, 3 * tileSize , 3 * tileSize , 2 * tileSize, 2 * tileSize, null);
         Color = spiel.whiteMoves?-1:1;
 
         int round = 1;
-        boolean whitebackground = true;
-        ImageIcon backgroundTile;
-        if (customBackground) {
-            backgroundTile = new ImageIcon("resources/chess/backgrounds/" + backgroundName + "/selection.png");
-            g.drawImage(backgroundTile.getImage(), 3 * tileSize , 3 * tileSize , 2 * tileSize, 2 * tileSize, null);
-        }
-
         for (int i = 0; i < 2; i++) {
-            whitebackground = !whitebackground;
             for (int j = 0; j < 2; j++) {
-                whitebackground = !whitebackground;
-
-                //Draw Background Tiles
-                if (!customBackground) {
-                    if (whitebackground)
-                        backgroundTile = new ImageIcon("resources/chess/backgrounds/" + backgroundName + "/light.png");
-                    else
-                        backgroundTile = new ImageIcon("resources/chess/backgrounds/" + backgroundName + "/dark.png");
-                    g.drawImage(backgroundTile.getImage(), (3 + j) * tileSize , (3 + i) * tileSize , tileSize, tileSize, null);
-                }
-
-                //Draw selection sprites
                 round++;
-                ImageIcon spriteImage = new ImageIcon("resources/chess/Sprites/" + Spritetype + "/" + round * Color + ".png");
                 if (hoveredX == j + 3 && hoveredY == i + 3)
-                    g.drawImage(spriteImage.getImage(), (3 + j) * tileSize - 5  , (3 + i) * tileSize - 5  , tileSize + 10, tileSize + 10, null);
+                    g.drawImage(spriteCache.get(round*Color), (3 + j) * tileSize - 5  , (3 + i) * tileSize - 5  , tileSize + 10, tileSize + 10, null);
                 else
-                    g.drawImage(spriteImage.getImage(), (3 + j) * tileSize  , (3 + i) * tileSize , tileSize, tileSize, null);
+                    g.drawImage(spriteCache.get(round*Color), (3 + j) * tileSize  , (3 + i) * tileSize , tileSize, tileSize, null);
             }
         }
     }
 
     private void paintStopScreen(Graphics g) {
         int arc = (int) (3.5 * tileSize / 10);
-        g.setColor(new Color(40, 50, 50, 161));
+        g.setColor(new Color(53, 57, 57, 161));
         g.fillRect(0, 0, getWidth(), getHeight());
-        g.setColor(new Color(53, 57, 57, 255));
+
+        g.setColor(defaultGray);
         g.fillRoundRect((int) (2.5 * tileSize), (int) (2.5 * tileSize), 3 * tileSize, 2 * tileSize, arc, arc);
 
-        g.setColor(new Color(255, 255, 255, 255));
+        g.setColor(java.awt.Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 3 * tileSize / 10));
         if(spiel.checkmate){
             String winner = spiel.whiteMoves ? "White" : "Black";
@@ -194,14 +162,69 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
             g.drawRoundRect((int) (2.8 * tileSize), (int) (3.5 * tileSize), (int) (2.4 * tileSize), (int) (0.75 * tileSize), arc, arc);
         }
     }
+
     private void paintMenu(Graphics g) {
-        Image menuImage = new ImageIcon("resources/chess/Menu"+(Menuhighlight==1?"_selected":"")+".png").getImage();
-        Image settingsImage = new ImageIcon("resources/chess/SettingsIcon"+(Menuhighlight==2?"_selected":"")+".png").getImage();
-        Image resetImage = new ImageIcon("resources/chess/reset"+(Menuhighlight==3?"_selected":"")+".png").getImage();
-        g.drawImage(menuImage, (int) (8.25*tileSize), (int) (0.25*tileSize), tileSize/2, tileSize/2, null);
-        g.drawImage(settingsImage, (int) (8.25*tileSize), (int) (1.25*tileSize), tileSize/2, tileSize/2, null);
-        g.drawImage(resetImage, (int) (8.25*tileSize), (int) (2.25*tileSize), tileSize/2, tileSize/2, null);
+        g.drawImage((Menuhighlight==1?menuImageSelected:menuImage), (int) (8.25*tileSize), (int) (0.25*tileSize), tileSize/2, tileSize/2, null);
+        g.drawImage((Menuhighlight==2?settingsImageSelected:settingsImage), (int) (8.25*tileSize), (int) (1.25*tileSize), tileSize/2, tileSize/2, null);
+        g.drawImage((Menuhighlight==3?resetImageSelected:resetImage), (int) (8.25*tileSize), (int) (2.25*tileSize), tileSize/2, tileSize/2, null);
     }
+
+    private void paintSettings(Graphics g) {
+        int arc = (int) (3.5 * tileSize / 10);
+
+        g.setColor(defaultGray);
+        g.fillRoundRect(tileSize, tileSize, 6 * tileSize, 5 * tileSize, arc, arc);
+
+        g.setFont(new Font("Arial", Font.BOLD, 3 * tileSize / 10));
+        g.setColor(java.awt.Color.WHITE);
+        g.drawString("Settings", (int) (1.5 * tileSize), (int) (1.6 * tileSize));
+
+        g.setColor(new Color(104, 104, 104, 255));
+        g.drawLine((int) (1.5 * tileSize), (int) (1.8 * tileSize), (int) (6.5 * tileSize), (int) (1.8 * tileSize));
+
+
+        if(firstSettingsTabOpened){
+            g.fillRoundRect((int) (1.4 * tileSize), (int) (2.175 * tileSize),tileSize,(int)(0.3*tileSize), arc/2, arc/2);
+            paintBoardSelector(g);
+        }
+        else{
+            g.fillRoundRect((int) (4.15 * tileSize), (int) (2.175 * tileSize),tileSize,(int)(0.3*tileSize), arc/2, arc/2);
+            paintPieceSelector(g);
+        }
+
+        g.setFont(new Font("Arial", Font.BOLD, tileSize / 5));
+        g.setColor(java.awt.Color.WHITE);
+        g.drawString("Board", (int) (1.5 * tileSize), (int) (2.4 * tileSize));
+
+        g.drawString("Pieces", (int) (4.25 * tileSize), (int) (2.4 * tileSize));
+    }
+
+    private void paintBoardSelector(Graphics g) {
+        int arc = (int) (3.5 * tileSize / 10);
+
+        g.drawImage(new ImageIcon("resources/chess/backgrounds/Burled_Wood/selection.png").getImage(),(int)(1.4*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(new ImageIcon("resources/chess/backgrounds/Green/selection.png").getImage(),(int)(2.8*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(new ImageIcon("resources/chess/backgrounds/Default/selection.png").getImage(),(int)(4.2*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(new ImageIcon("resources/chess/backgrounds/Dark_Blue/selection.png").getImage(),(int)(5.6*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(new ImageIcon("resources/chess/backgrounds/Purple/selection.png").getImage(),(int)(1.4*tileSize), (int) (4.4*tileSize),tileSize,tileSize,null);
+        g.drawImage(new ImageIcon("resources/chess/backgrounds/Orange/selection.png").getImage(),(int)(2.8*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
+        g.drawImage(new ImageIcon("resources/chess/backgrounds/Stone/selection.png").getImage(),(int)(4.2*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
+        g.drawImage(new ImageIcon("resources/chess/backgrounds/Sky_&_Sea/selection.png").getImage(),(int)(5.6*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
+        g.setColor(new Color(72, 92, 59, 255));
+        g.drawRoundRect((int)((settingsBoardSelected%4)*1.4*tileSize+1.3*tileSize),(int)(settingsBoardSelected<4?2.9*tileSize:4.3*tileSize), (int) (tileSize*1.2), (int) (tileSize*1.2),arc,arc);
+    }
+
+    private void paintPieceSelector(Graphics g) {
+        int arc = (int) (3.5 * tileSize / 10);
+
+        g.drawImage(new ImageIcon("resources/chess/sprites/Neo/1.png").getImage(),(int)(1.4*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(new ImageIcon("resources/chess/sprites/Default/1.png").getImage(),(int)(2.8*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(new ImageIcon("resources/chess/sprites/Wood/1.png").getImage(),(int)(4.2*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(new ImageIcon("resources/chess/sprites/Neon/1.png").getImage(),(int)(5.6*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.setColor(new Color(72, 92, 59, 255));
+        g.drawRoundRect((int)(settingsPieceSelected*1.4*tileSize+1.3*tileSize),(int)(2.9*tileSize), (int) (tileSize*1.2), (int) (tileSize*1.2),arc,arc);
+        }
+
     private void paintPossibleMoves(Graphics g) {
         if(!(highlightX==-1||highlightY==-1)){
             java.util.ArrayList<int[]> allMoves;
@@ -220,6 +243,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
                     allMoves.add(new int[]{highlightX+2, highlightY});
                     allMoves.add(new int[]{highlightX-2, highlightY});
                 }
+
             }else{
                 allMoves= spiel.generatePseudoMoves(highlightX,highlightY);
             }
@@ -235,12 +259,11 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
             }
         }
     }
+
     private void paintDraggedPiece(Graphics g) {
         Point mouse = getMousePosition();
         ImageIcon tileImage = new ImageIcon("resources/chess/Sprites/" + Spritetype + "/" + spiel.Schachfeld[highlightY][highlightX] + ".png");
-
         g.drawImage(tileImage.getImage(), mouse.x - 5 - tileSize/2 , mouse.y - 5 - tileSize/2 , tileSize + 10, tileSize + 10, null);
-
     }
 
     public void highlight(int x, int y) {
@@ -255,29 +278,114 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         highlightY = -1;
     }
 
+    protected void sendMove(int x, int y,int toX, int toY) {
+        spiel.move(x,y,toX,toY);
+    }
+
     @Override
     public void mousePressed(MouseEvent e) {
         int MouseX = e.getX() / tileSize;
         int MouseY = e.getY() / tileSize;
 
         if (e.getButton() == MouseEvent.BUTTON1) {
-                if(new Rectangle((int) (8.25*tileSize), (int) (0.25*tileSize), tileSize/2, tileSize/2).contains(e.getX(), e.getY())) {
-                    fireActionPerformed();
-                    return;
-                }
+
+            if(new Rectangle((int) (8.25*tileSize), (int) (0.25*tileSize), tileSize/2, tileSize/2).contains(e.getX(), e.getY())) {
+                fireActionPerformed();
+                repaint();
+                return;
+            }
             if(new Rectangle((int) (8.25*tileSize), (int) (1.25*tileSize), tileSize/2, tileSize/2).contains(e.getX(), e.getY())) {
-                //code zum settings öffnen
+                SettingsOpened =!SettingsOpened;
+                repaint();
                 return;
             }
             if(new Rectangle((int) (8.25*tileSize), (int) (2.25*tileSize), tileSize/2, tileSize/2).contains(e.getX(), e.getY())) {
                 spiel.reset();
+                repaint();
                 return;
             }
-
-
-
-
-
+            if(SettingsOpened){
+                if(new Rectangle((int) (1.4 * tileSize), (int) (2.175 * tileSize),tileSize,(int)(0.3*tileSize)).contains(e.getX(),e.getY()))
+                    firstSettingsTabOpened = true;
+                if(new Rectangle((int) (4.15 * tileSize), (int) (2.175 * tileSize),tileSize,(int)(0.3*tileSize)).contains(e.getX(),e.getY()))
+                    firstSettingsTabOpened = false;
+                if(firstSettingsTabOpened) {
+                    if (new Rectangle((int) (1.4 * tileSize), 3 * tileSize, tileSize, tileSize).contains(e.getX(), e.getY())) {
+                        settingsBoardSelected = 0;
+                        backgroundName = "Burled_Wood";
+                        reloadBoard();
+                        return;
+                    }
+                    if (new Rectangle((int) (2.8 * tileSize), 3 * tileSize, tileSize, tileSize).contains(e.getX(), e.getY())) {
+                        settingsBoardSelected = 1;
+                        backgroundName = "Green";
+                        reloadBoard();
+                        return;
+                    }
+                    if (new Rectangle((int) (4.2 * tileSize), 3 * tileSize, tileSize, tileSize).contains(e.getX(), e.getY())) {
+                        settingsBoardSelected = 2;
+                        backgroundName = "Default";
+                        reloadBoard();
+                        return;
+                    }
+                    if (new Rectangle((int) (5.6 * tileSize), 3 * tileSize, tileSize, tileSize).contains(e.getX(), e.getY())) {
+                        settingsBoardSelected = 3;
+                        backgroundName = "Dark_Blue";
+                        reloadBoard();
+                        return;
+                    }
+                    if (new Rectangle((int) (1.4 * tileSize), (int) (4.4 * tileSize), tileSize, tileSize).contains(e.getX(), e.getY())) {
+                        settingsBoardSelected = 4;
+                        backgroundName = "Purple";
+                        reloadBoard();
+                        return;
+                    }
+                    if (new Rectangle((int) (2.8 * tileSize), (int) (4.4 * tileSize), tileSize, tileSize).contains(e.getX(), e.getY())) {
+                        settingsBoardSelected = 5;
+                        backgroundName = "Orange";
+                        reloadBoard();
+                        return;
+                    }
+                    if (new Rectangle((int) (4.2 * tileSize), (int) (4.4 * tileSize), tileSize, tileSize).contains(e.getX(), e.getY())) {
+                        settingsBoardSelected = 6;
+                        backgroundName = "Stone";
+                        reloadBoard();
+                        return;
+                    }
+                    if (new Rectangle((int) (5.6 * tileSize), (int) (4.4 * tileSize), tileSize, tileSize).contains(e.getX(), e.getY())) {
+                        settingsBoardSelected = 7;
+                        backgroundName = "Sky_&_Sea";
+                        reloadBoard();
+                        return;
+                    }
+                }
+                else{
+                    if(new Rectangle((int)(1.4*tileSize),3*tileSize,tileSize,tileSize).contains(e.getX(),e.getY())){
+                        settingsPieceSelected = 0;
+                        Spritetype = "Neo";
+                        reloadSprites();
+                        return;
+                    }
+                    if(new Rectangle((int)(2.8*tileSize),3*tileSize,tileSize,tileSize).contains(e.getX(),e.getY())){
+                        settingsPieceSelected = 1;
+                        Spritetype = "Default";
+                        reloadSprites();
+                        return;
+                    }
+                    if(new Rectangle((int)(4.2*tileSize),3*tileSize,tileSize,tileSize).contains(e.getX(),e.getY())){
+                        settingsPieceSelected = 2;
+                        Spritetype = "Wood";
+                        reloadSprites();
+                        return;
+                    }
+                    if(new Rectangle((int)(5.6*tileSize),3*tileSize,tileSize,tileSize).contains(e.getX(),e.getY())){
+                        settingsPieceSelected = 3;
+                        Spritetype = "Neon";
+                        reloadSprites();
+                        return;
+                    }
+                }
+            }
 
             if(MouseX<0||MouseX>7||MouseY<0||MouseY>7) {
                 repaint();
@@ -296,15 +404,14 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
                 else {
                     x2 = MouseX;
                     y2 = MouseY;
-                    //Überprüfung, ob das zweite feld nicht dieselbe Farbe hat
+
                     if (spiel.Schachfeld[y1][x1] * spiel.Schachfeld[y2][x2] <= 0||(Math.abs(spiel.Schachfeld[y1][x1])== 6 &&Math.abs( spiel.Schachfeld[y2][x2])==4)) {
-                        spiel.move(x1, y1, x2, y2);
+                        sendMove(x1, y1, x2, y2);
                         unhighlight();
                         firstClick = true;
                         mousePressed = false;
                     }
                     else {
-                        //selber Code wie beim ersten click
                         x1 = MouseX;
                         y1 = MouseY;
                         highlight(x1, y1);
@@ -313,7 +420,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
                     }
                 }
             }
-            //Umgewandelte Figur auswählen
+
             if (spiel.chooseNewPiece) {
                 if ((MouseX == 3 || MouseX == 4) && (MouseY == 3 || MouseY == 4)) {
                     int[][] pieces = {{2, 3}, {4, 5}};
@@ -348,7 +455,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         y2 = MouseY;
         if (spiel.Schachfeld[y1][x1] * spiel.Schachfeld[y2][x2] <= 0||(Math.abs(spiel.Schachfeld[y1][x1])== 6 &&Math.abs( spiel.Schachfeld[y2][x2])==4)) {
             if(spiel.canMove(x1, y1, x2, y2)){
-            spiel.move(x1, y1, x2, y2);
+            sendMove(x1, y1, x2, y2);
             unhighlight();
             firstClick = true;
             }
@@ -369,6 +476,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     @Override
     public void mouseMoved(MouseEvent e) {
         Menuhighlight=-1;
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         for(int i = 0; i<3;i++){
             if(new Rectangle((int) (8.25*tileSize), (int) ((i+0.25)*tileSize), tileSize/2, tileSize/2).contains(e.getX(), e.getY())) {
                 Menuhighlight = i + 1;
@@ -384,8 +492,6 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
             newGameHovered = rect.contains(p);
             if (newGameHovered)
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            else
-                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
             hoveredX = -1;
             hoveredY = -1;
@@ -402,7 +508,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
                 return;
             }
 
-            if (spiel.Schachfeld[hoveredY][hoveredY] * (spiel.whiteMoves ? 1 : -1) > 0)
+            if (spiel.Schachfeld[hoveredY][hoveredX] * (spiel.whiteMoves ? 1 : -1) > 0)
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             else {
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
