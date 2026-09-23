@@ -23,6 +23,10 @@ public class Schachlogik {
     int[][] Schachfeld;
     int[][] UsedTiles;
 
+    public Schachlogik() {
+        reset();
+    }
+
     public void reset() {
         Schachfeld = new int[][]{
                 {-4, -3, -2, -5, -6, -2, -3, -4},
@@ -50,7 +54,9 @@ public class Schachlogik {
 
             //En Passant Bauer löschen
             if (Math.abs(tempOrigin) == 1 && x != toX && Schachfeld[toY][toX] == 0) {
-                Schachfeld[oldToY][oldToX] = 0;
+                if (toX == oldToX && oldToY == y) {
+                    Schachfeld[oldToY][oldToX] = 0;
+                }
             }
             int colormodifier = tempOrigin>0? 1:-1;
             if (validRochade(x, y, toX, toY)) {
@@ -117,8 +123,14 @@ public class Schachlogik {
                     return true;
 
                 // En Passant
-                if (Schachfeld[oldToY][oldToX] == Piece * -1 && (oldY - oldToY) * Piece == -2 && oldToX == toX && Math.abs(x - oldToX) == 1 && toY == oldToY - Piece && Schachfeld[toY][toX] == 0)
+                boolean isOpponentPawnLastMove = (Schachfeld[oldToY][oldToX] == -Piece);
+                boolean lastMoveWasTwoSquares = Math.abs(oldY - oldToY) == 2;
+                boolean isAdjacentColumn = Math.abs(x - oldToX) == 1 && y == oldToY;
+                boolean isMovingBehindEnemyPawn = (toX == oldToX) && (toY == y - Piece);
+
+                if (isOpponentPawnLastMove && lastMoveWasTwoSquares && isAdjacentColumn && isMovingBehindEnemyPawn && Schachfeld[toY][toX] == 0) {
                     return true;
+                }
                 break;
 
             case 2, -2:
@@ -405,7 +417,7 @@ public class Schachlogik {
     }
 
     public boolean isWhite(int x, int y) {
-        return Schachfeld[y][x] == 1;
+        return Schachfeld[y][x] >0;
     }
 
     private boolean isStalemate(int pieceColor){
