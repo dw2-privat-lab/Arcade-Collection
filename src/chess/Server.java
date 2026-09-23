@@ -137,6 +137,15 @@ class ChessRoom {
             player2.sendObject(player2.isWhite());
         }
     }
+
+    public void choosePiece(int piece,ClientHandler sender) {
+        if(sender.isWhite()){
+            game.choosePiece(piece);
+        }else{
+            game.choosePiece(piece*-1);
+        }
+        broadcast(piece);
+    }
 }
 
 class ClientHandler implements Runnable {
@@ -194,6 +203,9 @@ class ClientHandler implements Runnable {
                 if (receivedObject instanceof String resetString) {
                     if(resetString.equals("Reset"))
                         room.countResetRequests(this);
+                }
+                if(receivedObject instanceof Integer piece) {
+                    room.choosePiece(piece,this);
                 }
             }
         } catch (Exception e) {

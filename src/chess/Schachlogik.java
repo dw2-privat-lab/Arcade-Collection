@@ -58,15 +58,15 @@ public class Schachlogik {
                     Schachfeld[oldToY][oldToX] = 0;
                 }
             }
-            int colormodifier = tempOrigin>0? 1:-1;
+            int colormodifier = tempOrigin > 0 ? 1 : -1;
             if (validRochade(x, y, toX, toY)) {
-                if (toX == 0||toX==2) {
-                    Schachfeld[toY][2] = 6*colormodifier;
-                    Schachfeld[toY][3] = 4*colormodifier;
+                if (toX == 0 || toX == 2) {
+                    Schachfeld[toY][2] = 6 * colormodifier;
+                    Schachfeld[toY][3] = 4 * colormodifier;
                     Schachfeld[toY][0] = 0;
-                } else if (toX == 7||toX==6) {
-                    Schachfeld[toY][6] = 6*colormodifier;
-                    Schachfeld[toY][5] = 4*colormodifier;
+                } else if (toX == 7 || toX == 6) {
+                    Schachfeld[toY][6] = 6 * colormodifier;
+                    Schachfeld[toY][5] = 4 * colormodifier;
                     Schachfeld[toY][7] = 0;
                 }
             } else {
@@ -77,8 +77,9 @@ public class Schachlogik {
             UsedTiles[y][x] = 1;
             UsedTiles[toY][toX] = 1;
 
-            if (Math.abs(tempOrigin) == 1 && ((tempOrigin > 0 && toY == 0) || (tempOrigin < 0 && toY == 7)))
+            if (Math.abs(tempOrigin) == 1 && ((tempOrigin > 0 && toY == 0) || (tempOrigin < 0 && toY == 7))){
                 chooseNewPiece = true;
+        }
 
 
             oldY = y;
@@ -87,10 +88,11 @@ public class Schachlogik {
             if (checkCheckmate(whiteMoves ? -1:1)) {
                 checkmate = true;
             } else {
-                whiteMoves = !whiteMoves;
-                if (isStalemate(whiteMoves ? 1 : -1))
-                    stalemate = true;
-
+                if(!chooseNewPiece) {
+                    whiteMoves = !whiteMoves;
+                    if (isStalemate(whiteMoves ? 1 : -1))
+                        stalemate = true;
+                }
             }
         }
     }
@@ -478,6 +480,7 @@ public class Schachlogik {
     public void choosePiece(int Piece) {
         Schachfeld[oldToY][oldToX] = Piece;
         chooseNewPiece = false;
+        whiteMoves = !whiteMoves;
     }
 
     private boolean validRochade(int x, int y, int toX, int toY) {

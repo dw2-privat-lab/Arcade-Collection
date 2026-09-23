@@ -12,12 +12,12 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     public int tileSize = 80;
 
     boolean highlighted ;
-    int highlightX, highlightY ;
-    int hoveredX, hoveredY ;
+    int highlightX, highlightY =-1;
+    int hoveredX, hoveredY =-1;
 
     boolean newGameHovered = false;
     boolean mousePressed;
-    protected int Menuhighlight = 1;
+    protected int Menuhighlight = -1;
 
     int x1, y1, x2, y2;
     boolean firstClick = true;
@@ -30,7 +30,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     private boolean SettingsOpened = false;
     private int settingsPieceSelected = 0;
     private int settingsBoardSelected = 1;
-    private boolean firstSettingsTabOpened = false;
+    private boolean firstSettingsTabOpened = true;
 
     Color defaultGray = new Color(53, 57, 57, 255);
 
@@ -62,6 +62,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     }
     public void reset(){
         spiel.reset();
+        highlighted = false;
     }
 
     public void reloadSprites(){
@@ -113,12 +114,12 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         }
     }
 
-    private void paintPieceChangeWindow(Graphics g) {
+    protected void paintPieceChangeWindow(Graphics g) {
         g.setColor(new Color(46, 45, 45, 160));
         g.fillRect(0, 0, getWidth(), getHeight());
 
         g.drawImage(selectionImg, 3 * tileSize , 3 * tileSize , 2 * tileSize, 2 * tileSize, null);
-        Color = spiel.whiteMoves?-1:1;
+        Color = spiel.whiteMoves?1:-1;
 
         int round = 1;
         for (int i = 0; i < 2; i++) {
@@ -488,17 +489,14 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     public void mouseDragged(MouseEvent e) {
         repaint();
     }
-    protected void checkResetHovered(Point e){
-        if(new Rectangle((int) (8.25*tileSize), (int) ((2.25)*tileSize), tileSize/2, tileSize/2).contains(e.getX(), e.getY())) {
-            Menuhighlight = 3;
-            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            repaint();
-        }
+    protected void highlightReset(Point e){
+        Menuhighlight = 3;
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        repaint();
     }
     @Override
     public void mouseMoved(MouseEvent e) {
         Menuhighlight=-1;
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         for(int i = 0; i<2;i++){
             if(new Rectangle((int) (8.25*tileSize), (int) ((i+0.25)*tileSize), tileSize/2, tileSize/2).contains(e.getX(), e.getY())) {
                 Menuhighlight = i + 1;
@@ -507,21 +505,35 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
                 return;
             }
         }
-        checkResetHovered(e.getPoint());
+        if(new Rectangle((int) (8.25*tileSize), (int) ((2.25)*tileSize), tileSize/2, tileSize/2).contains(e.getX(), e.getY())) {
+            highlightReset(e.getPoint());
+            return;
+        }
 
         if (spiel.checkmate || spiel.stalemate) {
-            Rectangle rect = new Rectangle((int) (2.75 * tileSize), (int) (3.45 * tileSize), (int) (2.5 * tileSize), (int) (0.85 * tileSize));
-            Point p = new Point(e.getX(), e.getY());
-            newGameHovered = rect.contains(p);
+            newGameHovered = new Rectangle((int) (2.75 * tileSize), (int) (3.45 * tileSize), (int) (2.5 * tileSize), (int) (0.85 * tileSize)).contains(e.getPoint());
             if (newGameHovered)
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            else
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
             hoveredX = -1;
             hoveredY = -1;
+            repaint();
         } else {
-            mouseHoveredCheck(e.getPoint());
+            if(spiel.chooseNewPiece)
+                highlightChoosePiece(e.getPoint());
+            else
+                mouseHoveredCheck(e.getPoint());
         }
         repaint();
+    }
+    protected void highlightChoosePiece(Point p){
+        hoveredX = (int) (p.getX() / tileSize);
+        hoveredY = (int) (p.getY() / tileSize);
+        if(new Rectangle(3*tileSize,3*tileSize,2*tileSize,2*tileSize).contains(p)){
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
     }
     protected void mouseHoveredCheck(Point p){
 
@@ -531,6 +543,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
             mousePressed = false;
             hoveredX = -1;
             hoveredY = -1;
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             repaint();
             return;
         }
@@ -538,6 +551,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         if (spiel.Schachfeld[hoveredY][hoveredX] * (spiel.whiteMoves ? 1 : -1) > 0)
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         else {
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             hoveredX = -1;
             hoveredY = -1;
         }

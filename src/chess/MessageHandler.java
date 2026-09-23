@@ -70,6 +70,8 @@ public class MessageHandler implements Runnable {
                     fireEvent(new ActionEvent(message, ActionEvent.ACTION_PERFORMED, "IncomingMessage"));
                 } else if (readObject instanceof Boolean isWhite) {
                     fireEvent(new ActionEvent(isWhite, ActionEvent.ACTION_PERFORMED, "IncomingColor"));
+                } else if (readObject instanceof Integer piece) {
+                    fireEvent(new ActionEvent(piece, ActionEvent.ACTION_PERFORMED, "IncomingPiece"));
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -85,6 +87,17 @@ public class MessageHandler implements Runnable {
                 listener.actionPerformed(event);
             }
         });
+    }
+    public void sendChosenPiece(int piece) {
+        Integer Piece = piece;
+        try {
+            if (out != null) {
+                out.writeObject(Piece);
+                out.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendMove(Move move) {

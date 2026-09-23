@@ -172,6 +172,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
         add(targetPanel, BorderLayout.CENTER);
         targetPanel.setVisible(true);
         setPreferredSize(targetPanel.getPreferredSize());
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         revalidate();
         repaint();
         fireActionPerformed("resize");
