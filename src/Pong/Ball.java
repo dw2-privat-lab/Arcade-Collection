@@ -8,7 +8,7 @@ public class Ball extends Rectangle {
 
     private double direction;
 
-    private final double speed = (double) Settings.GameSize / 70;
+    private final double speed = (double) Settings.GameSize / 86;
     private final int startX;
     private final int startY;
     public Ball(int x, int y) {

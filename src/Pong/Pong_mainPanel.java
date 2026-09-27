@@ -54,6 +54,9 @@ public class Pong_mainPanel extends JPanel implements KeyListener, MouseListener
         });
         gameTimer.start();
     }
+    public void pause(){
+        paused = true;
+    }
     public void reset(){
         scoreLeft = 0;
         scoreRight = 0;
@@ -122,10 +125,10 @@ public class Pong_mainPanel extends JPanel implements KeyListener, MouseListener
             scoreLeft++;
         }
     }
-    void debug_paddlesfollowBall(){
+    /*void debug_paddlesfollowBall(){
         paddleLeft.setLocation((int) paddleLeft.getX(), (int) ball.getY());
         paddleRight.setLocation((int) paddleRight.getX(), (int) ball.getY());
-    }
+    }*/
     private void movePaddles(){
         if (wPressed) paddleLeft.move(direction.UP);
         if (sPressed) paddleLeft.move(direction.DOWN);

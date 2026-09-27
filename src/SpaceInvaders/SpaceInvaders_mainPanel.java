@@ -31,6 +31,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
     private double enemiedifficulty = 0.995;
     private int score = 0;
     private int highlighted = 3;
+    int level = 0;
 
     public SpaceInvaders_mainPanel(ActionListener actionListener) {
         listenerList.add(ActionListener.class, actionListener);
@@ -44,6 +45,9 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
         Timer timer = new Timer(20, this);
         timer.start();
     }
+    public void pause(){
+        running = false;
+    }
 
     protected void fireActionPerformed() {
         Object[] listeners = listenerList.getListenerList();
@@ -56,12 +60,16 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
     }
 
     public void reset() {
+        level = 0;
         running = true;
         gameOver = false;
         score = 0;
         hearts = 3;
         enemiedifficulty = 0.995;
+        spaceInvadersEnemyController.resetBullets();
+        spaceInvadersPlayer.resetBullets();
         spaceInvadersEnemyController.resetEnemies();
+        spaceInvadersEnemyController.timer.setDelay(300);
         spaceInvadersEnemyController.timer.start();
     }
 
@@ -72,7 +80,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
             if (bullet.intersects(new Rectangle(spaceInvadersPlayer.getX(), spaceInvadersPlayer.getY(), playerWidth, playerHeight))) {
                 hearts--;
                 spaceInvadersEnemyController.removeBullet(bullet);
-                if (hearts <= -1) {
+                if (hearts <= 0) {
                     gameOver = true;
                     running = false;
                     spaceInvadersEnemyController.timer.stop();
@@ -116,6 +124,9 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
             } else {
                 spaceInvadersEnemyController.timer.start();
                 running = true;
+            }
+            if(gameOver) {
+                reset();
             }
         }
     }
@@ -215,9 +226,19 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
             checkPlayersBulletCollision();
             checkEnemiesBulletCollision();
 
+            if(spaceInvadersEnemyController.getEnemies().isEmpty()){
+                spaceInvadersEnemyController.resetEnemies();
+                level++;
+                enemiedifficulty=0.995-level*0.0005;
+                spaceInvadersEnemyController.timer.setDelay(300-level*50);
+            }else if(spaceInvadersEnemyController.getEnemies().getLast().getY()==spaceInvadersPlayer.getY()-spaceInvadersEnemyController.getEnemies().getLast().getHeight()){
+                gameOver = true;
+                running = false;
+                spaceInvadersEnemyController.timer.stop();
+            }
+
             if (pressedSpace)
                 spaceInvadersPlayer.shoot();
-
 
             repaint();
         }

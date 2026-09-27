@@ -35,6 +35,9 @@ public class SpaceInvaders_Player {
         }
         bullets.removeIf(shot -> shot.y < -5);
     }
+    public void resetBullets() {
+    bullets.clear();
+    }
 
     public void shoot() {
         if (bullets.isEmpty())

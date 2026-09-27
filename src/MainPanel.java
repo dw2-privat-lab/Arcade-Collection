@@ -24,6 +24,12 @@ public class MainPanel extends JPanel {
         Button chess = new Button("Chess");
         chess.addActionListener(_ -> fireActionPerformed("Chess"));
         add(chess);
+        Button minesweeper = new Button("Minesweeper");
+        minesweeper.addActionListener(_ -> fireActionPerformed("Minesweeper"));
+        add(minesweeper);
+        Button connect4 = new Button("Connect4");
+        connect4.addActionListener(_ -> fireActionPerformed("Connect4"));
+        add(connect4);
     }
 
     protected void fireActionPerformed(String command) {

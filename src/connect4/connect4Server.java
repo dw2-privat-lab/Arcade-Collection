@@ -1,21 +1,44 @@
-package chess;
+package connect4;
 
 import java.io.*;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Server {
-    private static final int PORT = 8888;
+public class connect4Server implements Runnable {
+    private static final int PORT = 5000;
+    private ServerSocket serverSocket;
+    private volatile boolean running = false;
 
     public static void main(String[] args) {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("Chess chessServer started on port " + PORT);
+        connect4Server server = new connect4Server();
+        server.run();
+    }
+
+    @Override
+    public void run() {
+        try {
+            serverSocket = new ServerSocket(PORT);
+            running = true;
+            System.out.println("Chess connect4Server started on port " + PORT);
+            System.out.println("IpAddress: " + Inet4Address.getLocalHost().getHostAddress());
             Map<String, ClientHandler> waitingHosts = new HashMap<>();
 
-            while (true) {
+            while (running) {
                 Socket socket = serverSocket.accept();
                 new Thread(() -> handleConnection(socket, waitingHosts)).start();
+            }
+        }catch (SocketException e){
+            System.out.println("Socket closed");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void stopServer() {
+        running = false;
+        try {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -29,10 +52,11 @@ public class Server {
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
             Object request = in.readObject();
+            System.out.println("new client");
 
             if ("HOST".equals(request)) {
-                StringBuilder buffer = new StringBuilder(10);
-                for (int i = 0; i < 10; i++) {
+                StringBuilder buffer = new StringBuilder(5);
+                for (int i = 0; i < 5; i++) {
                     int randomChar = (int) (Math.random() * 26) + 97;
                     buffer.append((char) randomChar);
                 }
@@ -50,7 +74,6 @@ public class Server {
 
             } else if ("JOIN".equals(request)) {
                 Object code = in.readObject();
-
                 if (code instanceof String roomCode) {
 
                     ClientHandler hostHandler;
@@ -63,7 +86,7 @@ public class Server {
                         System.out.println("Player joined room: " + roomCode);
                         joinerHandler.sendObject("JOINED");
                         hostHandler.sendObject("FRIEND_JOINED");
-                        ChessRoom room = new ChessRoom(hostHandler, joinerHandler);
+                        GameRoom room = new GameRoom(hostHandler, joinerHandler);
                         room.startChessRoom();
                     } else {
                         out.writeObject("ERROR: Invalid Code");
@@ -78,21 +101,20 @@ public class Server {
     }
 }
 
-class ChessRoom {
+class GameRoom {
     private final ClientHandler player1;
     private final ClientHandler player2;
-    private int resetRequest = 0;
-    Schachlogik game = new Schachlogik();
+    connect4_gameLogic game = new connect4_gameLogic();
 
-    public ChessRoom(ClientHandler player1, ClientHandler player2) {
+    public GameRoom(ClientHandler player1, ClientHandler player2) {
         this.player1 = player1;
         this.player2 = player2;
         if(Math.random() < 0.5) {
-            this.player1.setChessRoom(this, true);  // White
-            this.player2.setChessRoom(this, false); // Black
+            this.player1.setRoom(this, true);  // White
+            this.player2.setRoom(this, false); // Black
         }else{
-            this.player1.setChessRoom(this, false);
-            this.player2.setChessRoom(this, true);
+            this.player1.setRoom(this, false);
+            this.player2.setRoom(this, true);
         }
     }
 
@@ -106,45 +128,14 @@ class ChessRoom {
         player2.sendObject(obj);
     }
 
-    public void processMove(ClientHandler sender, Move move) {
-        if (game.isWhite(move.x, move.y) == sender.isWhite()) {
-            if (game.canMove(move.x, move.y, move.toX, move.toY)) {
-                game.move(move.x, move.y, move.toX, move.toY);
-                broadcast(move);
-            }
+    public void processMove(ClientHandler sender, Integer move) {
+        if (game.won != 0) {
+            game.resetField();
         }
-    }
-
-    public void countResetRequests(ClientHandler sender) {
-        if(!sender.isSentReset()) {
-            sender.setSentReset(true);
-            resetRequest++;
+        if(sender.isPlayer1() == game.firstPlayerPlaying) {
+            game.move(move);
+            broadcast(move);
         }
-        if(resetRequest == 2){
-            resetRequest = 0;
-            player1.setSentReset(false);
-            player2.setSentReset(false);
-            game.reset();
-            broadcast("RESET");
-            if(Math.random() < 0.5) {
-                this.player1.setChessRoom(this, true);  // White
-                this.player2.setChessRoom(this, false); // Black
-            }else{
-                this.player1.setChessRoom(this, false);
-                this.player2.setChessRoom(this, true);
-            }
-            player1.sendObject(player1.isWhite());
-            player2.sendObject(player2.isWhite());
-        }
-    }
-
-    public void choosePiece(int piece,ClientHandler sender) {
-        if(sender.isWhite()){
-            game.choosePiece(piece);
-        }else{
-            game.choosePiece(piece*-1);
-        }
-        broadcast(piece);
     }
 }
 
@@ -152,9 +143,8 @@ class ClientHandler implements Runnable {
     private final Socket socket;
     private final ObjectInputStream in;
     private final ObjectOutputStream out;
-    private ChessRoom room;
-    private boolean isWhite;
-    private boolean hasSentReset = false;
+    private GameRoom room;
+    private boolean isPlayer1;
 
     public ClientHandler(Socket socket, ObjectInputStream in, ObjectOutputStream out) {
         this.socket = socket;
@@ -162,50 +152,35 @@ class ClientHandler implements Runnable {
         this.out = out;
     }
 
-    public void setSentReset(boolean sentReset) {
-        this.hasSentReset = sentReset;
+    public boolean isPlayer1() {
+        return isPlayer1;
     }
 
-    public boolean isSentReset() {
-        return hasSentReset;
-    }
-
-    public boolean isWhite() {
-        return isWhite;
-    }
-
-    public void setChessRoom(ChessRoom room, boolean isWhite) {
+    public void setRoom(GameRoom room, boolean isPlayer1) {
         this.room = room;
-        this.isWhite = isWhite;
+        this.isPlayer1 = isPlayer1;
     }
 
     public void sendObject(Object obj) {
         try {
-            if (out != null) {
+            if (out != null && !socket.isClosed()) {
                 out.writeObject(obj);
                 out.flush();
             }
+        } catch (SocketException _) {
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to send object: " + e.getMessage());
         }
     }
 
     @Override
     public void run() {
-        // Send player color assignment to client
-        this.sendObject(isWhite);
+        this.sendObject(isPlayer1);
         try {
             Object receivedObject;
             while ((receivedObject = in.readObject()) != null) {
-                if (receivedObject instanceof Move move) {
+                if (receivedObject instanceof Integer move) {
                     room.processMove(this, move);
-                }
-                if (receivedObject instanceof String resetString) {
-                    if(resetString.equals("Reset"))
-                        room.countResetRequests(this);
-                }
-                if(receivedObject instanceof Integer piece) {
-                    room.choosePiece(piece,this);
                 }
             }
         } catch (Exception e) {

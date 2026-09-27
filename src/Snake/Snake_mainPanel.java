@@ -44,6 +44,10 @@ public class Snake_mainPanel extends JPanel implements KeyListener, MouseListene
         timer.start();
     }
 
+    public void pause(){
+        paused = true;
+    }
+
     public void tick() {
         snake.moveSnake();
         int appleNumber = apples.getTouchingApple(snake.getSnakeList().getLast());

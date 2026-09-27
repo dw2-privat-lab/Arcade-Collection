@@ -2,7 +2,8 @@ import Pong.Pong_mainPanel;
 import Snake.Snake_mainPanel;
 import SpaceInvaders.SpaceInvaders_mainPanel;
 import chess.Chess_MainMenu;
-import chess.ClientPanel;
+import connect4.connect4MainPanel;
+import minesweeper.MinesweeperMainpanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -14,8 +15,11 @@ public class MainFrame extends JFrame implements ActionListener {
     Snake_mainPanel snake_panel = new Snake_mainPanel(this);
     Pong_mainPanel pong_panel = new Pong_mainPanel(this);
     Chess_MainMenu Chess =new Chess_MainMenu(this);
+    MinesweeperMainpanel minesweeper = new MinesweeperMainpanel(this);
+    connect4MainPanel connect4MainPanel = new connect4MainPanel(this);
     public MainFrame() {
-        add(Chess);
+        add(mainPanel);
+        stopAllRunning();
 
         pack();
         setResizable(false);
@@ -30,29 +34,37 @@ public class MainFrame extends JFrame implements ActionListener {
         if (e.getActionCommand().equals("return")) {
             setTitle("Game Selection");
             renderPanel(mainPanel);
-        }
-
-        if (e.getActionCommand().equals("Space Invaders")) {
-            setTitle("Space Invaders");
-            renderPanel(spaceInvaders_panel);
-            spaceInvaders_panel.reset();
-        }
-        if (e.getActionCommand().equals("Snake")) {
-            setTitle("Snake");
-            renderPanel(snake_panel);
-            snake_panel.reset();
-        }
-        if (e.getActionCommand().equals("Pong")) {
-            setTitle("Pong");
-            renderPanel(pong_panel);
-            pong_panel.reset();
-        }
-        if (e.getActionCommand().equals("Chess")) {
-            setTitle("Chess");
-            renderPanel(Chess);
-        }
-        if (e.getActionCommand().equals("resize")) {
+        }else if (e.getActionCommand().equals("resize")){
             pack();
+            if(e.getSource() == minesweeper){
+                setLocationRelativeTo(null);
+            }
+        }
+        else {
+            stopAllRunning();
+            setTitle(e.getActionCommand());
+            if (e.getActionCommand().equals("Space Invaders")) {
+                spaceInvaders_panel.reset();
+                renderPanel(spaceInvaders_panel);
+            }
+            if (e.getActionCommand().equals("Snake")) {
+                snake_panel.reset();
+                renderPanel(snake_panel);
+            }
+            if (e.getActionCommand().equals("Pong")) {
+                pong_panel.reset();
+                renderPanel(pong_panel);
+            }
+            if (e.getActionCommand().equals("Chess")) {
+                renderPanel(Chess);
+            }
+            if (e.getActionCommand().equals("Minesweeper")) {
+                minesweeper.reset();
+                renderPanel(minesweeper);
+            }
+            if (e.getActionCommand().equals("Connect4")) {
+                renderPanel(connect4MainPanel);
+            }
         }
     }
 
@@ -64,5 +76,10 @@ public class MainFrame extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         getContentPane().repaint();
         panel.requestFocusInWindow();
+    }
+    private void stopAllRunning(){
+        spaceInvaders_panel.pause();
+        snake_panel.pause();
+        pong_panel.pause();
     }
 }

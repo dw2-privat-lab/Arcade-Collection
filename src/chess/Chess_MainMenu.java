@@ -7,8 +7,8 @@ import java.awt.event.*;
 
 public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotionListener, KeyListener, ActionListener {
 
-    private Chess_Singleplayer_panel chess_singleplayer_panel = new Chess_Singleplayer_panel(this);
-    private ClientPanel clientPanel = new ClientPanel(this);
+    private final Chess_Singleplayer_panel chess_singleplayer_panel = new Chess_Singleplayer_panel(this);
+    private final ClientPanel clientPanel = new ClientPanel(this);
 
     Color defaultGray = new Color(53, 57, 57, 255);
     Color defaultGreen = new Color(72, 92, 59, 255);
@@ -49,7 +49,6 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
 
     @Override
     public void paintComponent(Graphics g) {
-        // ALWAYS call super.paintComponent(g) first to handle standard background & child painting
         super.paintComponent(g);
 
         if (panelSelected == 1) {

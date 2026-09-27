@@ -41,6 +41,10 @@ public class SpaceInvaders_EnemyController implements ActionListener {
         }
     }
 
+    public void resetBullets() {
+        bullets.clear();
+    }
+
     public void randomShot() {
         int i = (int) (Math.random() * enemies.size());
         SpaceInvaders_Enemy chosen = enemies.get(i);
