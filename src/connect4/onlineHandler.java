@@ -80,13 +80,13 @@ public class onlineHandler implements Runnable {
             if (!"Socket closed".equals(msg)) {
                 switch (msg) {
                     case "Network is unreachable: connect" ->
-                            fireEvent(new ActionEvent("Connection closed or lost: \nServer network unreachable", ActionEvent.ACTION_PERFORMED, "ERROR"));
+                            fireEvent(new ActionEvent("Connection closed or lost: \nChessServer network unreachable", ActionEvent.ACTION_PERFORMED, "ERROR"));
                     case "Connection timed out: connect" ->
                             fireEvent(new ActionEvent("Connection closed or lost: \nConnection timed out", ActionEvent.ACTION_PERFORMED, "ERROR"));
                     case "Connection refused: connect" ->
-                            fireEvent(new ActionEvent("Connection closed or lost: \nServer not running on port", ActionEvent.ACTION_PERFORMED, "ERROR"));
+                            fireEvent(new ActionEvent("Connection closed or lost: \nChessServer not running on port", ActionEvent.ACTION_PERFORMED, "ERROR"));
                     default ->
-                            fireEvent(new ActionEvent("Connection closed or lost: \n" + (msg != null ? msg : "Server disconnected"), ActionEvent.ACTION_PERFORMED, "ERROR"));
+                            fireEvent(new ActionEvent("Connection closed or lost: \n" + msg, ActionEvent.ACTION_PERFORMED, "ERROR"));
                 }
             }
             System.err.println("Connection closed or lost: " + msg);

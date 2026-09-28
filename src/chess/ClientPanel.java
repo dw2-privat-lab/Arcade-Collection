@@ -6,8 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 
 public class ClientPanel extends Chess_Singleplayer_panel implements ActionListener {
-    String host = "localhost";
-    int port = 8888;
+    int port = 55555;
     MessageHandler messageHandler;
     private boolean playsAsWhite = true;
     private String GameCode;
@@ -18,31 +17,15 @@ public class ClientPanel extends Chess_Singleplayer_panel implements ActionListe
         super(actionListener);
     }
 
-    public void Host() {
+    public void host(String IpAddress) {
         waiting = true;
-        messageHandler = new MessageHandler(host, port, null, true, this);
+        messageHandler = new MessageHandler(IpAddress, port, null, true, this);
         new Thread(messageHandler).start();
     }
 
-    public void Join(String code) {
-        messageHandler = new MessageHandler(host, port, code, false, this);
+    public void join(String IpAddress, String code) {
+        messageHandler = new MessageHandler(IpAddress, port, code, false, this);
         new Thread(messageHandler).start();
-    }
-
-    public void setGameCode(String GameCode) {
-        this.GameCode = GameCode;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void setPlaysAsWhite(boolean playsAsWhite) {
-        this.playsAsWhite = playsAsWhite;
     }
 
     @Override

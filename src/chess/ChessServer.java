@@ -5,15 +5,25 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Server {
-    private static final int PORT = 8888;
+public class ChessServer implements Runnable {
+    private static final int PORT = 55555;
+    private ServerSocket serverSocket;
+    private volatile boolean running = false;
 
     public static void main(String[] args) {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        ChessServer server = new ChessServer();
+        server.run();
+    }
+    @Override
+    public void run() {
+        try {
+            serverSocket = new ServerSocket(PORT);
+            running = true;
+
             System.out.println("Chess chessServer started on port " + PORT);
             Map<String, ClientHandler> waitingHosts = new HashMap<>();
 
-            while (true) {
+            while (running) {
                 Socket socket = serverSocket.accept();
                 new Thread(() -> handleConnection(socket, waitingHosts)).start();
             }
@@ -21,7 +31,6 @@ public class Server {
             e.printStackTrace();
         }
     }
-
     private static void handleConnection(Socket socket, Map<String, ClientHandler> waitingHosts) {
         try {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -31,8 +40,8 @@ public class Server {
             Object request = in.readObject();
 
             if ("HOST".equals(request)) {
-                StringBuilder buffer = new StringBuilder(10);
-                for (int i = 0; i < 10; i++) {
+                StringBuilder buffer = new StringBuilder(5);
+                for (int i = 0; i < 5; i++) {
                     int randomChar = (int) (Math.random() * 26) + 97;
                     buffer.append((char) randomChar);
                 }
@@ -74,6 +83,16 @@ public class Server {
             }
         } catch (Exception e) {
             System.err.println("Error establishing connection: " + e.getMessage());
+        }
+    }
+    public void stopServer() {
+        running = false;
+        try {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

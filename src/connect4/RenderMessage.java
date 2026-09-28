@@ -1,14 +1,14 @@
 package connect4;
 
-import java.awt.*;
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class RenderMessage implements Runnable {
     private final ArrayList <String> Message = new ArrayList<>();
     private final ArrayList<Integer> FadeTimer = new ArrayList<>();
 
-    connect4MainPanel panel;
-    public RenderMessage(connect4MainPanel panel){
+    JPanel panel;
+    public RenderMessage(JPanel panel){
         this.panel = panel;
     }
     public void addMessage(String message, int fadeTimer){

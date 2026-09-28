@@ -93,10 +93,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
                 drawRoundRect(btnLeave, arc, arc, g);
             }
         }
-        if (menu == 2) {
+        else if (menu == 2) {
             paintOnlineWindow(g);
         }
-        if (menu==3){
+        else if (menu==3){
             paintHostWindow(g);
         }
         if(!renderMessage.getMessages().isEmpty())
@@ -293,7 +293,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
 
         if (ipAddress.isEmpty() && !ipAddressFocussed) {
             g.setColor(new Color(130, 140, 160));
-            g.drawString("IP / Domain Address of Host Server", HostIpAddressHitbox.x + 10, HostIpAddressHitbox.y + 27);
+            g.drawString("IP / Domain Address of Host ChessServer", HostIpAddressHitbox.x + 10, HostIpAddressHitbox.y + 27);
         } else {
             g.setColor(Color.WHITE);
             g.drawString(textToDraw, textX, HostIpAddressHitbox.y + 27);

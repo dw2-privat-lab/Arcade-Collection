@@ -56,7 +56,7 @@ public class MessageHandler implements Runnable {
                 out.flush();
                 String response = (String) in.readObject();
                 if(response.equals("JOINED")) {
-                    fireEvent(new ActionEvent(new String("joined"), ActionEvent.ACTION_PERFORMED, "IncomingMessage"));
+                    fireEvent(new ActionEvent("joined", ActionEvent.ACTION_PERFORMED, "IncomingMessage"));
                 }
             }
             System.out.println("joined");
