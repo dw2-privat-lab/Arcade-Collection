@@ -55,9 +55,13 @@ public class onlineHandler implements Runnable {
                 out.flush();
                 out.writeObject(Code);
                 out.flush();
-                String response = (String) in.readObject();
-                if(response.equals("JOINED"))
+                Object response = in.readObject();
+                if ("JOINED".equals(response)) {
                     fireEvent(new ActionEvent("JOINED", ActionEvent.ACTION_PERFORMED, "JOINED"));
+                } else if (response instanceof String strResp && strResp.startsWith("ERROR:")) {
+                    fireEvent(new ActionEvent(strResp.substring(7), ActionEvent.ACTION_PERFORMED, "ERROR"));
+                    return;
+                }
             }
             while (!socket.isClosed()) {
                 Object readObject = in.readObject();
@@ -66,13 +70,26 @@ public class onlineHandler implements Runnable {
                 }
                 else if (readObject instanceof Boolean isYellow) {
                     fireEvent(new ActionEvent(isYellow, ActionEvent.ACTION_PERFORMED, "Incoming Color"));
-                }else if (readObject instanceof String) {
-                    if(readObject.equals("DISCONNECT"))
+                } else if (readObject instanceof String) {
+                    if (readObject.equals("DISCONNECT"))
                         fireEvent(new ActionEvent("DISCONNECTED", ActionEvent.ACTION_PERFORMED, "DISCONNECTED"));
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Connection closed or lost: " + e.getMessage());
+            String msg = e.getMessage();
+            if (!"Socket closed".equals(msg)) {
+                switch (msg) {
+                    case "Network is unreachable: connect" ->
+                            fireEvent(new ActionEvent("Connection closed or lost: \nServer network unreachable", ActionEvent.ACTION_PERFORMED, "ERROR"));
+                    case "Connection timed out: connect" ->
+                            fireEvent(new ActionEvent("Connection closed or lost: \nConnection timed out", ActionEvent.ACTION_PERFORMED, "ERROR"));
+                    case "Connection refused: connect" ->
+                            fireEvent(new ActionEvent("Connection closed or lost: \nServer not running on port", ActionEvent.ACTION_PERFORMED, "ERROR"));
+                    default ->
+                            fireEvent(new ActionEvent("Connection closed or lost: \n" + (msg != null ? msg : "Server disconnected"), ActionEvent.ACTION_PERFORMED, "ERROR"));
+                }
+            }
+            System.err.println("Connection closed or lost: " + msg);
         } finally {
             closeConnection();
         }

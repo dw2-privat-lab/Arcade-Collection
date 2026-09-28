@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class connect4Server implements Runnable {
-    private static final int PORT = 5000;
+    private static final int PORT = 55555;
     private ServerSocket serverSocket;
     private volatile boolean running = false;
 

@@ -39,10 +39,9 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         Thread gameServerThread = new Thread(activeServer);
         gameServerThread.start();
     }
-    public void hostGame(){
+    public void joinAsHostGame(String host){
         reset();
-        hostGameServer();
-        onlineHandler = new onlineHandler("localhost",5000,true,null,this);
+        onlineHandler = new onlineHandler(host,55555,true,null,this);
         Thread onlineThread = new Thread(onlineHandler);
         onlineThread.start();
         online = true;
@@ -51,17 +50,13 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
     public void joinGame(String host,String Code){
         isWaiting = false;
         reset();
-        onlineHandler = new onlineHandler(host,5000,false,Code,this);
+        onlineHandler = new onlineHandler(host,55555,false,Code,this);
         Thread onlineThread = new Thread(onlineHandler);
         onlineThread.start();
         online = true;
     }
 
     public void reset(){
-        if (activeServer != null) {
-            activeServer.stopServer();
-            activeServer = null;
-        }
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         disconnect = false;
         isYellow = false;
@@ -235,27 +230,31 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals("Incoming Move")) {
-            gameLogic.move((Integer) e.getSource());
-            repaint();
-            return;
-        }
-        if(e.getActionCommand().equals("Incoming Color")) {
-            isYellow = (boolean) e.getSource();
-            repaint();
-        }
-        if (e.getActionCommand().equals("JOINED")) {
-            fireActionPerformed("RENDER ME");
-        }
-        if(e.getActionCommand().equals("RoomHosted")){
-            roomCode = e.getSource().toString();
-            fireActionPerformed("RENDER ME");
-        }
-        if(e.getActionCommand().equals("FRIEND_JOINED")){
-            isWaiting = false;
-        }
-        if (e.getActionCommand().equals("DISCONNECTED")) {
-            disconnect = true;
+        switch (e.getActionCommand()) {
+            case "Incoming Move" -> {
+                gameLogic.move((Integer) e.getSource());
+                repaint();
+                return;
+            }
+            case "Incoming Color" -> {
+                isYellow = (boolean) e.getSource();
+                repaint();
+            }
+            case "JOINED" -> fireActionPerformed("RENDER ME");
+            case "RoomHosted" -> {
+                roomCode = e.getSource().toString();
+                fireActionPerformed("RENDER ME");
+            }
+            case "FRIEND_JOINED" -> isWaiting = false;
+            case "DISCONNECTED" -> disconnect = true;
+            case "ERROR" -> {
+                Object[] listeners = listenerList.getListenerList();
+                for (int i = listeners.length - 2; i >= 0; i -= 2) {
+                    if (listeners[i] == ActionListener.class) {
+                        ((ActionListener) listeners[i + 1]).actionPerformed(new ActionEvent(e.getSource().toString(), ActionEvent.ACTION_PERFORMED,"ERROR"));
+                    }
+                }
+            }
         }
         repaint();
     }
