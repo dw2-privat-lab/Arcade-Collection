@@ -1,5 +1,7 @@
 package connect4;
 
+import SoundTools.SoundPlayer;
+
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.*;
@@ -19,7 +21,12 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
     private boolean online = true;
     private boolean isYellow = false;
     private final Rectangle returnHitbox = new Rectangle(15, 150, 90, 35);
+    private final Rectangle muteHitbox = new Rectangle(15, 195, 35, 35);
     private boolean returnHitboxhovered = false;
+    private boolean muteHitboxhovered = false;
+    private boolean muted = false;
+    Image muteImg = new ImageIcon("resources/Muted.png").getImage();
+    Image notMuteImg = new ImageIcon("resources/notMuted.png").getImage();
 
     private connect4Server activeServer;
     EventListenerList listenerList = new EventListenerList();
@@ -138,12 +145,22 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         g2d.fillRoundRect(returnHitbox.x, returnHitbox.y, returnHitbox.width, returnHitbox.height, 10, 10);
 
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Arial", Font.BOLD, 16));
+        g2d.setFont(new Font("Arial", Font.BOLD, 15));
         FontMetrics fmReturn = g2d.getFontMetrics();
-        g2d.drawString("Return", returnHitbox.x + (returnHitbox.width - fmReturn.stringWidth("Return")) / 2, returnHitbox.y + 23);
+        g2d.drawString("Return", returnHitbox.x + (returnHitbox.width - fmReturn.stringWidth("Return")) / 2, returnHitbox.y + 22);
         if(returnHitboxhovered){
             g2d.setColor(new Color(255, 255, 255));
-            g2d.drawRoundRect(returnHitbox.x, returnHitbox.y, returnHitbox.width, returnHitbox.height, 10, 10);
+        }
+
+        g2d.setColor(new Color(57, 57, 57));
+        g2d.fillRoundRect(muteHitbox.x, muteHitbox.y, muteHitbox.width, muteHitbox.height, 10, 10);
+
+        if(muted)
+            g2d.drawImage(muteImg,muteHitbox.x+5, muteHitbox.y+5,muteHitbox.width-10,muteHitbox.height-10, this);
+        else g2d.drawImage(notMuteImg,muteHitbox.x+5, muteHitbox.y+5,muteHitbox.width-10,muteHitbox.height-10, this);
+        if(muteHitboxhovered){
+            g2d.setColor(new Color(255, 255, 255));
+            g2d.drawRoundRect(muteHitbox.x, muteHitbox.y, muteHitbox.width, muteHitbox.height, 10, 10);
         }
     }
 
@@ -191,6 +208,10 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
             fireActionPerformed("return");
             return;
         }
+        if(muteHitbox.contains(e.getPoint())) {
+            muted = !muted;
+            repaint();
+        }
         if(isWaiting||disconnect)
             return;
         int sideWidth = 120;
@@ -209,6 +230,8 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
             int col = clickX / (boardWidth / gameLogic.gameField.length);
             if(!online) {
                 gameLogic.move(col);
+                if(!muted)
+                    SoundPlayer.playSound("resources/click.wav");
             }
             else if(gameLogic.firstPlayerPlaying==isYellow) onlineHandler.sendMove(col);
             repaint();
@@ -235,6 +258,8 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
             case "Incoming Move" -> {
                 gameLogic.move((Integer) e.getSource());
                 repaint();
+                if(!muted)
+                    SoundPlayer.playSound("resources/click.wav");
                 return;
             }
             case "Incoming Color" -> {
@@ -268,7 +293,9 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
     @Override
     public void mouseMoved(MouseEvent e) {
         returnHitboxhovered = returnHitbox.contains(e.getPoint());
+        muteHitboxhovered = muteHitbox.contains(e.getPoint());
         if(returnHitboxhovered) setCursor(new Cursor(Cursor.HAND_CURSOR));
+        else if(muteHitboxhovered) setCursor(new Cursor(Cursor.HAND_CURSOR));
         else setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         repaint();
     }

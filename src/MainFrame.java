@@ -4,6 +4,7 @@ import SpaceInvaders.SpaceInvaders_mainPanel;
 import chess.Chess_MainMenu;
 import connect4.connect4MainPanel;
 import minesweeper.MinesweeperMainpanel;
+import twentyfourtyeight.TwentyfourtyeightPanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,8 +18,9 @@ public class MainFrame extends JFrame implements ActionListener {
     Chess_MainMenu Chess =new Chess_MainMenu(this);
     MinesweeperMainpanel minesweeper = new MinesweeperMainpanel(this);
     connect4MainPanel connect4MainPanel = new connect4MainPanel(this);
+    TwentyfourtyeightPanel g = new TwentyfourtyeightPanel();
     public MainFrame() {
-        add(mainPanel);
+        add(g);
         stopAllRunning();
 
         pack();

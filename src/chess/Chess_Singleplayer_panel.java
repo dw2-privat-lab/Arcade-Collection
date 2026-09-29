@@ -302,6 +302,9 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
             repaint();
         }
         if(SettingsOpened) {
+            if(!new Rectangle(tileSize, tileSize, 6 * tileSize, 5 * tileSize).contains(e)){
+                SettingsOpened = false;
+            }
             if (new Rectangle((int) (1.4 * tileSize), (int) (2.175 * tileSize), tileSize, (int) (0.3 * tileSize)).contains(e))
                 firstSettingsTabOpened = true;
             if (new Rectangle((int) (4.15 * tileSize), (int) (2.175 * tileSize), tileSize, (int) (0.3 * tileSize)).contains(e))

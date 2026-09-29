@@ -1,5 +1,7 @@
 package connect4;
 
+import SoundTools.SoundPlayer;
+
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.*;
