@@ -7,8 +7,11 @@ import minesweeper.MinesweeperMainpanel;
 import twentyfourtyeight.TwentyfourtyeightPanel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class MainFrame extends JFrame implements ActionListener {
     SpaceInvaders_mainPanel spaceInvaders_panel = new SpaceInvaders_mainPanel(this);
@@ -18,14 +21,14 @@ public class MainFrame extends JFrame implements ActionListener {
     Chess_MainMenu Chess =new Chess_MainMenu(this);
     MinesweeperMainpanel minesweeper = new MinesweeperMainpanel(this);
     connect4MainPanel connect4MainPanel = new connect4MainPanel(this);
-    TwentyfourtyeightPanel g = new TwentyfourtyeightPanel();
+    TwentyfourtyeightPanel game_2048 = new TwentyfourtyeightPanel(this);
     public MainFrame() {
-        add(g);
+        add(mainPanel);
         stopAllRunning();
 
         pack();
         setResizable(false);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -66,6 +69,9 @@ public class MainFrame extends JFrame implements ActionListener {
             }
             if (e.getActionCommand().equals("Connect4")) {
                 renderPanel(connect4MainPanel);
+            }
+            if (e.getActionCommand().equals("2048")) {
+                renderPanel(game_2048);
             }
         }
     }

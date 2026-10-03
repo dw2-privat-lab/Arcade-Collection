@@ -30,6 +30,9 @@ public class MainPanel extends JPanel {
         Button connect4 = new Button("Connect4");
         connect4.addActionListener(_ -> fireActionPerformed("Connect4"));
         add(connect4);
+        Button game2048 = new Button("2048");
+        game2048.addActionListener(_ -> fireActionPerformed("2048"));
+        add(game2048);
     }
 
     protected void fireActionPerformed(String command) {
