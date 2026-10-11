@@ -33,6 +33,9 @@ public class MainPanel extends JPanel {
         Button game2048 = new Button("2048");
         game2048.addActionListener(_ -> fireActionPerformed("2048"));
         add(game2048);
+        Button tetris = new Button("Tetris");
+        tetris.addActionListener(_ -> fireActionPerformed("Tetris"));
+        add(tetris);
     }
 
     protected void fireActionPerformed(String command) {

@@ -1,17 +1,15 @@
 import Pong.Pong_mainPanel;
 import Snake.Snake_mainPanel;
 import SpaceInvaders.SpaceInvaders_mainPanel;
+import Tetris.TetrisMainPanel;
 import chess.Chess_MainMenu;
 import connect4.connect4MainPanel;
 import minesweeper.MinesweeperMainpanel;
 import twentyfourtyeight.TwentyfourtyeightPanel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class MainFrame extends JFrame implements ActionListener {
     SpaceInvaders_mainPanel spaceInvaders_panel = new SpaceInvaders_mainPanel(this);
@@ -22,6 +20,7 @@ public class MainFrame extends JFrame implements ActionListener {
     MinesweeperMainpanel minesweeper = new MinesweeperMainpanel(this);
     connect4MainPanel connect4MainPanel = new connect4MainPanel(this);
     TwentyfourtyeightPanel game_2048 = new TwentyfourtyeightPanel(this);
+    TetrisMainPanel tetris = new TetrisMainPanel(this);
     public MainFrame() {
         add(mainPanel);
         stopAllRunning();
@@ -38,6 +37,7 @@ public class MainFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("return")) {
             setTitle("Game Selection");
+            stopAllRunning();
             renderPanel(mainPanel);
         }else if (e.getActionCommand().equals("resize")){
             pack();
@@ -73,6 +73,11 @@ public class MainFrame extends JFrame implements ActionListener {
             if (e.getActionCommand().equals("2048")) {
                 renderPanel(game_2048);
             }
+            if(e.getActionCommand().equals("Tetris")) {
+                tetris.reset();
+                tetris.startGame();
+                renderPanel(tetris);
+            }
         }
     }
 
@@ -83,11 +88,13 @@ public class MainFrame extends JFrame implements ActionListener {
         pack();
         setLocationRelativeTo(null);
         getContentPane().repaint();
-        panel.requestFocusInWindow();
+
+        SwingUtilities.invokeLater(panel::requestFocusInWindow);
     }
     private void stopAllRunning(){
         spaceInvaders_panel.pause();
         snake_panel.pause();
         pong_panel.pause();
+        tetris.stopGame();
     }
 }

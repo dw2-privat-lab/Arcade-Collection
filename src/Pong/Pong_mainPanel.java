@@ -63,6 +63,7 @@ public class Pong_mainPanel extends JPanel implements KeyListener, MouseListener
         ball.reset();
         paddleLeft.setLocation(Settings.GameSize/ 16, (Settings.GameSize * 15) / 32);
         paddleRight.setLocation(Settings.GameSize -Settings.GameSize/ 16, (Settings.GameSize * 15) / 32);
+        paused = false;
     }
 
 

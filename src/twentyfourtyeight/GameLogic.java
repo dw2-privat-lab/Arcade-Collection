@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GameLogic {
-    private int customSize = 7;
+    private int customSize = 4;
     private int[][] gameField = new int[customSize][customSize];
     private boolean gameOver = false;
     private int score = 0;
@@ -42,11 +42,19 @@ public class GameLogic {
 
         try {
             String content = Files.readString(SAVE_FILE);
-            Matcher matcher = Pattern.compile("\"(\\d+)\"\\s*:\\s*(\\d+)").matcher(content);
-            while (matcher.find()) {
-                int size = Integer.parseInt(matcher.group(1));
-                int highscore = Integer.parseInt(matcher.group(2));
-                highscores.put(size, highscore);
+            Matcher categoryMatcher = Pattern.compile("\"2048\"\\s*:\\s*\\{(.*?)\\}", Pattern.DOTALL).matcher(content);
+
+            if (categoryMatcher.find()) {
+                String data2048 = categoryMatcher.group(1);
+
+                Matcher scoreMatcher = Pattern.compile("\"(\\d+)\"\\s*:\\s*(\\d+)").matcher(data2048);
+
+                while (scoreMatcher.find()) {
+                    int size = Integer.parseInt(scoreMatcher.group(1));
+                    int highscore = Integer.parseInt(scoreMatcher.group(2));
+
+                    highscores.put(size, highscore);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -208,21 +216,35 @@ public class GameLogic {
         gameField[randomX][randomY] = (int) (Math.random()*10)==1?4:2;
 
     }
-    public void saveHighscores() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        int count = 0;
-        for (Map.Entry<Integer, Integer> entry : highscores.entrySet()) {
-            sb.append(String.format("  \"%d\": %d", entry.getKey(), entry.getValue()));
-            if (++count < highscores.size()) {
-                sb.append(",");
-            }
-            sb.append("\n");
-        }
-        sb.append("}");
 
+    public void saveHighscores() {
         try {
-            Files.writeString(SAVE_FILE, sb.toString());
+            String content = Files.readString(SAVE_FILE);
+            StringBuilder sb = new StringBuilder();
+            sb.append("{\n");
+
+            int count = 0;
+            for (Map.Entry<Integer, Integer> entry : highscores.entrySet()) {
+                sb.append(String.format("    \"%d\": %d", entry.getKey(), entry.getValue()));
+
+                if (++count < highscores.size()) {
+                    sb.append(",");
+                }
+
+                sb.append("\n");
+            }
+
+            sb.append("  }");
+
+            Pattern pattern = Pattern.compile("(\"2048\"\\s*:\\s*\\{)(.*?)(\\})", Pattern.DOTALL);
+
+            Matcher matcher = pattern.matcher(content);
+
+            if (matcher.find()) {
+                content = matcher.replaceFirst(Matcher.quoteReplacement("\"2048\": " + sb));
+            }
+
+            Files.writeString(SAVE_FILE, content);
         } catch (IOException e) {
             e.printStackTrace();
         }

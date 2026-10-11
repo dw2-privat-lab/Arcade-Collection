@@ -12,10 +12,10 @@ public class GameOptions {
     public static directions startingDirection = directions.RIGHT;
     public static int amountApples = 5;
 
-    public static final int gameSpeed = 75; //time for every tick
-    public static final Color snakeBaseColor = new Color(112, 112, 112);
-    public static Color snakeHeadColor = new Color(255, 255, 255);
-    public static Color backgroundColor = new Color(0, 0, 0);
+    public static final int gameSpeed = 100; //time for every tick
+    public static final Color snakeBaseColor = new Color(17, 151, 139);
+    public static Color snakeHeadColor = new Color(250, 147, 0);
+    public static Color backgroundColor = new Color(57, 57, 57);
 }
 
 //here are some other themes:

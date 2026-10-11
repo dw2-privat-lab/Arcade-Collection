@@ -202,6 +202,7 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if(e.getButton() != MouseEvent.BUTTON1) return;
         if (returnHitbox.contains(e.getPoint())) {
             if(onlineHandler!=null)
                 onlineHandler.closeConnection();

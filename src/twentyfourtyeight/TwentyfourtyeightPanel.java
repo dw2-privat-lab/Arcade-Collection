@@ -209,7 +209,7 @@ public class TwentyfourtyeightPanel extends JPanel implements KeyListener, Mouse
         }
 
         FontMetrics fm = g.getFontMetrics();
-        g.setColor(new Color(0, 0, 0));
+        g.setColor(new Color(83, 77, 71));
         g.drawString("Size selected:",sizeSelectionHitbox.x- fm.stringWidth("Size selected:"),sizeSelectionHitbox.y+15);
         g.drawString(gameLogic.getCustomSize()+"",sizeSelectionHitbox.x+6,sizeSelectionHitbox.y+15);
 
