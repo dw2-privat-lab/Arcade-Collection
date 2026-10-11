@@ -1,5 +1,6 @@
 package connect4;
 
+import commonTools.ImageLoader;
 import commonTools.SoundPlayer;
 
 import javax.swing.*;
@@ -25,8 +26,8 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
     private boolean returnHitboxhovered = false;
     private boolean muteHitboxhovered = false;
     private boolean muted = false;
-    Image muteImg = new ImageIcon("resources/Muted.png").getImage();
-    Image notMuteImg = new ImageIcon("resources/notMuted.png").getImage();
+    Image muteImg = ImageLoader.loadImage(this.getClass(),"Muted.png");
+    Image notMuteImg = ImageLoader.loadImage(this.getClass(),"notMuted.png");
 
     private connect4Server activeServer;
     EventListenerList listenerList = new EventListenerList();

@@ -1,5 +1,7 @@
 package Pong;
 
+import commonTools.ImageLoader;
+
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.*;
@@ -21,10 +23,10 @@ public class Pong_mainPanel extends JPanel implements KeyListener, MouseListener
     private int highlighted = -1;
     private boolean paused = false;
 
-    Image pausedImg = new ImageIcon("resources/spaceInvaders/paused.png").getImage();
-    Image quitImg = new ImageIcon("resources/spaceInvaders/quit.png").getImage();
-    Image resumeImg = new ImageIcon("resources/spaceInvaders/resume.png").getImage();
-    Image returnImg = new ImageIcon("resources/spaceInvaders/return.png").getImage();
+    Image pausedImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/paused.png");
+    Image quitImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/quit.png");
+    Image resumeImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/resume.png");
+    Image returnImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/return.png");
 
     EventListenerList  listenerList = new EventListenerList();
 

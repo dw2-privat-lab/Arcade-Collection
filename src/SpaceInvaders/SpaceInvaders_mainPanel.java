@@ -1,10 +1,13 @@
 package SpaceInvaders;
 
+import commonTools.ImageLoader;
+
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, ActionListener, MouseListener, MouseMotionListener {
     private final int scale = 4;
@@ -17,14 +20,15 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
     ArrayList<Point> destroyAnimation = new ArrayList<>();
     boolean running = true;
     boolean gameOver = false;
-    Image playerImg = new ImageIcon("resources/spaceInvaders/ship.png").getImage();
-    Image explosion = new ImageIcon("resources/spaceInvaders/explosion.png").getImage();
-    Image gameOverImg = new ImageIcon("resources/spaceInvaders/gameOver.png").getImage();
-    Image pausedImg = new ImageIcon("resources/spaceInvaders/paused.png").getImage();
-    Image quitImg = new ImageIcon("resources/spaceInvaders/quit.png").getImage();
-    Image resumeImg = new ImageIcon("resources/spaceInvaders/resume.png").getImage();
-    Image returnImg = new ImageIcon("resources/spaceInvaders/return.png").getImage();
-    Image scoreImg = new ImageIcon("resources/spaceInvaders/score.png").getImage();
+    HashMap<Integer,Image> enemies = new HashMap<>();
+    Image playerImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/ship.png");
+    Image explosion = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/explosion.png");
+    Image gameOverImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/gameOver.png");
+    Image pausedImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/paused.png");
+    Image quitImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/quit.png");
+    Image resumeImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/resume.png");
+    Image returnImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/return.png");
+    Image scoreImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/score.png");
     SpaceInvaders_EnemyController spaceInvadersEnemyController = new SpaceInvaders_EnemyController(15 * scale, 12 * scale, 8 * scale, 4 * scale);
     EventListenerList listenerList = new EventListenerList();
     private int hearts = 3;
@@ -42,8 +46,17 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
         spaceInvadersPlayer = new SpaceInvaders_Player(getPreferredSize().width / 2 - playerWidth / 2, getPreferredSize().height - 2 * playerHeight, playerWidth, getPreferredSize().width);
         addMouseListener(this);
         addMouseMotionListener(this);
+        loadEnemies();
         Timer timer = new Timer(20, this);
         timer.start();
+    }
+    private void loadEnemies() {
+        enemies.put(1, ImageLoader.loadImage(this.getClass(), "SpaceInvaders/octopusFrame1.png"));
+        enemies.put(-1, ImageLoader.loadImage(this.getClass(), "SpaceInvaders/octopusFrame2.png"));
+        enemies.put(2,ImageLoader.loadImage(this.getClass(), "SpaceInvaders/crabFrame1.png"));
+        enemies.put(-2,ImageLoader.loadImage(this.getClass(), "SpaceInvaders/crabFrame2.png"));
+        enemies.put(3,ImageLoader.loadImage(this.getClass(), "SpaceInvaders/squidFrame1.png"));
+        enemies.put(-3,ImageLoader.loadImage(this.getClass(), "SpaceInvaders/squidFrame2.png"));
     }
     public void pause(){
         running = false;
@@ -157,14 +170,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
 
         boolean frame = spaceInvadersEnemyController.getFirstFrame();
         for (SpaceInvaders_Enemy e : renderedEnemies) {
-            ImageIcon EnemyTile = new ImageIcon();
-            if (e.getType() == 1)
-                EnemyTile = new ImageIcon("resources/spaceInvaders/octopusFrame" + (frame ? 1 : 2) + ".png");
-            if (e.getType() == 2)
-                EnemyTile = new ImageIcon("resources/spaceInvaders/crabFrame" + (frame ? 1 : 2) + ".png");
-            if (e.getType() == 3)
-                EnemyTile = new ImageIcon("resources/spaceInvaders/squidFrame" + (frame ? 1 : 2) + ".png");
-            g.drawImage(EnemyTile.getImage(), e.getX(), e.getY(), e.getWidth(), e.getHeight(), null);
+            g.drawImage(enemies.get(e.getType()*(frame? 1:-1)), e.getX(), e.getY(), e.getWidth(), e.getHeight(), null);
         }
 
         ArrayList<Rectangle> enemiesBullets = spaceInvadersEnemyController.getBullets();

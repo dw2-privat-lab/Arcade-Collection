@@ -1,5 +1,7 @@
 package Tetris;
 
+import commonTools.ImageLoader;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -18,12 +20,12 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
 
     HashMap<Integer, Image> tiles = new HashMap<>();
     HashMap<Character, Image> numbers = new HashMap<>();
-    Image scoreImg = new ImageIcon("resources/tetris/score.png").getImage();
-    Image highscoreImg = new ImageIcon("resources/tetris/highscore.png").getImage();
-    Image nextPieceImg = new ImageIcon("resources/tetris/nextPiece.png").getImage();
-    Image gameOverImg = new ImageIcon("resources/tetris/gameOver.png").getImage();
-    Image restartImg = new ImageIcon("resources/tetris/restart.png").getImage();
-    Image returnImg = new ImageIcon("resources/tetris/return.png").getImage();
+    Image scoreImg = ImageLoader.loadImage(this.getClass(),"Tetris/score.png");
+    Image highscoreImg = ImageLoader.loadImage(this.getClass(),"Tetris/highscore.png");
+    Image nextPieceImg = ImageLoader.loadImage(this.getClass(),"Tetris/nextPiece.png");
+    Image gameOverImg = ImageLoader.loadImage(this.getClass(),"Tetris/gameOver.png");
+    Image restartImg = ImageLoader.loadImage(this.getClass(),"Tetris/restart.png");
+    Image returnImg = ImageLoader.loadImage(this.getClass(),"Tetris/return.png");
     Timer repaintTimer;
     Thread gameThread = new Thread(game);
     int[][] renderField;
@@ -57,24 +59,24 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
     }
 
     private void loadImages() {
-        tiles.put(0, new ImageIcon("resources/tetris/background.png").getImage());
-        tiles.put(1, new ImageIcon("resources/tetris/blue.png").getImage());
-        tiles.put(2, new ImageIcon("resources/tetris/cyan.png").getImage());
-        tiles.put(3, new ImageIcon("resources/tetris/green.png").getImage());
-        tiles.put(4, new ImageIcon("resources/tetris/orange.png").getImage());
-        tiles.put(5, new ImageIcon("resources/tetris/purple.png").getImage());
-        tiles.put(6, new ImageIcon("resources/tetris/red.png").getImage());
-        tiles.put(7, new ImageIcon("resources/tetris/yellow.png").getImage());
-        numbers.put('0', new ImageIcon("resources/tetris/numbers/0.png").getImage());
-        numbers.put('1', new ImageIcon("resources/tetris/numbers/1.png").getImage());
-        numbers.put('2', new ImageIcon("resources/tetris/numbers/2.png").getImage());
-        numbers.put('3', new ImageIcon("resources/tetris/numbers/3.png").getImage());
-        numbers.put('4', new ImageIcon("resources/tetris/numbers/4.png").getImage());
-        numbers.put('5', new ImageIcon("resources/tetris/numbers/5.png").getImage());
-        numbers.put('6', new ImageIcon("resources/tetris/numbers/6.png").getImage());
-        numbers.put('7', new ImageIcon("resources/tetris/numbers/7.png").getImage());
-        numbers.put('8', new ImageIcon("resources/tetris/numbers/8.png").getImage());
-        numbers.put('9', new ImageIcon("resources/tetris/numbers/9.png").getImage());
+        tiles.put(0, ImageLoader.loadImage(this.getClass(),"Tetris/background.png"));
+        tiles.put(1, ImageLoader.loadImage(this.getClass(),"Tetris/blue.png"));
+        tiles.put(2, ImageLoader.loadImage(this.getClass(),"Tetris/cyan.png"));
+        tiles.put(3, ImageLoader.loadImage(this.getClass(),"Tetris/green.png"));
+        tiles.put(4, ImageLoader.loadImage(this.getClass(),"Tetris/orange.png"));
+        tiles.put(5, ImageLoader.loadImage(this.getClass(),"Tetris/purple.png"));
+        tiles.put(6, ImageLoader.loadImage(this.getClass(),"Tetris/red.png"));
+        tiles.put(7, ImageLoader.loadImage(this.getClass(),"Tetris/yellow.png"));
+        numbers.put('0', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/0.png"));
+        numbers.put('1', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/1.png"));
+        numbers.put('2', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/2.png"));
+        numbers.put('3', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/3.png"));
+        numbers.put('4', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/4.png"));
+        numbers.put('5', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/5.png"));
+        numbers.put('6', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/6.png"));
+        numbers.put('7', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/7.png"));
+        numbers.put('8', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/8.png"));
+        numbers.put('9', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/9.png"));
     }
 
     @Override

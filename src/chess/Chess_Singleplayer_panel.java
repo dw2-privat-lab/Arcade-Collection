@@ -1,10 +1,13 @@
 package chess;
 
+import commonTools.ImageLoader;
+
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,12 +41,12 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     private Image selectionImg;
 
     protected Map<Integer, Image> spriteCache = new HashMap<>();
-    protected final Image menuImage = new ImageIcon("resources/chess/Menu.png").getImage();
-    protected final Image settingsImage = new ImageIcon("resources/chess/SettingsIcon.png").getImage();
-    private final Image resetImage = new ImageIcon("resources/chess/reset.png").getImage();
-    protected final Image menuImageSelected = new ImageIcon("resources/chess/Menu_selected.png").getImage();
-    protected final Image settingsImageSelected = new ImageIcon("resources/chess/SettingsIcon_selected.png").getImage();
-    private final Image resetImageSelected = new ImageIcon("resources/chess/reset_selected.png").getImage();
+    protected final Image menuImage = ImageLoader.loadImage(this.getClass(),"chess/Menu.png");
+    protected final Image settingsImage = ImageLoader.loadImage(this.getClass(),"chess/SettingsIcon.png");
+    private final Image resetImage = ImageLoader.loadImage(this.getClass(),"chess/reset.png");
+    protected final Image menuImageSelected = ImageLoader.loadImage(this.getClass(),"chess/Menu_selected.png");
+    protected final Image settingsImageSelected = ImageLoader.loadImage(this.getClass(),"chess/SettingsIcon_selected.png");
+    private final Image resetImageSelected = ImageLoader.loadImage(this.getClass(),"chess/reset_selected.png");
 
 
 
@@ -65,19 +68,20 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         highlighted = false;
     }
 
-    public void reloadSprites(){
+    public void reloadSprites() {
         spriteCache.clear();
         for (int i = -6; i <= 6; i++) {
-            File tempSprite = new File("resources/chess/Sprites/" + Spritetype + "/" + i + ".png");
-            if (tempSprite.exists()) {
-                spriteCache.put(i, new ImageIcon(tempSprite.getPath()).getImage());
+            URL url = getClass().getClassLoader().getResource("chess/Sprites/" + Spritetype + "/" + i + ".png");
+            if (url != null) {
+                spriteCache.put(i, new ImageIcon(url).getImage());
             }
         }
         repaint();
     }
+
     public void reloadBoard(){
-        boardImg = new ImageIcon("resources/chess/backgrounds/"+backgroundName+"/board.png").getImage();
-        selectionImg = new ImageIcon("resources/chess/backgrounds/"+backgroundName+"/selection.png").getImage();
+        boardImg = ImageLoader.loadImage(this.getClass(),"chess/backgrounds/"+backgroundName+"/board.png");
+        selectionImg = ImageLoader.loadImage(this.getClass(),"chess/backgrounds/"+backgroundName+"/selection.png");
         repaint();
     }
 
@@ -203,14 +207,14 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     private void paintBoardSelector(Graphics g) {
         int arc = (int) (3.5 * tileSize / 10);
 
-        g.drawImage(new ImageIcon("resources/chess/backgrounds/Burled_Wood/selection.png").getImage(),(int)(1.4*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(new ImageIcon("resources/chess/backgrounds/Green/selection.png").getImage(),(int)(2.8*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(new ImageIcon("resources/chess/backgrounds/Default/selection.png").getImage(),(int)(4.2*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(new ImageIcon("resources/chess/backgrounds/Dark_Blue/selection.png").getImage(),(int)(5.6*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(new ImageIcon("resources/chess/backgrounds/Purple/selection.png").getImage(),(int)(1.4*tileSize), (int) (4.4*tileSize),tileSize,tileSize,null);
-        g.drawImage(new ImageIcon("resources/chess/backgrounds/Orange/selection.png").getImage(),(int)(2.8*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
-        g.drawImage(new ImageIcon("resources/chess/backgrounds/Stone/selection.png").getImage(),(int)(4.2*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
-        g.drawImage(new ImageIcon("resources/chess/backgrounds/Sky_&_Sea/selection.png").getImage(),(int)(5.6*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Burled_Wood/selection.png"),(int)(1.4*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Green/selection.png"),(int)(2.8*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Default/selection.png"),(int)(4.2*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Dark_Blue/selection.png"),(int)(5.6*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Purple/selection.png"),(int)(1.4*tileSize), (int) (4.4*tileSize),tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Orange/selection.png"),(int)(2.8*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Stone/selection.png"),(int)(4.2*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Sky_&_Sea/selection.png"),(int)(5.6*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
         g.setColor(new Color(72, 92, 59, 255));
         g.drawRoundRect((int)((settingsBoardSelected%4)*1.4*tileSize+1.3*tileSize),(int)(settingsBoardSelected<4?2.9*tileSize:4.3*tileSize), (int) (tileSize*1.2), (int) (tileSize*1.2),arc,arc);
     }
@@ -218,10 +222,10 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     private void paintPieceSelector(Graphics g) {
         int arc = (int) (3.5 * tileSize / 10);
 
-        g.drawImage(new ImageIcon("resources/chess/sprites/Neo/1.png").getImage(),(int)(1.4*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(new ImageIcon("resources/chess/sprites/Default/1.png").getImage(),(int)(2.8*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(new ImageIcon("resources/chess/sprites/Wood/1.png").getImage(),(int)(4.2*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(new ImageIcon("resources/chess/sprites/Neon/1.png").getImage(),(int)(5.6*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/Sprites/Neo/1.png"),(int)(1.4*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/Sprites/Default/1.png"),(int)(2.8*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/Sprites/Wood/1.png"),(int)(4.2*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/Sprites/Neon/1.png"),(int)(5.6*tileSize),3*tileSize,tileSize,tileSize,null);
         g.setColor(new Color(72, 92, 59, 255));
         g.drawRoundRect((int)(settingsPieceSelected*1.4*tileSize+1.3*tileSize),(int)(2.9*tileSize), (int) (tileSize*1.2), (int) (tileSize*1.2),arc,arc);
         }

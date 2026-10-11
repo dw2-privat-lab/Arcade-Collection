@@ -1,5 +1,7 @@
 package Snake;
 
+import commonTools.ImageLoader;
+
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.*;
@@ -17,11 +19,11 @@ public class Snake_mainPanel extends JPanel implements KeyListener, MouseListene
     EventListenerList listenerList = new EventListenerList();
 
 
-    Image gameOver = new ImageIcon("resources/spaceInvaders/gameOver.png").getImage();
-    Image pausedImg = new ImageIcon("resources/spaceInvaders/paused.png").getImage();
-    Image quitImg = new ImageIcon("resources/spaceInvaders/quit.png").getImage();
-    Image resumeImg = new ImageIcon("resources/spaceInvaders/resume.png").getImage();
-    Image returnImg = new ImageIcon("resources/spaceInvaders/return.png").getImage();
+    Image gameOver = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/gameOver.png");
+    Image pausedImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/paused.png");
+    Image quitImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/quit.png");
+    Image resumeImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/resume.png");
+    Image returnImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/return.png");
 
     public Snake_mainPanel(ActionListener a) {
         listenerList.add(ActionListener.class, a);
