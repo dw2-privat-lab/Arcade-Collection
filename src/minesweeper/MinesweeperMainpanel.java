@@ -13,7 +13,7 @@ public class MinesweeperMainpanel extends JPanel {
     public MinesweeperMainpanel(ActionListener actionListener) {
         listenerList.add(ActionListener.class, actionListener);
         gamepanel = new Gamepanel();
-        this.setPreferredSize(new Dimension((int) gamepanel.getPreferredSize().getWidth(),(int) gamepanel.getPreferredSize().getHeight()+30));
+        this.setPreferredSize(new Dimension((int) gamepanel.getPreferredSize().getWidth(), (int) gamepanel.getPreferredSize().getHeight() + 30));
 
 
         JRadioButton easy = new JRadioButton("Easy");
@@ -43,8 +43,8 @@ public class MinesweeperMainpanel extends JPanel {
         buttonGroup.add(medium);
         buttonGroup.add(hard);
         easy.setSelected(true);
-        reset.setPreferredSize(new Dimension(100,20));
-        returnBtn.setPreferredSize(new Dimension(100,20));
+        reset.setPreferredSize(new Dimension(100, 20));
+        returnBtn.setPreferredSize(new Dimension(100, 20));
         add(reset);
         add(returnBtn);
 
@@ -63,6 +63,7 @@ public class MinesweeperMainpanel extends JPanel {
 
         setVisible(true);
     }
+
     private void fireActionPerformed(String action) {
         Object[] listeners = listenerList.getListenerList();
         for (int i = listeners.length - 2; i >= 0; i -= 2) {
@@ -71,9 +72,10 @@ public class MinesweeperMainpanel extends JPanel {
             }
         }
     }
+
     public void reset() {
         gamepanel.prepareNewBoard();
-        this.setPreferredSize(new Dimension((int) gamepanel.getPreferredSize().getWidth(),(int) gamepanel.getPreferredSize().getHeight()+30));
+        this.setPreferredSize(new Dimension((int) gamepanel.getPreferredSize().getWidth(), (int) gamepanel.getPreferredSize().getHeight() + 30));
         fireActionPerformed("resize");
     }
 }

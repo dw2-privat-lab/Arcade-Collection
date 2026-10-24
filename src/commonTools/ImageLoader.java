@@ -5,7 +5,7 @@ import java.awt.*;
 import java.net.URL;
 
 public class ImageLoader {
-    public static Image loadImage(Class inputClass,String path) {
+    public static Image loadImage(Class inputClass, String path) {
         URL url = inputClass.getClassLoader().getResource(path);
         if (url != null) {
             return new ImageIcon(url).getImage();

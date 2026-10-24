@@ -13,24 +13,24 @@ import java.awt.geom.RoundRectangle2D;
 
 public class connect4GamePanel extends JPanel implements MouseListener, MouseMotionListener, ActionListener {
     private final connect4_gameLogic gameLogic = new connect4_gameLogic();
-    private int yellowScore = 0;
-    private int redScore = 0;
+    private final Rectangle returnHitbox = new Rectangle(15, 150, 90, 35);
+    private final Rectangle muteHitbox = new Rectangle(15, 195, 35, 35);
     onlineHandler onlineHandler;
     String roomCode = "";
     boolean isWaiting = true;
     boolean disconnect = false;
+    Image muteImg = ImageLoader.loadImage(this.getClass(), "Muted.png");
+    Image notMuteImg = ImageLoader.loadImage(this.getClass(), "notMuted.png");
+    EventListenerList listenerList = new EventListenerList();
+    private int yellowScore = 0;
+    private int redScore = 0;
     private boolean online = true;
     private boolean isYellow = false;
-    private final Rectangle returnHitbox = new Rectangle(15, 150, 90, 35);
-    private final Rectangle muteHitbox = new Rectangle(15, 195, 35, 35);
     private boolean returnHitboxhovered = false;
     private boolean muteHitboxhovered = false;
     private boolean muted = false;
-    Image muteImg = ImageLoader.loadImage(this.getClass(),"Muted.png");
-    Image notMuteImg = ImageLoader.loadImage(this.getClass(),"notMuted.png");
-
     private connect4Server activeServer;
-    EventListenerList listenerList = new EventListenerList();
+
     public connect4GamePanel(ActionListener actionListener) {
         listenerList.add(ActionListener.class, actionListener);
         setPreferredSize(new Dimension(800, 500));
@@ -38,7 +38,8 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         addMouseListener(this);
         addMouseMotionListener(this);
     }
-    public void hostGameServer(){
+
+    public void hostGameServer() {
         if (activeServer != null) {
             activeServer.stopServer();
         }
@@ -47,24 +48,26 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         Thread gameServerThread = new Thread(activeServer);
         gameServerThread.start();
     }
-    public void joinAsHostGame(String host){
+
+    public void joinAsHostGame(String host) {
         reset();
-        onlineHandler = new onlineHandler(host,55555,true,null,this);
+        onlineHandler = new onlineHandler(host, 55555, true, null, this);
         Thread onlineThread = new Thread(onlineHandler);
         onlineThread.start();
         online = true;
         isWaiting = true;
     }
-    public void joinGame(String host,String Code){
+
+    public void joinGame(String host, String Code) {
         isWaiting = false;
         reset();
-        onlineHandler = new onlineHandler(host,55555,false,Code,this);
+        onlineHandler = new onlineHandler(host, 55555, false, Code, this);
         Thread onlineThread = new Thread(onlineHandler);
         onlineThread.start();
         online = true;
     }
 
-    public void reset(){
+    public void reset() {
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         disconnect = false;
         isYellow = false;
@@ -85,8 +88,8 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         int boardWidth = getWidth() - (sideWidth * 2);
         int boardHeight = getHeight();
 
-        drawSide(g2d, 0, online?isYellow?"YOU":"OPPONENT":"YELLOW", yellowScore, Color.YELLOW, gameLogic.firstPlayerPlaying);
-        drawSide(g2d, getWidth() - sideWidth, online?isYellow?"OPPONENT":"YOU":"RED", redScore, Color.RED, !gameLogic.firstPlayerPlaying);
+        drawSide(g2d, 0, online ? isYellow ? "YOU" : "OPPONENT" : "YELLOW", yellowScore, Color.YELLOW, gameLogic.firstPlayerPlaying);
+        drawSide(g2d, getWidth() - sideWidth, online ? isYellow ? "OPPONENT" : "YOU" : "RED", redScore, Color.RED, !gameLogic.firstPlayerPlaying);
 
         int cols = gameLogic.gameField.length;
         int rows = gameLogic.gameField[0].length;
@@ -129,16 +132,16 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
             g2d.setColor(Color.WHITE);
             g2d.setFont(new Font("SansSerif", Font.BOLD, 28));
             String text;
-            if(online)
-                text = (gameLogic.won == 1 ?isYellow? "YOU WIN!" : "YOUR OPPONENT WINS!":isYellow?"YOUR OPPONENT WINS!":"YOU WIN!");
+            if (online)
+                text = (gameLogic.won == 1 ? isYellow ? "YOU WIN!" : "YOUR OPPONENT WINS!" : isYellow ? "YOUR OPPONENT WINS!" : "YOU WIN!");
             else
                 text = (gameLogic.won == 1 ? "YELLOW" : "RED") + " WINS!";
             FontMetrics fm = g2d.getFontMetrics();
             g2d.drawString(text, sideWidth + (boardWidth - fm.stringWidth(text)) / 2, boardHeight / 2);
         }
-        if(isWaiting)
+        if (isWaiting)
             drawWaitingOverlay((Graphics2D) g);
-        if(disconnect)
+        if (disconnect)
             drawDisconnectionScreen((Graphics2D) g);
 
 
@@ -149,17 +152,18 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         g2d.setFont(new Font("Arial", Font.BOLD, 15));
         FontMetrics fmReturn = g2d.getFontMetrics();
         g2d.drawString("Return", returnHitbox.x + (returnHitbox.width - fmReturn.stringWidth("Return")) / 2, returnHitbox.y + 22);
-        if(returnHitboxhovered){
+        if (returnHitboxhovered) {
             g2d.setColor(new Color(255, 255, 255));
         }
 
         g2d.setColor(new Color(57, 57, 57));
         g2d.fillRoundRect(muteHitbox.x, muteHitbox.y, muteHitbox.width, muteHitbox.height, 10, 10);
 
-        if(muted)
-            g2d.drawImage(muteImg,muteHitbox.x+5, muteHitbox.y+5,muteHitbox.width-10,muteHitbox.height-10, this);
-        else g2d.drawImage(notMuteImg,muteHitbox.x+5, muteHitbox.y+5,muteHitbox.width-10,muteHitbox.height-10, this);
-        if(muteHitboxhovered){
+        if (muted)
+            g2d.drawImage(muteImg, muteHitbox.x + 5, muteHitbox.y + 5, muteHitbox.width - 10, muteHitbox.height - 10, this);
+        else
+            g2d.drawImage(notMuteImg, muteHitbox.x + 5, muteHitbox.y + 5, muteHitbox.width - 10, muteHitbox.height - 10, this);
+        if (muteHitboxhovered) {
             g2d.setColor(new Color(255, 255, 255));
             g2d.drawRoundRect(muteHitbox.x, muteHitbox.y, muteHitbox.width, muteHitbox.height, 10, 10);
         }
@@ -180,41 +184,41 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         }
     }
 
-    private void drawWaitingOverlay(Graphics2D g2d){
+    private void drawWaitingOverlay(Graphics2D g2d) {
         g2d.setColor(new Color(0, 0, 0, 115));
-        g2d.fillRect(0,0,getWidth(),getHeight());
+        g2d.fillRect(0, 0, getWidth(), getHeight());
 
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("SansSerif", Font.BOLD, 22));
         FontMetrics fm = g2d.getFontMetrics();
-        g2d.drawString("Waiting for players!", (int) ((getWidth()-fm.getStringBounds("Waiting for players!",g2d).getWidth())/2),getHeight()/2);
-        g2d.drawString("This is your room Code: "+roomCode, (int) ((getWidth()-fm.getStringBounds("This is your room Code: "+roomCode,g2d).getWidth())/2),getHeight()/2+35);
+        g2d.drawString("Waiting for players!", (int) ((getWidth() - fm.getStringBounds("Waiting for players!", g2d).getWidth()) / 2), getHeight() / 2);
+        g2d.drawString("This is your room Code: " + roomCode, (int) ((getWidth() - fm.getStringBounds("This is your room Code: " + roomCode, g2d).getWidth()) / 2), getHeight() / 2 + 35);
     }
 
-    private void drawDisconnectionScreen(Graphics2D g2d){
+    private void drawDisconnectionScreen(Graphics2D g2d) {
         g2d.setColor(new Color(0, 0, 0, 115));
-        g2d.fillRect(0,0,getWidth(),getHeight());
+        g2d.fillRect(0, 0, getWidth(), getHeight());
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("SansSerif", Font.BOLD, 22));
         FontMetrics fm = g2d.getFontMetrics();
-        g2d.drawString("Your Opponent has disconnected", (int) ((getWidth()-fm.getStringBounds("Your Opponent has disconnected",g2d).getWidth())/2),getHeight()/2);
-        g2d.drawString("Exit to start a new game", (int) ((getWidth()-fm.getStringBounds("Exit to start a new game",g2d).getWidth())/2),getHeight()/2+35);
+        g2d.drawString("Your Opponent has disconnected", (int) ((getWidth() - fm.getStringBounds("Your Opponent has disconnected", g2d).getWidth()) / 2), getHeight() / 2);
+        g2d.drawString("Exit to start a new game", (int) ((getWidth() - fm.getStringBounds("Exit to start a new game", g2d).getWidth()) / 2), getHeight() / 2 + 35);
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(e.getButton() != MouseEvent.BUTTON1) return;
+        if (e.getButton() != MouseEvent.BUTTON1) return;
         if (returnHitbox.contains(e.getPoint())) {
-            if(onlineHandler!=null)
+            if (onlineHandler != null)
                 onlineHandler.closeConnection();
             fireActionPerformed("return");
             return;
         }
-        if(muteHitbox.contains(e.getPoint())) {
+        if (muteHitbox.contains(e.getPoint())) {
             muted = !muted;
             repaint();
         }
-        if(isWaiting||disconnect)
+        if (isWaiting || disconnect)
             return;
         int sideWidth = 120;
         int boardWidth = getWidth() - (sideWidth * 2);
@@ -230,12 +234,11 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         int clickX = e.getX() - sideWidth;
         if (clickX >= 0 && clickX < boardWidth) {
             int col = clickX / (boardWidth / gameLogic.gameField.length);
-            if(!online) {
+            if (!online) {
                 gameLogic.move(col);
-                if(!muted)
+                if (!muted)
                     SoundPlayer.playSound("resources/click.wav");
-            }
-            else if(gameLogic.firstPlayerPlaying==isYellow) onlineHandler.sendMove(col);
+            } else if (gameLogic.firstPlayerPlaying == isYellow) onlineHandler.sendMove(col);
             repaint();
         }
     }
@@ -249,10 +252,21 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         }
     }
 
-    @Override public void mouseClicked(MouseEvent e) {}
-    @Override public void mouseReleased(MouseEvent e) {}
-    @Override public void mouseEntered(MouseEvent e) {}
-    @Override public void mouseExited(MouseEvent e) {}
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -260,7 +274,7 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
             case "Incoming Move" -> {
                 gameLogic.move((Integer) e.getSource());
                 repaint();
-                if(!muted)
+                if (!muted)
                     SoundPlayer.playSound("resources/click.wav");
                 return;
             }
@@ -279,7 +293,7 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
                 Object[] listeners = listenerList.getListenerList();
                 for (int i = listeners.length - 2; i >= 0; i -= 2) {
                     if (listeners[i] == ActionListener.class) {
-                        ((ActionListener) listeners[i + 1]).actionPerformed(new ActionEvent(e.getSource().toString(), ActionEvent.ACTION_PERFORMED,"ERROR"));
+                        ((ActionListener) listeners[i + 1]).actionPerformed(new ActionEvent(e.getSource().toString(), ActionEvent.ACTION_PERFORMED, "ERROR"));
                     }
                 }
             }
@@ -296,8 +310,8 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
     public void mouseMoved(MouseEvent e) {
         returnHitboxhovered = returnHitbox.contains(e.getPoint());
         muteHitboxhovered = muteHitbox.contains(e.getPoint());
-        if(returnHitboxhovered) setCursor(new Cursor(Cursor.HAND_CURSOR));
-        else if(muteHitboxhovered) setCursor(new Cursor(Cursor.HAND_CURSOR));
+        if (returnHitboxhovered) setCursor(new Cursor(Cursor.HAND_CURSOR));
+        else if (muteHitboxhovered) setCursor(new Cursor(Cursor.HAND_CURSOR));
         else setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         repaint();
     }

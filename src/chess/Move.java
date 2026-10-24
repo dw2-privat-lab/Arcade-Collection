@@ -11,6 +11,7 @@ public class Move implements Serializable {
     int y;
     int toX;
     int toY;
+
     public Move(int x, int y, int toX, int toY) {
         this.x = x;
         this.y = y;

@@ -1,3 +1,4 @@
+import PacMan.PacMan_MainPanel;
 import Pong.Pong_mainPanel;
 import Snake.Snake_mainPanel;
 import SpaceInvaders.SpaceInvaders_mainPanel;
@@ -8,6 +9,7 @@ import minesweeper.MinesweeperMainpanel;
 import twentyfourtyeight.TwentyfourtyeightPanel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,13 +18,15 @@ public class MainFrame extends JFrame implements ActionListener {
     MainPanel mainPanel = new MainPanel(this);
     Snake_mainPanel snake_panel = new Snake_mainPanel(this);
     Pong_mainPanel pong_panel = new Pong_mainPanel(this);
-    Chess_MainMenu Chess =new Chess_MainMenu(this);
+    Chess_MainMenu Chess = new Chess_MainMenu(this);
     MinesweeperMainpanel minesweeper = new MinesweeperMainpanel(this);
     connect4MainPanel connect4MainPanel = new connect4MainPanel(this);
     TwentyfourtyeightPanel game_2048 = new TwentyfourtyeightPanel(this);
     TetrisMainPanel tetris = new TetrisMainPanel(this);
+    PacMan_MainPanel m = new PacMan_MainPanel();
+
     public MainFrame() {
-        add(mainPanel);
+        add(m);
         stopAllRunning();
 
         pack();
@@ -39,13 +43,12 @@ public class MainFrame extends JFrame implements ActionListener {
             setTitle("Game Selection");
             stopAllRunning();
             renderPanel(mainPanel);
-        }else if (e.getActionCommand().equals("resize")){
+        } else if (e.getActionCommand().equals("resize")) {
             pack();
-            if(e.getSource() == minesweeper){
+            if (e.getSource() == minesweeper) {
                 setLocationRelativeTo(null);
             }
-        }
-        else {
+        } else {
             stopAllRunning();
             setTitle(e.getActionCommand());
             if (e.getActionCommand().equals("Space Invaders")) {
@@ -73,7 +76,7 @@ public class MainFrame extends JFrame implements ActionListener {
             if (e.getActionCommand().equals("2048")) {
                 renderPanel(game_2048);
             }
-            if(e.getActionCommand().equals("Tetris")) {
+            if (e.getActionCommand().equals("Tetris")) {
                 tetris.reset();
                 tetris.startGame();
                 renderPanel(tetris);
@@ -91,7 +94,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
         SwingUtilities.invokeLater(panel::requestFocusInWindow);
     }
-    private void stopAllRunning(){
+
+    private void stopAllRunning() {
         spaceInvaders_panel.pause();
         snake_panel.pause();
         pong_panel.pause();

@@ -77,18 +77,18 @@ public class Schachlogik {
             UsedTiles[y][x] = 1;
             UsedTiles[toY][toX] = 1;
 
-            if (Math.abs(tempOrigin) == 1 && ((tempOrigin > 0 && toY == 0) || (tempOrigin < 0 && toY == 7))){
+            if (Math.abs(tempOrigin) == 1 && ((tempOrigin > 0 && toY == 0) || (tempOrigin < 0 && toY == 7))) {
                 chooseNewPiece = true;
-        }
+            }
 
 
             oldY = y;
             oldToX = toX;
             oldToY = toY;
-            if (checkCheckmate(whiteMoves ? -1:1)) {
+            if (checkCheckmate(whiteMoves ? -1 : 1)) {
                 checkmate = true;
             } else {
-                if(!chooseNewPiece) {
+                if (!chooseNewPiece) {
                     whiteMoves = !whiteMoves;
                     if (isStalemate(whiteMoves ? 1 : -1))
                         stalemate = true;
@@ -291,7 +291,7 @@ public class Schachlogik {
                 //Scanne das ganze Brett für alle figuren einer farbe
                 if (Schachfeld[j][i] * pieceColor > 0) {
                     //generiere PseudoMoves für die gefundene Figur
-                    ArrayList<int[]> points = generatePseudoMoves( i, j);
+                    ArrayList<int[]> points = generatePseudoMoves(i, j);
                     for (int[] point : points) {
                         if (!(point[0] == i && point[1] == j)) {
                             int pointX = point[0];
@@ -419,18 +419,18 @@ public class Schachlogik {
     }
 
     public boolean isWhite(int x, int y) {
-        return Schachfeld[y][x] >0;
+        return Schachfeld[y][x] > 0;
     }
 
-    private boolean isStalemate(int pieceColor){
-        if(kingInCheck(pieceColor))
+    private boolean isStalemate(int pieceColor) {
+        if (kingInCheck(pieceColor))
             return false;
         if (checkKingHasValidMoves(pieceColor))
             return false;
-        for(int i = 0; i < 8; i++){
-            for(int j = 0; j < 8; j++){
-                if(Schachfeld[j][i]*pieceColor> 0) {
-                    ArrayList<int[]> possiblePoints = generatePseudoMoves( i, j);
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (Schachfeld[j][i] * pieceColor > 0) {
+                    ArrayList<int[]> possiblePoints = generatePseudoMoves(i, j);
                     for (int[] Point : possiblePoints) {
                         int pointX = Point[0];
                         int pointY = Point[1];
@@ -484,8 +484,8 @@ public class Schachlogik {
     }
 
     private boolean validRochade(int x, int y, int toX, int toY) {
-        if(toX==2)toX = 0;
-        if(toX==6)toX = 7;
+        if (toX == 2) toX = 0;
+        if (toX == 6) toX = 7;
         if (Schachfeld[toY][toX] * Schachfeld[y][x] <= 0) return false;
         if (UsedTiles[toY][toX] == 1 || UsedTiles[y][x] == 1) return false;
         if (Math.abs(Schachfeld[y][x]) == 6 && Math.abs(Schachfeld[toY][toX]) == 4) {

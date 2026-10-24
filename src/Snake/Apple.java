@@ -9,13 +9,14 @@ public class Apple {
     public Apple() {
         ArrayList<Rectangle> temp = new ArrayList<>();
         for (int i = 0; i < GameOptions.snakeLengthAtStart; i++) {
-            temp.add(new Rectangle(GameOptions.originX + i * GameOptions.tileSize, GameOptions.originY,GameOptions.tileSize,GameOptions.tileSize));
+            temp.add(new Rectangle(GameOptions.originX + i * GameOptions.tileSize, GameOptions.originY, GameOptions.tileSize, GameOptions.tileSize));
         }
         for (int i = 0; i < GameOptions.amountApples; i++) {
             addApple(temp);
         }
     }
-    boolean touches(Rectangle rectangle,ArrayList<Rectangle> list) {
+
+    boolean touches(Rectangle rectangle, ArrayList<Rectangle> list) {
         for (Rectangle Element : list) {
             if (Element.intersects(rectangle)) {
                 return true;
@@ -39,10 +40,11 @@ public class Apple {
         do {
             randomX = (int) (Math.random() * GameOptions.WIDTH) / GameOptions.tileSize * GameOptions.tileSize;
             randomY = (int) (Math.random() * GameOptions.HEIGHT) / GameOptions.tileSize * GameOptions.tileSize;
-        } while (touches(new Rectangle(randomX, randomY,GameOptions.tileSize, GameOptions.tileSize),apples)||touches(new Rectangle(randomX, randomY,GameOptions.tileSize, GameOptions.tileSize), snakeElements));
+        } while (touches(new Rectangle(randomX, randomY, GameOptions.tileSize, GameOptions.tileSize), apples) || touches(new Rectangle(randomX, randomY, GameOptions.tileSize, GameOptions.tileSize), snakeElements));
 
-        apples.add(new Rectangle(randomX, randomY,GameOptions.tileSize, GameOptions.tileSize));
+        apples.add(new Rectangle(randomX, randomY, GameOptions.tileSize, GameOptions.tileSize));
     }
+
     public ArrayList<Rectangle> getApples() {
         return apples;
     }

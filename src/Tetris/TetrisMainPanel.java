@@ -14,21 +14,20 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
     int gamePanelXoffset = 25;
     int gamePanelYoffset = 25;
 
-    private final Rectangle resetGame = new Rectangle(gamePanelXoffset+(10*tilesize-45*4)/2,gamePanelYoffset+105,45*4,8*4);
+    private final Rectangle resetGame = new Rectangle(gamePanelXoffset + (10 * tilesize - 45 * 4) / 2, gamePanelYoffset + 105, 45 * 4, 8 * 4);
     private final Rectangle returnButton = new Rectangle(gamePanelXoffset + (10 * tilesize) + 78, gamePanelYoffset + 430, 39 * 3, 8 * 3);
-    private int hoveredElement=0;
-
     HashMap<Integer, Image> tiles = new HashMap<>();
     HashMap<Character, Image> numbers = new HashMap<>();
-    Image scoreImg = ImageLoader.loadImage(this.getClass(),"Tetris/score.png");
-    Image highscoreImg = ImageLoader.loadImage(this.getClass(),"Tetris/highscore.png");
-    Image nextPieceImg = ImageLoader.loadImage(this.getClass(),"Tetris/nextPiece.png");
-    Image gameOverImg = ImageLoader.loadImage(this.getClass(),"Tetris/gameOver.png");
-    Image restartImg = ImageLoader.loadImage(this.getClass(),"Tetris/restart.png");
-    Image returnImg = ImageLoader.loadImage(this.getClass(),"Tetris/return.png");
+    Image scoreImg = ImageLoader.loadImage(this.getClass(), "Tetris/score.png");
+    Image highscoreImg = ImageLoader.loadImage(this.getClass(), "Tetris/highscore.png");
+    Image nextPieceImg = ImageLoader.loadImage(this.getClass(), "Tetris/nextPiece.png");
+    Image gameOverImg = ImageLoader.loadImage(this.getClass(), "Tetris/gameOver.png");
+    Image restartImg = ImageLoader.loadImage(this.getClass(), "Tetris/restart.png");
+    Image returnImg = ImageLoader.loadImage(this.getClass(), "Tetris/return.png");
     Timer repaintTimer;
     Thread gameThread = new Thread(game);
     int[][] renderField;
+    private int hoveredElement = 0;
 
     public TetrisMainPanel(ActionListener actionListener) {
         listenerList.add(ActionListener.class, actionListener);
@@ -59,24 +58,24 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
     }
 
     private void loadImages() {
-        tiles.put(0, ImageLoader.loadImage(this.getClass(),"Tetris/background.png"));
-        tiles.put(1, ImageLoader.loadImage(this.getClass(),"Tetris/blue.png"));
-        tiles.put(2, ImageLoader.loadImage(this.getClass(),"Tetris/cyan.png"));
-        tiles.put(3, ImageLoader.loadImage(this.getClass(),"Tetris/green.png"));
-        tiles.put(4, ImageLoader.loadImage(this.getClass(),"Tetris/orange.png"));
-        tiles.put(5, ImageLoader.loadImage(this.getClass(),"Tetris/purple.png"));
-        tiles.put(6, ImageLoader.loadImage(this.getClass(),"Tetris/red.png"));
-        tiles.put(7, ImageLoader.loadImage(this.getClass(),"Tetris/yellow.png"));
-        numbers.put('0', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/0.png"));
-        numbers.put('1', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/1.png"));
-        numbers.put('2', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/2.png"));
-        numbers.put('3', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/3.png"));
-        numbers.put('4', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/4.png"));
-        numbers.put('5', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/5.png"));
-        numbers.put('6', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/6.png"));
-        numbers.put('7', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/7.png"));
-        numbers.put('8', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/8.png"));
-        numbers.put('9', ImageLoader.loadImage(this.getClass(),"Tetris/numbers/9.png"));
+        tiles.put(0, ImageLoader.loadImage(this.getClass(), "Tetris/background.png"));
+        tiles.put(1, ImageLoader.loadImage(this.getClass(), "Tetris/blue.png"));
+        tiles.put(2, ImageLoader.loadImage(this.getClass(), "Tetris/cyan.png"));
+        tiles.put(3, ImageLoader.loadImage(this.getClass(), "Tetris/green.png"));
+        tiles.put(4, ImageLoader.loadImage(this.getClass(), "Tetris/orange.png"));
+        tiles.put(5, ImageLoader.loadImage(this.getClass(), "Tetris/purple.png"));
+        tiles.put(6, ImageLoader.loadImage(this.getClass(), "Tetris/red.png"));
+        tiles.put(7, ImageLoader.loadImage(this.getClass(), "Tetris/yellow.png"));
+        numbers.put('0', ImageLoader.loadImage(this.getClass(), "Tetris/numbers/0.png"));
+        numbers.put('1', ImageLoader.loadImage(this.getClass(), "Tetris/numbers/1.png"));
+        numbers.put('2', ImageLoader.loadImage(this.getClass(), "Tetris/numbers/2.png"));
+        numbers.put('3', ImageLoader.loadImage(this.getClass(), "Tetris/numbers/3.png"));
+        numbers.put('4', ImageLoader.loadImage(this.getClass(), "Tetris/numbers/4.png"));
+        numbers.put('5', ImageLoader.loadImage(this.getClass(), "Tetris/numbers/5.png"));
+        numbers.put('6', ImageLoader.loadImage(this.getClass(), "Tetris/numbers/6.png"));
+        numbers.put('7', ImageLoader.loadImage(this.getClass(), "Tetris/numbers/7.png"));
+        numbers.put('8', ImageLoader.loadImage(this.getClass(), "Tetris/numbers/8.png"));
+        numbers.put('9', ImageLoader.loadImage(this.getClass(), "Tetris/numbers/9.png"));
     }
 
     @Override
@@ -86,7 +85,7 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
         drawGameField((Graphics2D) g);
         drawNextPiece(g);
         drawScore(g);
-        if(game.isGameOver())
+        if (game.isGameOver())
             drawGameOverScreen(g);
         drawReturnButton(g);
     }
@@ -211,27 +210,27 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
     }
 
     private void drawGameOverScreen(Graphics g) {
-        g.setColor(new Color(0, 0, 0,100));
-        g.fillRect(gamePanelXoffset,gamePanelYoffset,10*tilesize,20*tilesize);
-        g.drawImage(gameOverImg,gamePanelXoffset+(10*tilesize-265)/2,gamePanelYoffset+50,265,40, null);
+        g.setColor(new Color(0, 0, 0, 100));
+        g.fillRect(gamePanelXoffset, gamePanelYoffset, 10 * tilesize, 20 * tilesize);
+        g.drawImage(gameOverImg, gamePanelXoffset + (10 * tilesize - 265) / 2, gamePanelYoffset + 50, 265, 40, null);
 
         if (hoveredElement == 1) {
             g.setColor(new Color(255, 255, 255, 50));
-            g.fillRect(resetGame.x-2, resetGame.y-2, resetGame.width+4, resetGame.height+4);
+            g.fillRect(resetGame.x - 2, resetGame.y - 2, resetGame.width + 4, resetGame.height + 4);
             g.setColor(Color.WHITE);
-            g.drawRect(resetGame.x-2, resetGame.y-2, resetGame.width+4, resetGame.height+4);
+            g.drawRect(resetGame.x - 2, resetGame.y - 2, resetGame.width + 4, resetGame.height + 4);
         }
-        g.drawImage(restartImg,resetGame.x,resetGame.y,resetGame.width,resetGame.height, null);
+        g.drawImage(restartImg, resetGame.x, resetGame.y, resetGame.width, resetGame.height, null);
     }
 
     private void drawReturnButton(Graphics g) {
         if (hoveredElement == 2) {
             g.setColor(new Color(255, 255, 255, 50));
-            g.fillRect(returnButton.x-1, returnButton.y-1, returnButton.width+2, returnButton.height+2);
+            g.fillRect(returnButton.x - 1, returnButton.y - 1, returnButton.width + 2, returnButton.height + 2);
             g.setColor(Color.WHITE);
-            g.drawRect(returnButton.x-1, returnButton.y-1, returnButton.width+2, returnButton.height+2);
+            g.drawRect(returnButton.x - 1, returnButton.y - 1, returnButton.width + 2, returnButton.height + 2);
         }
-        g.drawImage(returnImg,returnButton.x,returnButton.y,returnButton.width,returnButton.height, null);
+        g.drawImage(returnImg, returnButton.x, returnButton.y, returnButton.width, returnButton.height, null);
         g.setColor(new Color(255, 255, 255, 50));
     }
 
@@ -251,7 +250,8 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -273,15 +273,16 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {
+    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1){
-            if(resetGame.contains(e.getPoint())){
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            if (resetGame.contains(e.getPoint())) {
                 game.resetGame();
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }else if(returnButton.contains(e.getPoint())){
+            } else if (returnButton.contains(e.getPoint())) {
                 fireActionPerformed("return");
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
@@ -289,33 +290,36 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {
+    }
 
     @Override
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+    }
 
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+    }
 
     @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+    }
 
     @Override
-    public void mouseDragged(MouseEvent e) {}
+    public void mouseDragged(MouseEvent e) {
+    }
 
     @Override
     public void mouseMoved(MouseEvent e) {
 
-        if(resetGame.contains(e.getPoint())) {
-            if(game.isGameOver())
+        if (resetGame.contains(e.getPoint())) {
+            if (game.isGameOver())
                 hoveredElement = 1;
-        }
-        else if (returnButton.contains(e.getPoint())) {
+        } else if (returnButton.contains(e.getPoint())) {
             hoveredElement = 2;
-        }
-        else hoveredElement = 0;
+        } else hoveredElement = 0;
 
-        if(hoveredElement !=0) setCursor(new Cursor(Cursor.HAND_CURSOR));
+        if (hoveredElement != 0) setCursor(new Cursor(Cursor.HAND_CURSOR));
         else setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
 

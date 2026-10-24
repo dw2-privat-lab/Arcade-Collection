@@ -1,7 +1,12 @@
 package connect4;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Inet4Address;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,39 +15,9 @@ public class connect4Server implements Runnable {
     private ServerSocket serverSocket;
     private volatile boolean running = false;
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         connect4Server server = new connect4Server();
         server.run();
-    }
-
-    @Override
-    public void run() {
-        try {
-            serverSocket = new ServerSocket(PORT);
-            running = true;
-            System.out.println("Chess connect4Server started on port " + PORT);
-            System.out.println("IpAddress: " + Inet4Address.getLocalHost().getHostAddress());
-            Map<String, ClientHandler> waitingHosts = new HashMap<>();
-
-            while (running) {
-                Socket socket = serverSocket.accept();
-                new Thread(() -> handleConnection(socket, waitingHosts)).start();
-            }
-        }catch (SocketException e){
-            System.out.println("Socket closed");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public void stopServer() {
-        running = false;
-        try {
-            if (serverSocket != null && !serverSocket.isClosed()) {
-                serverSocket.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private static void handleConnection(Socket socket, Map<String, ClientHandler> waitingHosts) {
@@ -99,6 +74,37 @@ public class connect4Server implements Runnable {
             System.err.println("Error establishing connection: " + e.getMessage());
         }
     }
+
+    @Override
+    public void run() {
+        try {
+            serverSocket = new ServerSocket(PORT);
+            running = true;
+            System.out.println("Chess connect4Server started on port " + PORT);
+            System.out.println("IpAddress: " + Inet4Address.getLocalHost().getHostAddress());
+            Map<String, ClientHandler> waitingHosts = new HashMap<>();
+
+            while (running) {
+                Socket socket = serverSocket.accept();
+                new Thread(() -> handleConnection(socket, waitingHosts)).start();
+            }
+        } catch (SocketException e) {
+            System.out.println("Socket closed");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopServer() {
+        running = false;
+        try {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 class GameRoom {
@@ -109,10 +115,10 @@ class GameRoom {
     public GameRoom(ClientHandler player1, ClientHandler player2) {
         this.player1 = player1;
         this.player2 = player2;
-        if(Math.random() < 0.5) {
+        if (Math.random() < 0.5) {
             this.player1.setRoom(this, true);  // White
             this.player2.setRoom(this, false); // Black
-        }else{
+        } else {
             this.player1.setRoom(this, false);
             this.player2.setRoom(this, true);
         }
@@ -132,7 +138,7 @@ class GameRoom {
         if (game.won != 0) {
             game.resetField();
         }
-        if(sender.isPlayer1() == game.firstPlayerPlaying) {
+        if (sender.isPlayer1() == game.firstPlayerPlaying) {
             game.move(move);
             broadcast(move);
         }
@@ -189,7 +195,8 @@ class ClientHandler implements Runnable {
             try {
                 socket.close();
                 room.broadcast("DISCONNECT");
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 }

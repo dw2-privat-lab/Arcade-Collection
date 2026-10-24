@@ -5,24 +5,19 @@ import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.event.*;
 
-public class connect4MainPanel extends JPanel implements MouseListener, MouseMotionListener, KeyListener,ActionListener {
+public class connect4MainPanel extends JPanel implements MouseListener, MouseMotionListener, KeyListener, ActionListener {
+    private final Rectangle windowBounds = new Rectangle(180, 110, 440, 390);
+    private final Rectangle hostGameHitbox = new Rectangle(220, 170, 360, 45);
+    private final Rectangle ipAddressHitbox = new Rectangle(220, 245, 260, 45);
+    private final Rectangle gameCodeHitbox = new Rectangle(490, 245, 90, 45);
+    private final Rectangle HostIpAddressHitbox = new Rectangle(220, 245, 360, 45);
+    private final Rectangle joinGameHitbox = new Rectangle(220, 305, 360, 45);
+    private final Rectangle closeHitbox = new Rectangle(220, 365, 360, 45);
     int menu = 1;
     int hoveredButton = 1;
-
     Rectangle btnLocally = new Rectangle(250, 220, 300, 60);
-    Rectangle btnOnline  = new Rectangle(250, 300, 300, 60);
-    Rectangle btnLeave   = new Rectangle(250, 380, 300, 60);
-
-    private final Rectangle windowBounds    = new Rectangle(180, 110, 440, 390);
-    private final Rectangle hostGameHitbox  = new Rectangle(220, 170, 360, 45);
-
-    private final Rectangle ipAddressHitbox = new Rectangle(220, 245, 260, 45);
-    private final Rectangle gameCodeHitbox  = new Rectangle(490, 245, 90, 45);
-    private final Rectangle HostIpAddressHitbox = new Rectangle(220, 245, 360, 45);
-
-    private final Rectangle joinGameHitbox  = new Rectangle(220, 305, 360, 45);
-    private final Rectangle closeHitbox     = new Rectangle(220, 365, 360, 45);
-
+    Rectangle btnOnline = new Rectangle(250, 300, 300, 60);
+    Rectangle btnLeave = new Rectangle(250, 380, 300, 60);
     RenderMessage renderMessage = new RenderMessage(this);
     Thread ErrorRepaintThread = new Thread(renderMessage);
 
@@ -32,13 +27,11 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
     Color c4Red = new Color(220, 50, 50);
 
     EventListenerList listenerList = new EventListenerList();
-
+    connect4GamePanel gamePanel = new connect4GamePanel(this);
     private boolean ipAddressFocussed = false;
     private String ipAddress = "";
     private boolean gameCodeFocused = false;
     private String gameCode = "";
-
-    connect4GamePanel gamePanel = new connect4GamePanel(this);
 
     public connect4MainPanel(ActionListener actionListener) {
         setPreferredSize(new Dimension(800, 600));
@@ -92,14 +85,12 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
                 g.setColor(Color.WHITE);
                 drawRoundRect(btnLeave, arc, arc, g);
             }
-        }
-        else if (menu == 2) {
+        } else if (menu == 2) {
             paintOnlineWindow(g);
-        }
-        else if (menu==3){
+        } else if (menu == 3) {
             paintHostWindow(g);
         }
-        if(!renderMessage.getMessages().isEmpty())
+        if (!renderMessage.getMessages().isEmpty())
             paintErrors((Graphics2D) g);
     }
 
@@ -107,17 +98,17 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setFont(new Font("Arial", Font.PLAIN, 14));
         for (int i = 0; i < 3; i++) {
-            if(i<renderMessage.getMessages().size()){
+            if (i < renderMessage.getMessages().size()) {
                 g2d.setColor(c4Red);
-                g2d.fillRoundRect(530,550-i*55,260,45,10,10);
+                g2d.fillRoundRect(530, 550 - i * 55, 260, 45, 10, 10);
                 g2d.setColor(Color.WHITE);
 
                 String[] lines = renderMessage.getMessage(i).split("\n");
                 int yOffset = 0;
-                int yDistributionOffset =lines.length==1?28:18;
+                int yDistributionOffset = lines.length == 1 ? 28 : 18;
 
                 for (String line : lines) {
-                    g2d.drawString(line, 535, 550-i*55 + yOffset+yDistributionOffset);
+                    g2d.drawString(line, 535, 550 - i * 55 + yOffset + yDistributionOffset);
                     yOffset += g2d.getFontMetrics().getHeight();
                 }
             }
@@ -135,9 +126,9 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.fillRect(0, 0, getWidth(), getHeight());
 
         g.setColor(c4DarkBlue);
-        fillRoundRect(windowBounds, Arc, Arc,g);
+        fillRoundRect(windowBounds, Arc, Arc, g);
         g.setColor(c4BoardBlue);
-        drawRoundRect(windowBounds, Arc, Arc,g);
+        drawRoundRect(windowBounds, Arc, Arc, g);
 
         g.setFont(new Font("Arial", Font.BOLD, 26));
         FontMetrics fontMetrics = g.getFontMetrics();
@@ -146,10 +137,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.drawString(title, windowBounds.x + (windowBounds.width - fontMetrics.stringWidth(title)) / 2, windowBounds.y + 42);
 
         g.setColor(c4BoardBlue);
-        fillRoundRect(hostGameHitbox, elementArc, elementArc,g);
+        fillRoundRect(hostGameHitbox, elementArc, elementArc, g);
         if (hoveredButton == 4) {
             g.setColor(c4Yellow);
-            drawRoundRect(hostGameHitbox, elementArc, elementArc,g);
+            drawRoundRect(hostGameHitbox, elementArc, elementArc, g);
         }
         g.setFont(new Font("Arial", Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
@@ -163,10 +154,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.drawString("— OR —", windowBounds.x + (windowBounds.width - fontMetrics.stringWidth("— OR —")) / 2, 235);
 
         g.setColor(new Color(10, 20, 50));
-        fillRoundRect(ipAddressHitbox, elementArc, elementArc,g);
+        fillRoundRect(ipAddressHitbox, elementArc, elementArc, g);
         if (ipAddressFocussed || hoveredButton == 5) {
             g.setColor(c4Yellow);
-            drawRoundRect(ipAddressHitbox, elementArc, elementArc,g);
+            drawRoundRect(ipAddressHitbox, elementArc, elementArc, g);
         }
         g.setFont(new Font("Arial", Font.PLAIN, 14));
         FontMetrics fm = g.getFontMetrics();
@@ -193,10 +184,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.setClip(originalClip);
 
         g.setColor(new Color(10, 20, 50));
-        fillRoundRect(gameCodeHitbox, elementArc, elementArc,g);
+        fillRoundRect(gameCodeHitbox, elementArc, elementArc, g);
         if (gameCodeFocused || hoveredButton == 6) {
             g.setColor(c4Yellow);
-            drawRoundRect(gameCodeHitbox, elementArc, elementArc,g);
+            drawRoundRect(gameCodeHitbox, elementArc, elementArc, g);
         }
         g.setFont(new Font("Arial", Font.PLAIN, 14));
         if (gameCode.isEmpty() && !gameCodeFocused) {
@@ -208,10 +199,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         }
 
         g.setColor(c4BoardBlue);
-        fillRoundRect(joinGameHitbox, elementArc, elementArc,g);
+        fillRoundRect(joinGameHitbox, elementArc, elementArc, g);
         if (hoveredButton == 7) {
             g.setColor(c4Yellow);
-            drawRoundRect(joinGameHitbox, elementArc, elementArc,g);
+            drawRoundRect(joinGameHitbox, elementArc, elementArc, g);
         }
         g.setFont(new Font("Arial", Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
@@ -220,10 +211,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.drawString(joinText, joinGameHitbox.x + (joinGameHitbox.width - fontMetrics.stringWidth(joinText)) / 2, joinGameHitbox.y + 28);
 
         g.setColor(c4Red);
-        fillRoundRect(closeHitbox, elementArc, elementArc,g);
+        fillRoundRect(closeHitbox, elementArc, elementArc, g);
         if (hoveredButton == 8) {
             g.setColor(Color.WHITE);
-            drawRoundRect(closeHitbox, elementArc, elementArc,g);
+            drawRoundRect(closeHitbox, elementArc, elementArc, g);
         }
         g.setFont(new Font("Arial", Font.BOLD, 16));
         fontMetrics = g.getFontMetrics();
@@ -243,9 +234,9 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.fillRect(0, 0, getWidth(), getHeight());
 
         g.setColor(c4DarkBlue);
-        fillRoundRect(windowBounds, Arc, Arc,g);
+        fillRoundRect(windowBounds, Arc, Arc, g);
         g.setColor(c4BoardBlue);
-        drawRoundRect(windowBounds, Arc, Arc,g);
+        drawRoundRect(windowBounds, Arc, Arc, g);
 
         g.setFont(new Font("Arial", Font.BOLD, 26));
         FontMetrics fontMetrics = g.getFontMetrics();
@@ -254,10 +245,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.drawString(title, windowBounds.x + (windowBounds.width - fontMetrics.stringWidth(title)) / 2, windowBounds.y + 42);
 
         g.setColor(c4BoardBlue);
-        fillRoundRect(hostGameHitbox, elementArc, elementArc,g);
+        fillRoundRect(hostGameHitbox, elementArc, elementArc, g);
         if (hoveredButton == 4) {
             g.setColor(c4Yellow);
-            drawRoundRect(hostGameHitbox, elementArc, elementArc,g);
+            drawRoundRect(hostGameHitbox, elementArc, elementArc, g);
         }
         g.setFont(new Font("Arial", Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
@@ -271,10 +262,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.drawString("— OR —", windowBounds.x + (windowBounds.width - fontMetrics.stringWidth("— OR —")) / 2, 235);
 
         g.setColor(new Color(10, 20, 50));
-        fillRoundRect(HostIpAddressHitbox, elementArc, elementArc,g);
+        fillRoundRect(HostIpAddressHitbox, elementArc, elementArc, g);
         if (ipAddressFocussed || hoveredButton == 5) {
             g.setColor(c4Yellow);
-            drawRoundRect(HostIpAddressHitbox, elementArc, elementArc,g);
+            drawRoundRect(HostIpAddressHitbox, elementArc, elementArc, g);
         }
         g.setFont(new Font("Arial", Font.PLAIN, 14));
         FontMetrics fm = g.getFontMetrics();
@@ -301,10 +292,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.setClip(originalClip);
 
         g.setColor(c4BoardBlue);
-        fillRoundRect(joinGameHitbox, elementArc, elementArc,g);
+        fillRoundRect(joinGameHitbox, elementArc, elementArc, g);
         if (hoveredButton == 7) {
             g.setColor(c4Yellow);
-            drawRoundRect(joinGameHitbox, elementArc, elementArc,g);
+            drawRoundRect(joinGameHitbox, elementArc, elementArc, g);
         }
         g.setFont(new Font("Arial", Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
@@ -313,10 +304,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.drawString(joinText, joinGameHitbox.x + (joinGameHitbox.width - fontMetrics.stringWidth(joinText)) / 2, joinGameHitbox.y + 28);
 
         g.setColor(c4Red);
-        fillRoundRect(closeHitbox, elementArc, elementArc,g);
+        fillRoundRect(closeHitbox, elementArc, elementArc, g);
         if (hoveredButton == 8) {
             g.setColor(Color.WHITE);
-            drawRoundRect(closeHitbox, elementArc, elementArc,g);
+            drawRoundRect(closeHitbox, elementArc, elementArc, g);
         }
         g.setFont(new Font("Arial", Font.BOLD, 16));
         fontMetrics = g.getFontMetrics();
@@ -395,8 +386,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             } else if (btnLeave.contains(p)) {
                 fireActionPerformed("return");
             }
-        }
-        else if (menu == 2) {
+        } else if (menu == 2) {
             if (!windowBounds.contains(p)) {
                 menu = 1;
                 ipAddressFocussed = false;
@@ -413,9 +403,10 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
                 gameCodeFocused = true;
                 ipAddressFocussed = false;
             } else if (joinGameHitbox.contains(p)) {
-                if(!ipAddress.isEmpty()&&!gameCode.isEmpty())
+                if (!ipAddress.isEmpty() && !gameCode.isEmpty())
                     gamePanel.joinGame(ipAddress, gameCode);
-                else renderMessage.addMessage((ipAddress.isEmpty()?gameCode.isEmpty()?"Code & IP/Domain ":"IP/Domain ": "Code " )+"is empty",15);
+                else
+                    renderMessage.addMessage((ipAddress.isEmpty() ? gameCode.isEmpty() ? "Code & IP/Domain " : "IP/Domain " : "Code ") + "is empty", 15);
             } else if (closeHitbox.contains(p)) {
                 menu = 1;
                 ipAddressFocussed = false;
@@ -424,8 +415,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
                 ipAddressFocussed = false;
                 gameCodeFocused = false;
             }
-        }
-        else if (menu == 3) {
+        } else if (menu == 3) {
             if (!windowBounds.contains(p)) {
                 menu = 1;
                 ipAddressFocussed = false;
@@ -438,9 +428,9 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
                 ipAddressFocussed = true;
             } else if (joinGameHitbox.contains(p)) {
                 fireActionPerformed("Connect4 - Online Game");
-                if(!ipAddress.isEmpty())
+                if (!ipAddress.isEmpty())
                     gamePanel.joinAsHostGame(ipAddress);
-                else renderMessage.addMessage("No IP/Domain entered",15);
+                else renderMessage.addMessage("No IP/Domain entered", 15);
             } else if (closeHitbox.contains(p)) {
                 menu = 2;
                 fireActionPerformed("Connect4 - Online Options");
@@ -475,15 +465,17 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
                         gameCode = gameCode.substring(0, gameCode.length() - 1);
                     }
                 } else if (c == KeyEvent.VK_ENTER) {
-                    if(!ipAddress.isEmpty()&&!gameCode.isEmpty())
+                    if (!ipAddress.isEmpty() && !gameCode.isEmpty())
                         gamePanel.joinGame(ipAddress, gameCode);
-                    else renderMessage.addMessage((ipAddress.isEmpty()?gameCode.isEmpty()?"Code & IP/Domain ":"IP/Domain ": "Code " )+"is empty",15);
+                    else
+                        renderMessage.addMessage((ipAddress.isEmpty() ? gameCode.isEmpty() ? "Code & IP/Domain " : "IP/Domain " : "Code ") + "is empty", 15);
                 } else if (Character.isLetterOrDigit(c) && gameCode.length() < 5) {
                     gameCode += c;
                 }
                 repaint();
             }
-        }if (menu == 3) {
+        }
+        if (menu == 3) {
             char c = e.getKeyChar();
 
             if (ipAddressFocussed) {
@@ -492,7 +484,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
                         ipAddress = ipAddress.substring(0, ipAddress.length() - 1);
                     }
                 } else if (c == KeyEvent.VK_ENTER) {
-                    if(!ipAddress.isEmpty())
+                    if (!ipAddress.isEmpty())
                         gamePanel.joinAsHostGame(ipAddress);
                 } else if ((Character.isLetterOrDigit(c) || c == '.' || c == '-') && ipAddress.length() < 253) {
                     ipAddress += c;
@@ -502,18 +494,38 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         }
     }
 
-    @Override public void mouseClicked(MouseEvent e) {}
-    @Override public void mouseReleased(MouseEvent e) {}
-    @Override public void mouseEntered(MouseEvent e) {}
-    @Override public void mouseExited(MouseEvent e) {}
-    @Override public void mouseDragged(MouseEvent e) {}
-    @Override public void keyPressed(KeyEvent e) {}
-    @Override public void keyReleased(KeyEvent e) {}
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == gamePanel) {
-            if(e.getActionCommand().equals("RENDER ME")) {
+        if (e.getSource() == gamePanel) {
+            if (e.getActionCommand().equals("RENDER ME")) {
                 add(gamePanel);
                 menu = 0;
                 setPreferredSize(gamePanel.getPreferredSize());
@@ -521,11 +533,11 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             } else if (e.getActionCommand().equals("return")) {
                 menu = 1;
                 removeAll();
-                setPreferredSize(new Dimension(800,600));
+                setPreferredSize(new Dimension(800, 600));
                 fireActionPerformed("resize");
             }
         } else if (e.getActionCommand().equals("ERROR")) {
-            renderMessage.addMessage(e.getSource().toString(),40);
+            renderMessage.addMessage(e.getSource().toString(), 40);
         }
     }
 }

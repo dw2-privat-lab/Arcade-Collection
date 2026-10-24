@@ -3,7 +3,6 @@ package chess;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
 
 public class ClientPanel extends Chess_Singleplayer_panel implements ActionListener {
     int port = 55555;

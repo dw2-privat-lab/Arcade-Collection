@@ -6,53 +6,41 @@ import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Chess_Singleplayer_panel extends JPanel implements MouseListener, MouseMotionListener {
+    protected final Image menuImage = ImageLoader.loadImage(this.getClass(), "chess/Menu.png");
+    protected final Image settingsImage = ImageLoader.loadImage(this.getClass(), "chess/SettingsIcon.png");
+    protected final Image menuImageSelected = ImageLoader.loadImage(this.getClass(), "chess/Menu_selected.png");
+    protected final Image settingsImageSelected = ImageLoader.loadImage(this.getClass(), "chess/SettingsIcon_selected.png");
+    private final Image resetImage = ImageLoader.loadImage(this.getClass(), "chess/reset.png");
+    private final Image resetImageSelected = ImageLoader.loadImage(this.getClass(), "chess/reset_selected.png");
     public int tileSize = 80;
-
-    boolean highlighted ;
-    int highlightX, highlightY =-1;
-    int hoveredX, hoveredY =-1;
-
+    protected int Menuhighlight = -1;
+    protected Image boardImg;
+    protected Map<Integer, Image> spriteCache = new HashMap<>();
+    boolean highlighted;
+    int highlightX, highlightY = -1;
+    int hoveredX, hoveredY = -1;
     boolean newGameHovered = false;
     boolean mousePressed;
-    protected int Menuhighlight = -1;
-
     int x1, y1, x2, y2;
     boolean firstClick = true;
-
     Schachlogik spiel = new Schachlogik();
     int Color;
-
+    Color defaultGray = new Color(53, 57, 57, 255);
+    EventListenerList listenerList = new EventListenerList();
     private String Spritetype = "Neo";
     private String backgroundName = "Green";
     private boolean SettingsOpened = false;
     private int settingsPieceSelected = 0;
     private int settingsBoardSelected = 1;
     private boolean firstSettingsTabOpened = true;
-
-    Color defaultGray = new Color(53, 57, 57, 255);
-
-    protected Image boardImg;
     private Image selectionImg;
 
-    protected Map<Integer, Image> spriteCache = new HashMap<>();
-    protected final Image menuImage = ImageLoader.loadImage(this.getClass(),"chess/Menu.png");
-    protected final Image settingsImage = ImageLoader.loadImage(this.getClass(),"chess/SettingsIcon.png");
-    private final Image resetImage = ImageLoader.loadImage(this.getClass(),"chess/reset.png");
-    protected final Image menuImageSelected = ImageLoader.loadImage(this.getClass(),"chess/Menu_selected.png");
-    protected final Image settingsImageSelected = ImageLoader.loadImage(this.getClass(),"chess/SettingsIcon_selected.png");
-    private final Image resetImageSelected = ImageLoader.loadImage(this.getClass(),"chess/reset_selected.png");
-
-
-
-    EventListenerList listenerList = new EventListenerList();
-
-    public Chess_Singleplayer_panel(ActionListener actionListener)  {
+    public Chess_Singleplayer_panel(ActionListener actionListener) {
         listenerList.add(ActionListener.class, actionListener);
         spiel.reset();
 
@@ -63,7 +51,8 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         addMouseMotionListener(this);
         repaint();
     }
-    public void reset(){
+
+    public void reset() {
         spiel.reset();
         highlighted = false;
     }
@@ -79,9 +68,9 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         repaint();
     }
 
-    public void reloadBoard(){
-        boardImg = ImageLoader.loadImage(this.getClass(),"chess/backgrounds/"+backgroundName+"/board.png");
-        selectionImg = ImageLoader.loadImage(this.getClass(),"chess/backgrounds/"+backgroundName+"/selection.png");
+    public void reloadBoard() {
+        boardImg = ImageLoader.loadImage(this.getClass(), "chess/backgrounds/" + backgroundName + "/board.png");
+        selectionImg = ImageLoader.loadImage(this.getClass(), "chess/backgrounds/" + backgroundName + "/selection.png");
         repaint();
     }
 
@@ -89,14 +78,14 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     public void paintComponent(Graphics g) {
         setBackground(defaultGray);
         super.paintComponent(g);
-        g.drawRect(0, 0, getWidth() , getHeight());
+        g.drawRect(0, 0, getWidth(), getHeight());
         paintGamefield(g);
         paintPossibleMoves(g);
-        if(mousePressed&& highlighted)
+        if (mousePressed && highlighted)
             paintDraggedPiece(g);
         if (spiel.chooseNewPiece)
             paintPieceChangeWindow(g);
-        if (spiel.checkmate||spiel.stalemate)
+        if (spiel.checkmate || spiel.stalemate)
             paintStopScreen(g);
         paintMenu(g);
         if (SettingsOpened)
@@ -108,11 +97,11 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
 
         for (int col = 0; col < spiel.Schachfeld.length; col++) {
             for (int row = 0; row < spiel.Schachfeld[0].length; row++) {
-                if ((highlightX == col && highlightY == row&& highlighted) || ((hoveredX == col && hoveredY == row) && !spiel.chooseNewPiece)) {
-                    if(!mousePressed)
-                        g.drawImage(spriteCache.get(spiel.Schachfeld[row][col]), col * tileSize - 5 , row * tileSize - 5 , tileSize + 10, tileSize + 10, null);
+                if ((highlightX == col && highlightY == row && highlighted) || ((hoveredX == col && hoveredY == row) && !spiel.chooseNewPiece)) {
+                    if (!mousePressed)
+                        g.drawImage(spriteCache.get(spiel.Schachfeld[row][col]), col * tileSize - 5, row * tileSize - 5, tileSize + 10, tileSize + 10, null);
                 } else {
-                    g.drawImage(spriteCache.get(spiel.Schachfeld[row][col]), col * tileSize , row * tileSize , tileSize, tileSize, null);
+                    g.drawImage(spriteCache.get(spiel.Schachfeld[row][col]), col * tileSize, row * tileSize, tileSize, tileSize, null);
                 }
             }
         }
@@ -122,17 +111,17 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         g.setColor(new Color(46, 45, 45, 160));
         g.fillRect(0, 0, getWidth(), getHeight());
 
-        g.drawImage(selectionImg, 3 * tileSize , 3 * tileSize , 2 * tileSize, 2 * tileSize, null);
-        Color = spiel.whiteMoves?1:-1;
+        g.drawImage(selectionImg, 3 * tileSize, 3 * tileSize, 2 * tileSize, 2 * tileSize, null);
+        Color = spiel.whiteMoves ? 1 : -1;
 
         int round = 1;
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
                 round++;
                 if (hoveredX == j + 3 && hoveredY == i + 3)
-                    g.drawImage(spriteCache.get(round*Color), (3 + j) * tileSize - 5  , (3 + i) * tileSize - 5  , tileSize + 10, tileSize + 10, null);
+                    g.drawImage(spriteCache.get(round * Color), (3 + j) * tileSize - 5, (3 + i) * tileSize - 5, tileSize + 10, tileSize + 10, null);
                 else
-                    g.drawImage(spriteCache.get(round*Color), (3 + j) * tileSize  , (3 + i) * tileSize , tileSize, tileSize, null);
+                    g.drawImage(spriteCache.get(round * Color), (3 + j) * tileSize, (3 + i) * tileSize, tileSize, tileSize, null);
             }
         }
     }
@@ -147,12 +136,12 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
 
         g.setColor(java.awt.Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 3 * tileSize / 10));
-        if(spiel.checkmate){
+        if (spiel.checkmate) {
             String winner = spiel.whiteMoves ? "White" : "Black";
             g.drawString(winner + " Won!", (int) (3.175 * tileSize), 3 * tileSize);
             g.setFont(new Font("Arial", Font.PLAIN, (int) (1.5 * tileSize / 10)));
             g.drawString("by Checkmate", (int) (3.5 * tileSize), (int) (3.25 * tileSize));
-        }else {
+        } else {
             g.drawString("Draw", (int) (3.6 * tileSize), 3 * tileSize);
             g.setFont(new Font("Arial", Font.PLAIN, (int) (1.5 * tileSize / 10)));
             g.drawString("by Stalemate", (int) (3.55 * tileSize), (int) (3.25 * tileSize));
@@ -169,9 +158,9 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     }
 
     protected void paintMenu(Graphics g) {
-        g.drawImage((Menuhighlight==1?menuImageSelected:menuImage), (int) (8.25*tileSize), (int) (0.25*tileSize), tileSize/2, tileSize/2, null);
-        g.drawImage((Menuhighlight==2?settingsImageSelected:settingsImage), (int) (8.25*tileSize), (int) (1.25*tileSize), tileSize/2, tileSize/2, null);
-        g.drawImage((Menuhighlight==3?resetImageSelected:resetImage), (int) (8.25*tileSize), (int) (2.25*tileSize), tileSize/2, tileSize/2, null);
+        g.drawImage((Menuhighlight == 1 ? menuImageSelected : menuImage), (int) (8.25 * tileSize), (int) (0.25 * tileSize), tileSize / 2, tileSize / 2, null);
+        g.drawImage((Menuhighlight == 2 ? settingsImageSelected : settingsImage), (int) (8.25 * tileSize), (int) (1.25 * tileSize), tileSize / 2, tileSize / 2, null);
+        g.drawImage((Menuhighlight == 3 ? resetImageSelected : resetImage), (int) (8.25 * tileSize), (int) (2.25 * tileSize), tileSize / 2, tileSize / 2, null);
     }
 
     private void paintSettings(Graphics g) {
@@ -188,12 +177,11 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         g.drawLine((int) (1.5 * tileSize), (int) (1.8 * tileSize), (int) (6.5 * tileSize), (int) (1.8 * tileSize));
 
 
-        if(firstSettingsTabOpened){
-            g.fillRoundRect((int) (1.4 * tileSize), (int) (2.175 * tileSize),tileSize,(int)(0.3*tileSize), arc/2, arc/2);
+        if (firstSettingsTabOpened) {
+            g.fillRoundRect((int) (1.4 * tileSize), (int) (2.175 * tileSize), tileSize, (int) (0.3 * tileSize), arc / 2, arc / 2);
             paintBoardSelector(g);
-        }
-        else{
-            g.fillRoundRect((int) (4.15 * tileSize), (int) (2.175 * tileSize),tileSize,(int)(0.3*tileSize), arc/2, arc/2);
+        } else {
+            g.fillRoundRect((int) (4.15 * tileSize), (int) (2.175 * tileSize), tileSize, (int) (0.3 * tileSize), arc / 2, arc / 2);
             paintPieceSelector(g);
         }
 
@@ -207,59 +195,59 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     private void paintBoardSelector(Graphics g) {
         int arc = (int) (3.5 * tileSize / 10);
 
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Burled_Wood/selection.png"),(int)(1.4*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Green/selection.png"),(int)(2.8*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Default/selection.png"),(int)(4.2*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Dark_Blue/selection.png"),(int)(5.6*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Purple/selection.png"),(int)(1.4*tileSize), (int) (4.4*tileSize),tileSize,tileSize,null);
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Orange/selection.png"),(int)(2.8*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Stone/selection.png"),(int)(4.2*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/backgrounds/Sky_&_Sea/selection.png"),(int)(5.6*tileSize),(int) (4.4*tileSize),tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/backgrounds/Burled_Wood/selection.png"), (int) (1.4 * tileSize), 3 * tileSize, tileSize, tileSize, null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/backgrounds/Green/selection.png"), (int) (2.8 * tileSize), 3 * tileSize, tileSize, tileSize, null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/backgrounds/Default/selection.png"), (int) (4.2 * tileSize), 3 * tileSize, tileSize, tileSize, null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/backgrounds/Dark_Blue/selection.png"), (int) (5.6 * tileSize), 3 * tileSize, tileSize, tileSize, null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/backgrounds/Purple/selection.png"), (int) (1.4 * tileSize), (int) (4.4 * tileSize), tileSize, tileSize, null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/backgrounds/Orange/selection.png"), (int) (2.8 * tileSize), (int) (4.4 * tileSize), tileSize, tileSize, null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/backgrounds/Stone/selection.png"), (int) (4.2 * tileSize), (int) (4.4 * tileSize), tileSize, tileSize, null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/backgrounds/Sky_&_Sea/selection.png"), (int) (5.6 * tileSize), (int) (4.4 * tileSize), tileSize, tileSize, null);
         g.setColor(new Color(72, 92, 59, 255));
-        g.drawRoundRect((int)((settingsBoardSelected%4)*1.4*tileSize+1.3*tileSize),(int)(settingsBoardSelected<4?2.9*tileSize:4.3*tileSize), (int) (tileSize*1.2), (int) (tileSize*1.2),arc,arc);
+        g.drawRoundRect((int) ((settingsBoardSelected % 4) * 1.4 * tileSize + 1.3 * tileSize), (int) (settingsBoardSelected < 4 ? 2.9 * tileSize : 4.3 * tileSize), (int) (tileSize * 1.2), (int) (tileSize * 1.2), arc, arc);
     }
 
     private void paintPieceSelector(Graphics g) {
         int arc = (int) (3.5 * tileSize / 10);
 
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/Sprites/Neo/1.png"),(int)(1.4*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/Sprites/Default/1.png"),(int)(2.8*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/Sprites/Wood/1.png"),(int)(4.2*tileSize),3*tileSize,tileSize,tileSize,null);
-        g.drawImage(ImageLoader.loadImage(this.getClass(),"chess/Sprites/Neon/1.png"),(int)(5.6*tileSize),3*tileSize,tileSize,tileSize,null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/Sprites/Neo/1.png"), (int) (1.4 * tileSize), 3 * tileSize, tileSize, tileSize, null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/Sprites/Default/1.png"), (int) (2.8 * tileSize), 3 * tileSize, tileSize, tileSize, null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/Sprites/Wood/1.png"), (int) (4.2 * tileSize), 3 * tileSize, tileSize, tileSize, null);
+        g.drawImage(ImageLoader.loadImage(this.getClass(), "chess/Sprites/Neon/1.png"), (int) (5.6 * tileSize), 3 * tileSize, tileSize, tileSize, null);
         g.setColor(new Color(72, 92, 59, 255));
-        g.drawRoundRect((int)(settingsPieceSelected*1.4*tileSize+1.3*tileSize),(int)(2.9*tileSize), (int) (tileSize*1.2), (int) (tileSize*1.2),arc,arc);
-        }
+        g.drawRoundRect((int) (settingsPieceSelected * 1.4 * tileSize + 1.3 * tileSize), (int) (2.9 * tileSize), (int) (tileSize * 1.2), (int) (tileSize * 1.2), arc, arc);
+    }
 
     protected void paintPossibleMoves(Graphics g) {
-        if(!(highlightX==-1||highlightY==-1)){
+        if (!(highlightX == -1 || highlightY == -1)) {
             java.util.ArrayList<int[]> allMoves;
-            if(Math.abs(spiel.Schachfeld[highlightY][highlightX])==6){
+            if (Math.abs(spiel.Schachfeld[highlightY][highlightX]) == 6) {
                 allMoves = new java.util.ArrayList<>();
-                for(int i=-1;i<=1;i++){
-                    for(int j=-1;j<=1;j++){
-                        if(!(i==0 && j==0)){
-                            if(highlightX+i>=0&&highlightX+i<8&&highlightY+j>=0&&highlightY+j<8) {
+                for (int i = -1; i <= 1; i++) {
+                    for (int j = -1; j <= 1; j++) {
+                        if (!(i == 0 && j == 0)) {
+                            if (highlightX + i >= 0 && highlightX + i < 8 && highlightY + j >= 0 && highlightY + j < 8) {
                                 allMoves.add(new int[]{highlightX + i, highlightY + j});
                             }
                         }
                     }
                 }
-                if(spiel.UsedTiles[highlightY][highlightX]==0){
-                    allMoves.add(new int[]{highlightX+2, highlightY});
-                    allMoves.add(new int[]{highlightX-2, highlightY});
+                if (spiel.UsedTiles[highlightY][highlightX] == 0) {
+                    allMoves.add(new int[]{highlightX + 2, highlightY});
+                    allMoves.add(new int[]{highlightX - 2, highlightY});
                 }
 
-            }else{
-                allMoves= spiel.generatePseudoMoves(highlightX,highlightY);
+            } else {
+                allMoves = spiel.generatePseudoMoves(highlightX, highlightY);
             }
 
             for (int[] Point : allMoves) {
                 int pointX = (Point[0] * tileSize);
                 int pointY = (Point[1] * tileSize);
-                if(spiel.canMove(highlightX,highlightY,Point[0],Point[1])) {
-                    int Size = (tileSize/3);
+                if (spiel.canMove(highlightX, highlightY, Point[0], Point[1])) {
+                    int Size = (tileSize / 3);
                     g.setColor(new Color(153, 156, 156, 134));
-                    g.fillOval(pointX+(tileSize-Size)/2, pointY+(tileSize-Size)/2, Size, Size);
+                    g.fillOval(pointX + (tileSize - Size) / 2, pointY + (tileSize - Size) / 2, Size, Size);
                 }
             }
         }
@@ -267,7 +255,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
 
     protected void paintDraggedPiece(Graphics g) {
         Point mouse = getMousePosition();
-        g.drawImage(spriteCache.get(spiel.Schachfeld[highlightY][highlightX]), mouse.x - 5 - tileSize/2 , mouse.y - 5 - tileSize/2 , tileSize + 10, tileSize + 10, null);
+        g.drawImage(spriteCache.get(spiel.Schachfeld[highlightY][highlightX]), mouse.x - 5 - tileSize / 2, mouse.y - 5 - tileSize / 2, tileSize + 10, tileSize + 10, null);
     }
 
     public void highlight(int x, int y) {
@@ -282,31 +270,31 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         highlightY = -1;
     }
 
-    protected void sendMove(int x, int y,int toX, int toY) {
-        spiel.move(x,y,toX,toY);
+    protected void sendMove(int x, int y, int toX, int toY) {
+        spiel.move(x, y, toX, toY);
     }
 
-    protected void leave(){
+    protected void leave() {
         fireActionPerformed();
         repaint();
     }
 
-    private void checkMenuClick(Point e){
-        if(new Rectangle((int) (8.25*tileSize), (int) (0.25*tileSize), tileSize/2, tileSize/2).contains(e)) {
+    private void checkMenuClick(Point e) {
+        if (new Rectangle((int) (8.25 * tileSize), (int) (0.25 * tileSize), tileSize / 2, tileSize / 2).contains(e)) {
             leave();
             return;
         }
-        if(new Rectangle((int) (8.25*tileSize), (int) (1.25*tileSize), tileSize/2, tileSize/2).contains(e)) {
-            SettingsOpened =!SettingsOpened;
+        if (new Rectangle((int) (8.25 * tileSize), (int) (1.25 * tileSize), tileSize / 2, tileSize / 2).contains(e)) {
+            SettingsOpened = !SettingsOpened;
             repaint();
             return;
         }
-        if(new Rectangle((int) (8.25*tileSize), (int) (2.25*tileSize), tileSize/2, tileSize/2).contains(e)) {
+        if (new Rectangle((int) (8.25 * tileSize), (int) (2.25 * tileSize), tileSize / 2, tileSize / 2).contains(e)) {
             sendReset();
             repaint();
         }
-        if(SettingsOpened) {
-            if(!new Rectangle(tileSize, tileSize, 6 * tileSize, 5 * tileSize).contains(e)){
+        if (SettingsOpened) {
+            if (!new Rectangle(tileSize, tileSize, 6 * tileSize, 5 * tileSize).contains(e)) {
                 SettingsOpened = false;
             }
             if (new Rectangle((int) (1.4 * tileSize), (int) (2.175 * tileSize), tileSize, (int) (0.3 * tileSize)).contains(e))
@@ -389,36 +377,34 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         }
     }
 
-    protected void sendReset(){
+    protected void sendReset() {
         reset();
         repaint();
     }
 
     protected void checkMoveClick(int MouseX, int MouseY) {
         //check if click is on the board
-        if(MouseX<0||MouseX>7||MouseY<0||MouseY>7) {
+        if (MouseX < 0 || MouseX > 7 || MouseY < 0 || MouseY > 7) {
             repaint();
             return;
         }
         if (firstClick) {
-            if((spiel.whiteMoves? 1:-1)*spiel.Schachfeld[MouseY][MouseX]>0) {
+            if ((spiel.whiteMoves ? 1 : -1) * spiel.Schachfeld[MouseY][MouseX] > 0) {
                 mousePressed = true;
                 x1 = MouseX;
                 y1 = MouseY;
                 highlight(x1, y1);
                 firstClick = false;
             }
-        }
-        else {
+        } else {
             x2 = MouseX;
             y2 = MouseY;
-            if (spiel.Schachfeld[y1][x1] * spiel.Schachfeld[y2][x2] <= 0||(Math.abs(spiel.Schachfeld[y1][x1])== 6 &&Math.abs( spiel.Schachfeld[y2][x2])==4)) {
+            if (spiel.Schachfeld[y1][x1] * spiel.Schachfeld[y2][x2] <= 0 || (Math.abs(spiel.Schachfeld[y1][x1]) == 6 && Math.abs(spiel.Schachfeld[y2][x2]) == 4)) {
                 sendMove(x1, y1, x2, y2);
                 unhighlight();
                 firstClick = true;
                 mousePressed = false;
-            }
-            else {
+            } else {
                 x1 = MouseX;
                 y1 = MouseY;
                 highlight(x1, y1);
@@ -427,6 +413,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
             }
         }
     }
+
     protected void checkChooseNewPiece(int MouseX, int MouseY) {
         if ((MouseX == 3 || MouseX == 4) && (MouseY == 3 || MouseY == 4)) {
             int[][] pieces = {{2, 3}, {4, 5}};
@@ -442,7 +429,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         if (e.getButton() == MouseEvent.BUTTON1) {
             checkMenuClick(e.getPoint());
 
-            if (!(spiel.chooseNewPiece || spiel.checkmate||spiel.stalemate)) {
+            if (!(spiel.chooseNewPiece || spiel.checkmate || spiel.stalemate)) {
                 checkMoveClick(MouseX, MouseY);
             }
 
@@ -450,7 +437,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
                 checkChooseNewPiece(MouseX, MouseY);
             }
 
-            if (spiel.checkmate||spiel.stalemate) {
+            if (spiel.checkmate || spiel.stalemate) {
                 if (new Rectangle((int) (2.75 * tileSize), (int) (3.45 * tileSize), (int) (2.5 * tileSize), (int) (0.85 * tileSize)).contains(e.getPoint()))
                     reset();
             }
@@ -459,13 +446,14 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {
+    }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         int MouseX = e.getX() / tileSize;
         int MouseY = e.getY() / tileSize;
-        if(MouseX<0||MouseX>7||MouseY<0||MouseY>7){
+        if (MouseX < 0 || MouseX > 7 || MouseY < 0 || MouseY > 7) {
             repaint();
             return;
         }
@@ -477,9 +465,9 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         repaint();
     }
 
-    protected void mouseReleasedCheck(){
-        if (spiel.Schachfeld[y1][x1] * spiel.Schachfeld[y2][x2] <= 0||(Math.abs(spiel.Schachfeld[y1][x1])== 6 &&Math.abs( spiel.Schachfeld[y2][x2])==4)) {
-            if(spiel.canMove(x1, y1, x2, y2)){
+    protected void mouseReleasedCheck() {
+        if (spiel.Schachfeld[y1][x1] * spiel.Schachfeld[y2][x2] <= 0 || (Math.abs(spiel.Schachfeld[y1][x1]) == 6 && Math.abs(spiel.Schachfeld[y2][x2]) == 4)) {
+            if (spiel.canMove(x1, y1, x2, y2)) {
                 sendMove(x1, y1, x2, y2);
                 unhighlight();
                 firstClick = true;
@@ -488,31 +476,36 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+    }
+
     @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+    }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         repaint();
     }
-    protected void highlightReset(Point e){
+
+    protected void highlightReset(Point e) {
         Menuhighlight = 3;
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         repaint();
     }
+
     @Override
     public void mouseMoved(MouseEvent e) {
-        Menuhighlight=-1;
-        for(int i = 0; i<2;i++){
-            if(new Rectangle((int) (8.25*tileSize), (int) ((i+0.25)*tileSize), tileSize/2, tileSize/2).contains(e.getX(), e.getY())) {
+        Menuhighlight = -1;
+        for (int i = 0; i < 2; i++) {
+            if (new Rectangle((int) (8.25 * tileSize), (int) ((i + 0.25) * tileSize), tileSize / 2, tileSize / 2).contains(e.getX(), e.getY())) {
                 Menuhighlight = i + 1;
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 repaint();
                 return;
             }
         }
-        if(new Rectangle((int) (8.25*tileSize), (int) ((2.25)*tileSize), tileSize/2, tileSize/2).contains(e.getX(), e.getY())) {
+        if (new Rectangle((int) (8.25 * tileSize), (int) ((2.25) * tileSize), tileSize / 2, tileSize / 2).contains(e.getX(), e.getY())) {
             highlightReset(e.getPoint());
             return;
         }
@@ -528,21 +521,23 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
             hoveredY = -1;
             repaint();
         } else {
-            if(spiel.chooseNewPiece)
+            if (spiel.chooseNewPiece)
                 highlightChoosePiece(e.getPoint());
             else
                 mouseHoveredCheck(e.getPoint());
         }
         repaint();
     }
-    protected void highlightChoosePiece(Point p){
+
+    protected void highlightChoosePiece(Point p) {
         hoveredX = (int) (p.getX() / tileSize);
         hoveredY = (int) (p.getY() / tileSize);
-        if(new Rectangle(3*tileSize,3*tileSize,2*tileSize,2*tileSize).contains(p)){
+        if (new Rectangle(3 * tileSize, 3 * tileSize, 2 * tileSize, 2 * tileSize).contains(p)) {
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
     }
-    protected void mouseHoveredCheck(Point p){
+
+    protected void mouseHoveredCheck(Point p) {
 
         hoveredX = (int) (p.getX() / tileSize);
         hoveredY = (int) (p.getY() / tileSize);

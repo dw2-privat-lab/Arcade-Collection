@@ -1,22 +1,25 @@
 package connect4;
+
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class onlineHandler implements Runnable {
-    private Socket socket;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
     private final String host;
     private final int port;
     private final String Code;
     private final boolean isHost;
     private final EventListenerList listenerList = new EventListenerList();
+    private Socket socket;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
-    public onlineHandler(String host, int port, boolean isHost,String Code, ActionListener actionListener) {
+    public onlineHandler(String host, int port, boolean isHost, String Code, ActionListener actionListener) {
         this.host = host;
         this.port = port;
         this.isHost = isHost;
@@ -45,12 +48,11 @@ public class onlineHandler implements Runnable {
                     System.out.println("Hosted room with code: " + roomCode);
                     fireEvent(new ActionEvent(roomCode, ActionEvent.ACTION_PERFORMED, "RoomHosted"));
 
-                    String friendJoined = (String)in.readObject();
+                    String friendJoined = (String) in.readObject();
                     if (friendJoined.equals("FRIEND_JOINED"))
                         fireEvent(new ActionEvent(friendJoined, ActionEvent.ACTION_PERFORMED, "FRIEND_JOINED"));
                 }
-            }
-            else {
+            } else {
                 out.writeObject("JOIN");
                 out.flush();
                 out.writeObject(Code);
@@ -67,8 +69,7 @@ public class onlineHandler implements Runnable {
                 Object readObject = in.readObject();
                 if (readObject instanceof Integer move) {
                     fireEvent(new ActionEvent(move, ActionEvent.ACTION_PERFORMED, "Incoming Move"));
-                }
-                else if (readObject instanceof Boolean isYellow) {
+                } else if (readObject instanceof Boolean isYellow) {
                     fireEvent(new ActionEvent(isYellow, ActionEvent.ACTION_PERFORMED, "Incoming Color"));
                 } else if (readObject instanceof String) {
                     if (readObject.equals("DISCONNECT"))
@@ -120,6 +121,7 @@ public class onlineHandler implements Runnable {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
     }
 }

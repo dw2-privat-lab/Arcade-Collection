@@ -1,7 +1,7 @@
 package Tetris;
 
 import javax.swing.*;
-import java.awt.Point;
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,30 +10,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TetrisGame implements Runnable {
-    private static final Path SAVE_FILE = Path.of("highscores.json");;
+    private static final Path SAVE_FILE = Path.of("highscores.json");
     private final int[][] gameField;
-    private int currentPieceNumber=1;
+    private final Point center = new Point();
+    private final Timer gameloop = new Timer(799, e -> {
+        move(directions.DOWN);
+    });
+    TetrisMainPanel mainPanel;
+    private int currentPieceNumber = 1;
     private int level = 1;
     private int clearedLines;
     private boolean gameOver = false;
     private boolean lockUserInput = false;
     private int nextPieceNumber;
     private int nextPieceColor;
-    private int score=0;
-    private int rotation=0;
-    private final Point center = new Point();
+    private int score = 0;
+    private int rotation = 0;
     private int[][] currentPiece;
-    private int highscore=0;
-    TetrisMainPanel mainPanel;
-    private final Timer gameloop = new Timer(799, e->{move(directions.DOWN);});
+    private int highscore = 0;
+
     public TetrisGame(TetrisMainPanel mainPanel) {
         this.mainPanel = mainPanel;
-        gameField = new int [20][10];
+        gameField = new int[20][10];
         loadHighscore();
         resetGame();
     }
 
-    public void run(){
+    public void run() {
         gameloop.start();
     }
 
@@ -42,7 +45,7 @@ public class TetrisGame implements Runnable {
         level = 1;
         score = 0;
         gameOver = false;
-        for(int i = 0; i<gameField.length; i++)
+        for (int i = 0; i < gameField.length; i++)
             for (int j = 0; j < gameField[0].length; j++) gameField[i][j] = 0;
 
         nextPieceNumber = 1 + (int) (Math.random() * 7);
@@ -54,12 +57,12 @@ public class TetrisGame implements Runnable {
         gameloop.start();
     }
 
-    public void pauseGame(){
+    public void pauseGame() {
         gameloop.stop();
     }
 
 
-    private void loadHighscore(){
+    private void loadHighscore() {
         try {
             if (!Files.exists(SAVE_FILE)) return;
 
@@ -76,31 +79,39 @@ public class TetrisGame implements Runnable {
                 }
             }
 
-        }catch (IOException e){}
+        } catch (IOException e) {
+        }
     }
 
     public void spawnPiece() {
         switch (nextPieceNumber) {
-            case 1 -> currentPiece = new int[][]{{-nextPieceColor, -nextPieceColor}, {-nextPieceColor, -nextPieceColor}};
-            case 2 -> currentPiece = new int[][]{{-nextPieceColor},{ -nextPieceColor}, {-nextPieceColor},{ -nextPieceColor}};
-            case 3 -> currentPiece = new int[][]{{-nextPieceColor, -nextPieceColor,0}, {0,-nextPieceColor, -nextPieceColor}};
-            case 4 -> currentPiece = new int[][]{{0, -nextPieceColor,-nextPieceColor}, {-nextPieceColor,-nextPieceColor, 0}};
-            case 5 -> currentPiece = new int[][]{{-nextPieceColor,0},{ -nextPieceColor,0},{ -nextPieceColor,-nextPieceColor}};
-            case 6 -> currentPiece = new int[][]{{0, -nextPieceColor}, {0, -nextPieceColor},{-nextPieceColor,-nextPieceColor}};
-            case 7 -> currentPiece = new int[][]{{0,-nextPieceColor, 0}, {-nextPieceColor, -nextPieceColor,-nextPieceColor}};
+            case 1 ->
+                    currentPiece = new int[][]{{-nextPieceColor, -nextPieceColor}, {-nextPieceColor, -nextPieceColor}};
+            case 2 ->
+                    currentPiece = new int[][]{{-nextPieceColor}, {-nextPieceColor}, {-nextPieceColor}, {-nextPieceColor}};
+            case 3 ->
+                    currentPiece = new int[][]{{-nextPieceColor, -nextPieceColor, 0}, {0, -nextPieceColor, -nextPieceColor}};
+            case 4 ->
+                    currentPiece = new int[][]{{0, -nextPieceColor, -nextPieceColor}, {-nextPieceColor, -nextPieceColor, 0}};
+            case 5 ->
+                    currentPiece = new int[][]{{-nextPieceColor, 0}, {-nextPieceColor, 0}, {-nextPieceColor, -nextPieceColor}};
+            case 6 ->
+                    currentPiece = new int[][]{{0, -nextPieceColor}, {0, -nextPieceColor}, {-nextPieceColor, -nextPieceColor}};
+            case 7 ->
+                    currentPiece = new int[][]{{0, -nextPieceColor, 0}, {-nextPieceColor, -nextPieceColor, -nextPieceColor}};
             default -> currentPiece = new int[][]{{-nextPieceColor}};
         }
-        currentPieceNumber=nextPieceNumber;
+        currentPieceNumber = nextPieceNumber;
         rotation = 0;
 
-        center.setLocation(gameField[0].length/2-(currentPiece[0].length+1)/2, 0);
+        center.setLocation(gameField[0].length / 2 - (currentPiece[0].length + 1) / 2, 0);
         for (int r = 0; r < currentPiece.length; r++) {
             for (int c = 0; c < currentPiece[r].length; c++) {
                 if (currentPiece[r][c] < 0) {
                     int targetY = center.y + r;
                     int targetX = center.x + c;
                     if (targetY >= 0 && targetY < gameField.length && targetX >= 0 && targetX < gameField[0].length) {
-                        if(gameField[targetY][targetX] > 0) {
+                        if (gameField[targetY][targetX] > 0) {
                             gameOver = true;
                             gameloop.stop();
                             System.out.println("Game Over");
@@ -117,35 +128,34 @@ public class TetrisGame implements Runnable {
     }
 
 
-
     public void move(directions direction) {
-        if(gameOver) return;
+        if (gameOver) return;
         if (!canMove(direction)) {
             if (direction == directions.DOWN) {
-                int temp=0;
-                ArrayList<Integer> linesToClear= new ArrayList<>();
-                for(int i = 0; i < gameField.length; i++) {
-                    if(canClearCurrentLine(i)){
+                int temp = 0;
+                ArrayList<Integer> linesToClear = new ArrayList<>();
+                for (int i = 0; i < gameField.length; i++) {
+                    if (canClearCurrentLine(i)) {
                         linesToClear.add(i);
                         temp++;
                     }
                 }
-                switch(temp) {
-                    case 1-> score+=40*level;
-                    case 2-> score+=100*level;
-                    case 3-> score+=300*level;
-                    case 4-> score+=1200*level;
+                switch (temp) {
+                    case 1 -> score += 40 * level;
+                    case 2 -> score += 100 * level;
+                    case 3 -> score += 300 * level;
+                    case 4 -> score += 1200 * level;
                 }
-                for(int line:linesToClear){
+                for (int line : linesToClear) {
                     clearLine(line);
                 }
-                if(score>highscore){
-                    highscore=score;
+                if (score > highscore) {
+                    highscore = score;
                     saveHighscore();
                 }
-                clearedLines+=temp;
-                if(clearedLines>=10){
-                    clearedLines-=10;
+                clearedLines += temp;
+                if (clearedLines >= 10) {
+                    clearedLines -= 10;
                     level++;
                     setNewSpeed();
                 }
@@ -161,7 +171,9 @@ public class TetrisGame implements Runnable {
             case LEFT -> dirX = -1;
             case RIGHT -> dirX = 1;
             case DOWN -> dirY = 1;
-            default -> { return; }
+            default -> {
+                return;
+            }
         }
 
         clearCurrentPiece();
@@ -172,7 +184,7 @@ public class TetrisGame implements Runnable {
     }
 
     private void setNewSpeed() {
-        switch(level) {
+        switch (level) {
             case 1 -> gameloop.setDelay(799);
             case 2 -> gameloop.setDelay(715);
             case 3 -> gameloop.setDelay(632);
@@ -212,12 +224,13 @@ public class TetrisGame implements Runnable {
         downTimer.start();
     }
 
-    private boolean canClearCurrentLine(int line){
-        for(int i = 0; i < gameField[line].length; i++){
-            if(gameField[line][i] == 0){
+    private boolean canClearCurrentLine(int line) {
+        for (int i = 0; i < gameField[line].length; i++) {
+            if (gameField[line][i] == 0) {
                 return false;
             }
-        }return  true;
+        }
+        return true;
     }
 
     private void clearLine(int line) {
@@ -235,7 +248,9 @@ public class TetrisGame implements Runnable {
             case LEFT -> dirX = -1;
             case RIGHT -> dirX = 1;
             case DOWN -> dirY = 1;
-            default -> { return false; }
+            default -> {
+                return false;
+            }
         }
 
         for (int r = 0; r < currentPiece.length; r++) {
@@ -313,20 +328,22 @@ public class TetrisGame implements Runnable {
     private void stopPlayer() {
         for (int r = 0; r < 5; r++) {
             for (int c = 0; c < 5; c++) {
-                    int targetY = center.y + r;
-                    int targetX = center.x + c;
-                    if (targetY >= 0 && targetY < gameField.length && targetX >= 0 && targetX < gameField[0].length) {
-                        if (gameField[targetY][targetX] < 0) {
-                            gameField[targetY][targetX] = Math.abs(gameField[targetY][targetX]);
-                        }
+                int targetY = center.y + r;
+                int targetX = center.x + c;
+                if (targetY >= 0 && targetY < gameField.length && targetX >= 0 && targetX < gameField[0].length) {
+                    if (gameField[targetY][targetX] < 0) {
+                        gameField[targetY][targetX] = Math.abs(gameField[targetY][targetX]);
                     }
+                }
 
             }
         }
     }
+
     public Point getCenter() {
         return new Point(center.x, center.y);
     }
+
     public void rotate() {
         if (gameOver) return;
 
@@ -338,13 +355,11 @@ public class TetrisGame implements Runnable {
         boolean success = false;
         if (canRotate()) {
             success = true;
-        }
-        else {
+        } else {
             center.x--;
             if (canRotate()) {
                 success = true;
-            }
-            else {
+            } else {
                 center.x += 2;
                 if (canRotate()) {
                     success = true;
@@ -361,7 +376,7 @@ public class TetrisGame implements Runnable {
         }
     }
 
-    private void doRotation(){
+    private void doRotation() {
         getRotationOffsets(center);
         int rows = currentPiece.length;
         int cols = currentPiece[0].length;
@@ -400,41 +415,63 @@ public class TetrisGame implements Runnable {
         placeCurrentPiece();
     }
 
-    private Point getRotationOffsets(Point original){
+    private Point getRotationOffsets(Point original) {
         switch (currentPieceNumber) {
             case 2 -> {
                 switch (rotation) {
-                    case 1 -> { original.x -= 1; original.y += 2; }
-                    case 2 -> { original.x += 1; original.y -= 1; }
-                    case 3 -> { original.x -= 2; original.y += 1; }
-                    case 0 -> { original.x += 2; original.y -= 2; }
+                    case 1 -> {
+                        original.x -= 1;
+                        original.y += 2;
+                    }
+                    case 2 -> {
+                        original.x += 1;
+                        original.y -= 1;
+                    }
+                    case 3 -> {
+                        original.x -= 2;
+                        original.y += 1;
+                    }
+                    case 0 -> {
+                        original.x += 2;
+                        original.y -= 2;
+                    }
                 }
             }
             case 3, 4, 7 -> {
                 switch (rotation) {
-                    case 1 ->  original.x += 1;
-                    case 2 -> {original.x -= 1; original.y += 1; }
-                    case 3 ->  original.y -= 1;
+                    case 1 -> original.x += 1;
+                    case 2 -> {
+                        original.x -= 1;
+                        original.y += 1;
+                    }
+                    case 3 -> original.y -= 1;
                 }
             }
             case 5 -> {
                 switch (rotation) {
-                    case 1 -> { original.x -= 1; original.y += 1; }
-                    case 2 ->  original.y -= 1;
-                    case 0 ->  original.x += 1;
+                    case 1 -> {
+                        original.x -= 1;
+                        original.y += 1;
+                    }
+                    case 2 -> original.y -= 1;
+                    case 0 -> original.x += 1;
                 }
             }
             case 6 -> {
                 switch (rotation) {
-                    case 2 ->  original.x += 1;
-                    case 3 -> {original.x -= 1; original.y += 1;}
-                    case 0 ->  original.y -= 1;
+                    case 2 -> original.x += 1;
+                    case 3 -> {
+                        original.x -= 1;
+                        original.y += 1;
+                    }
+                    case 0 -> original.y -= 1;
                 }
             }
         }
         return original;
     }
-    private boolean canRotate(){
+
+    private boolean canRotate() {
         Point tempCenter = getRotationOffsets(new Point(center.x, center.y));
 
         int rows = currentPiece.length;
@@ -464,15 +501,32 @@ public class TetrisGame implements Runnable {
         }
         return true;
     }
-    public int getNextPieceNumber() {return nextPieceNumber;}
-    public int getNextPieceColor() {return nextPieceColor;}
+
+    public int getNextPieceNumber() {
+        return nextPieceNumber;
+    }
+
+    public int getNextPieceColor() {
+        return nextPieceColor;
+    }
+
     public int[][] getGameField() {
         return gameField;
     }
+
     public boolean isLockUserInput() {
         return lockUserInput;
     }
-    public int getScore() {return score;}
-    public int getHighscore() {return highscore;}
-    public boolean isGameOver() {return gameOver;}
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getHighscore() {
+        return highscore;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
 }

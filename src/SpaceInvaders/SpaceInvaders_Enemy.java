@@ -2,8 +2,8 @@ package SpaceInvaders;
 
 public class SpaceInvaders_Enemy {
     private final int width, height;
-    private int x, y;
     private final int type;
+    private int x, y;
 
     public SpaceInvaders_Enemy(int x, int y, int width, int height, int type) {
         this.x = x;

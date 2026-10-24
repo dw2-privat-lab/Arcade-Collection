@@ -4,22 +4,24 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 public class RenderMessage implements Runnable {
-    private final ArrayList <String> Message = new ArrayList<>();
+    private final ArrayList<String> Message = new ArrayList<>();
     private final ArrayList<Integer> FadeTimer = new ArrayList<>();
 
     JPanel panel;
-    public RenderMessage(JPanel panel){
+
+    public RenderMessage(JPanel panel) {
         this.panel = panel;
     }
-    public void addMessage(String message, int fadeTimer){
+
+    public void addMessage(String message, int fadeTimer) {
         Message.add(message);
         FadeTimer.add(fadeTimer);
         panel.repaint();
     }
 
-    public void reduceFadeTimer(){
-        for(int i=0;i<3;i++){
-            if(i<FadeTimer.size()) {
+    public void reduceFadeTimer() {
+        for (int i = 0; i < 3; i++) {
+            if (i < FadeTimer.size()) {
                 FadeTimer.set(i, FadeTimer.get(i) - 1);
                 if (FadeTimer.get(i) <= 0) {
                     FadeTimer.remove(i);
@@ -29,20 +31,23 @@ public class RenderMessage implements Runnable {
             }
         }
     }
-    public ArrayList<String> getMessages(){
+
+    public ArrayList<String> getMessages() {
         return Message;
     }
-    public String getMessage(int index){
+
+    public String getMessage(int index) {
         return Message.get(index);
     }
 
     @Override
     public void run() {
-        while(true){
+        while (true) {
             try {
                 reduceFadeTimer();
                 Thread.sleep(100);
-            }catch (InterruptedException _){}
+            } catch (InterruptedException _) {
+            }
         }
     }
 }

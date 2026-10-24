@@ -20,7 +20,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
     ArrayList<Point> destroyAnimation = new ArrayList<>();
     boolean running = true;
     boolean gameOver = false;
-    HashMap<Integer,Image> enemies = new HashMap<>();
+    HashMap<Integer, Image> enemies = new HashMap<>();
     Image playerImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/ship.png");
     Image explosion = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/explosion.png");
     Image gameOverImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/gameOver.png");
@@ -31,11 +31,11 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
     Image scoreImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/score.png");
     SpaceInvaders_EnemyController spaceInvadersEnemyController = new SpaceInvaders_EnemyController(15 * scale, 12 * scale, 8 * scale, 4 * scale);
     EventListenerList listenerList = new EventListenerList();
+    int level = 0;
     private int hearts = 3;
     private double enemiedifficulty = 0.995;
     private int score = 0;
     private int highlighted = 3;
-    int level = 0;
 
     public SpaceInvaders_mainPanel(ActionListener actionListener) {
         listenerList.add(ActionListener.class, actionListener);
@@ -50,15 +50,17 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
         Timer timer = new Timer(20, this);
         timer.start();
     }
+
     private void loadEnemies() {
         enemies.put(1, ImageLoader.loadImage(this.getClass(), "SpaceInvaders/octopusFrame1.png"));
         enemies.put(-1, ImageLoader.loadImage(this.getClass(), "SpaceInvaders/octopusFrame2.png"));
-        enemies.put(2,ImageLoader.loadImage(this.getClass(), "SpaceInvaders/crabFrame1.png"));
-        enemies.put(-2,ImageLoader.loadImage(this.getClass(), "SpaceInvaders/crabFrame2.png"));
-        enemies.put(3,ImageLoader.loadImage(this.getClass(), "SpaceInvaders/squidFrame1.png"));
-        enemies.put(-3,ImageLoader.loadImage(this.getClass(), "SpaceInvaders/squidFrame2.png"));
+        enemies.put(2, ImageLoader.loadImage(this.getClass(), "SpaceInvaders/crabFrame1.png"));
+        enemies.put(-2, ImageLoader.loadImage(this.getClass(), "SpaceInvaders/crabFrame2.png"));
+        enemies.put(3, ImageLoader.loadImage(this.getClass(), "SpaceInvaders/squidFrame1.png"));
+        enemies.put(-3, ImageLoader.loadImage(this.getClass(), "SpaceInvaders/squidFrame2.png"));
     }
-    public void pause(){
+
+    public void pause() {
         running = false;
     }
 
@@ -138,7 +140,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
                 spaceInvadersEnemyController.timer.start();
                 running = true;
             }
-            if(gameOver) {
+            if (gameOver) {
                 reset();
             }
         }
@@ -170,7 +172,7 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
 
         boolean frame = spaceInvadersEnemyController.getFirstFrame();
         for (SpaceInvaders_Enemy e : renderedEnemies) {
-            g.drawImage(enemies.get(e.getType()*(frame? 1:-1)), e.getX(), e.getY(), e.getWidth(), e.getHeight(), null);
+            g.drawImage(enemies.get(e.getType() * (frame ? 1 : -1)), e.getX(), e.getY(), e.getWidth(), e.getHeight(), null);
         }
 
         ArrayList<Rectangle> enemiesBullets = spaceInvadersEnemyController.getBullets();
@@ -232,12 +234,12 @@ public class SpaceInvaders_mainPanel extends JPanel implements KeyListener, Acti
             checkPlayersBulletCollision();
             checkEnemiesBulletCollision();
 
-            if(spaceInvadersEnemyController.getEnemies().isEmpty()){
+            if (spaceInvadersEnemyController.getEnemies().isEmpty()) {
                 spaceInvadersEnemyController.resetEnemies();
                 level++;
-                enemiedifficulty=0.995-level*0.0005;
-                spaceInvadersEnemyController.timer.setDelay(300-level*50);
-            }else if(spaceInvadersEnemyController.getEnemies().getLast().getY()==spaceInvadersPlayer.getY()-spaceInvadersEnemyController.getEnemies().getLast().getHeight()){
+                enemiedifficulty = 0.995 - level * 0.0005;
+                spaceInvadersEnemyController.timer.setDelay(300 - level * 50);
+            } else if (spaceInvadersEnemyController.getEnemies().getLast().getY() == spaceInvadersPlayer.getY() - spaceInvadersEnemyController.getEnemies().getLast().getHeight()) {
                 gameOver = true;
                 running = false;
                 spaceInvadersEnemyController.timer.stop();

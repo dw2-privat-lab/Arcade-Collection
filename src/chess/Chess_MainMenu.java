@@ -11,41 +11,33 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
 
     private final Chess_Singleplayer_panel chess_singleplayer_panel = new Chess_Singleplayer_panel(this);
     private final ClientPanel clientPanel = new ClientPanel(this);
-
+    private final Rectangle playLocallyHitbox = new Rectangle(250, 220, 300, 60);
+    private final Rectangle playOnlineHitbox = new Rectangle(250, 300, 300, 60);
+    private final Rectangle leaveHitbox = new Rectangle(250, 380, 300, 60);
+    private final Rectangle ipAddressHitbox = new Rectangle(220, 245, 260, 45);
+    private final Rectangle gameCodeHitbox = new Rectangle(490, 245, 90, 45);
+    private final Rectangle HostIpAddressHitbox = new Rectangle(220, 245, 360, 45);
+    private final Rectangle joinGameHitbox = new Rectangle(220, 305, 360, 45);
+    private final Rectangle closeHitbox = new Rectangle(220, 365, 360, 45);
+    private final Rectangle windowBounds = new Rectangle(180, 110, 440, 380);
+    private final Rectangle hostGameHitbox = new Rectangle(220, 170, 360, 50);
     Color defaultGray = new Color(53, 57, 57, 255);
     Color defaultGreen = new Color(72, 92, 59, 255);
     Color darkPanelGray = new Color(38, 41, 41, 255);
     Color darkButtonGray = new Color(80, 85, 85, 255);
-
+    EventListenerList listenerList = new EventListenerList();
+    connect4.RenderMessage renderMessage = new connect4.RenderMessage(this);
+    Thread ErrorRepaintThread = new Thread(renderMessage);
     // 1: Main Menu, 2: Online Client, 3: Host Options
     private int panelSelected = 1;
     private int menu = 1;
-
-    private final Rectangle playLocallyHitbox = new Rectangle(250, 220, 300, 60);
-    private final Rectangle playOnlineHitbox  = new Rectangle(250, 300, 300, 60);
-    private final Rectangle leaveHitbox       = new Rectangle(250, 380, 300, 60);
-
-    private final Rectangle ipAddressHitbox     = new Rectangle(220, 245, 260, 45);
-    private final Rectangle gameCodeHitbox      = new Rectangle(490, 245, 90, 45);
-    private final Rectangle HostIpAddressHitbox = new Rectangle(220, 245, 360, 45);
-    private final Rectangle joinGameHitbox      = new Rectangle(220, 305, 360, 45);
-    private final Rectangle closeHitbox         = new Rectangle(220, 365, 360, 45);
-    private final Rectangle windowBounds        = new Rectangle(180, 110, 440, 380);
-    private final Rectangle hostGameHitbox      = new Rectangle(220, 170, 360, 50);
-
     private boolean ipAddressFocussed = false;
     private String ipAddress = "";
     private boolean gameCodeFocused = false;
     private String gameCode = "";
-
     // 0: NIX, 1: Play locally, 2: Play online, 3: Leave, 4: Host Game, 5: IP Box, 6: Code Box, 7: Join/Host Ext, 8: Back
     private int hoveredButton = 0;
-
     private ChessServer activeServer;
-
-    EventListenerList listenerList = new EventListenerList();
-    connect4.RenderMessage renderMessage = new connect4.RenderMessage(this);
-    Thread ErrorRepaintThread = new Thread(renderMessage);
 
     public Chess_MainMenu(ActionListener actionListener) {
         listenerList.add(ActionListener.class, actionListener);
@@ -468,24 +460,24 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
         char c = e.getKeyChar();
 
         if (ipAddressFocussed) {
-            if ( c == KeyEvent.VK_BACK_SPACE) {
+            if (c == KeyEvent.VK_BACK_SPACE) {
                 if (!ipAddress.isEmpty()) {
                     ipAddress = ipAddress.substring(0, ipAddress.length() - 1);
                 }
-            } else if ( c == KeyEvent.VK_ENTER) {
-                ipAddressFocussed=false;
-                gameCodeFocused=true;
+            } else if (c == KeyEvent.VK_ENTER) {
+                ipAddressFocussed = false;
+                gameCodeFocused = true;
 
             } else if (!Character.isISOControl(c) && ipAddress.length() < 45) {
                 ipAddress += c;
             }
             repaint();
         } else if (menu == 2 && gameCodeFocused) {
-            if ( c == KeyEvent.VK_BACK_SPACE) {
+            if (c == KeyEvent.VK_BACK_SPACE) {
                 if (!gameCode.isEmpty()) {
                     gameCode = gameCode.substring(0, gameCode.length() - 1);
                 }
-            } else if ( c == KeyEvent.VK_ENTER) {
+            } else if (c == KeyEvent.VK_ENTER) {
                 executeJoin();
             } else if (Character.isLetterOrDigit(c) && gameCode.length() < 5) {
                 gameCode += c;
@@ -503,13 +495,33 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
         }
     }
 
-    @Override public void keyPressed(KeyEvent e) {}
-    @Override public void keyReleased(KeyEvent e) {}
-    @Override public void mouseClicked(MouseEvent e) {}
-    @Override public void mouseReleased(MouseEvent e) {}
-    @Override public void mouseEntered(MouseEvent e) {}
-    @Override public void mouseExited(MouseEvent e) {}
-    @Override public void mouseDragged(MouseEvent e) {}
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {

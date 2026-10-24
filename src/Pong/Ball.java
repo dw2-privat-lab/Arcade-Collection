@@ -3,16 +3,15 @@ package Pong;
 import java.awt.*;
 
 public class Ball extends Rectangle {
-    private double exactX;
-    private double exactY;
-
-    private double direction;
-
     private final double speed = (double) Settings.GameSize / 86;
     private final int startX;
     private final int startY;
+    private double exactX;
+    private double exactY;
+    private double direction;
+
     public Ball(int x, int y) {
-        super(x, y,Settings.BallSize, Settings.BallSize);
+        super(x, y, Settings.BallSize, Settings.BallSize);
         startX = x;
         startY = y;
 
@@ -20,11 +19,11 @@ public class Ball extends Rectangle {
         this.exactY = y;
 
         direction = Math.random() * 240;
-        if(direction>60){
-            direction+=60;
+        if (direction > 60) {
+            direction += 60;
         }
-        if(direction>240){
-            direction+=60;
+        if (direction > 240) {
+            direction += 60;
         }
     }
 
@@ -48,33 +47,35 @@ public class Ball extends Rectangle {
             direction = -direction;
         }
 
-        if (exactY >= Settings.GameSize-ballSize) {
-            exactY = Settings.GameSize-ballSize;
+        if (exactY >= Settings.GameSize - ballSize) {
+            exactY = Settings.GameSize - ballSize;
             direction = -direction;
         }
         direction = (direction + 360) % 360;
     }
 
-    void reset(){
+    void reset() {
         exactX = startX;
         exactY = startY;
 
         direction = Math.random() * 240;
-        if(direction>60){
-            direction+=60;
+        if (direction > 60) {
+            direction += 60;
         }
-        if(direction>240){
-            direction+=60;
+        if (direction > 240) {
+            direction += 60;
         }
+    }
+
+    public void setExactX(double exactX) {
+        this.exactX = exactX;
+    }
+
+    public double getDirection() {
+        return direction;
     }
 
     public void setDirection(double direction) {
         this.direction = direction;
-    }
-    public void setExactX(double exactX) {
-        this.exactX = exactX;
-    }
-    public double getDirection() {
-        return direction;
     }
 }

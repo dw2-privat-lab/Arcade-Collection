@@ -1,7 +1,10 @@
 package chess;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,27 +13,11 @@ public class ChessServer implements Runnable {
     private ServerSocket serverSocket;
     private volatile boolean running = false;
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         ChessServer server = new ChessServer();
         server.run();
     }
-    @Override
-    public void run() {
-        try {
-            serverSocket = new ServerSocket(PORT);
-            running = true;
 
-            System.out.println("Chess chessServer started on port " + PORT);
-            Map<String, ClientHandler> waitingHosts = new HashMap<>();
-
-            while (running) {
-                Socket socket = serverSocket.accept();
-                new Thread(() -> handleConnection(socket, waitingHosts)).start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     private static void handleConnection(Socket socket, Map<String, ClientHandler> waitingHosts) {
         try {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -85,6 +72,25 @@ public class ChessServer implements Runnable {
             System.err.println("Error establishing connection: " + e.getMessage());
         }
     }
+
+    @Override
+    public void run() {
+        try {
+            serverSocket = new ServerSocket(PORT);
+            running = true;
+
+            System.out.println("Chess chessServer started on port " + PORT);
+            Map<String, ClientHandler> waitingHosts = new HashMap<>();
+
+            while (running) {
+                Socket socket = serverSocket.accept();
+                new Thread(() -> handleConnection(socket, waitingHosts)).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void stopServer() {
         running = false;
         try {
@@ -100,16 +106,16 @@ public class ChessServer implements Runnable {
 class ChessRoom {
     private final ClientHandler player1;
     private final ClientHandler player2;
-    private int resetRequest = 0;
     Schachlogik game = new Schachlogik();
+    private int resetRequest = 0;
 
     public ChessRoom(ClientHandler player1, ClientHandler player2) {
         this.player1 = player1;
         this.player2 = player2;
-        if(Math.random() < 0.5) {
+        if (Math.random() < 0.5) {
             this.player1.setChessRoom(this, true);  // White
             this.player2.setChessRoom(this, false); // Black
-        }else{
+        } else {
             this.player1.setChessRoom(this, false);
             this.player2.setChessRoom(this, true);
         }
@@ -135,20 +141,20 @@ class ChessRoom {
     }
 
     public void countResetRequests(ClientHandler sender) {
-        if(!sender.isSentReset()) {
+        if (!sender.isSentReset()) {
             sender.setSentReset(true);
             resetRequest++;
         }
-        if(resetRequest == 2){
+        if (resetRequest == 2) {
             resetRequest = 0;
             player1.setSentReset(false);
             player2.setSentReset(false);
             game.reset();
             broadcast("RESET");
-            if(Math.random() < 0.5) {
+            if (Math.random() < 0.5) {
                 this.player1.setChessRoom(this, true);  // White
                 this.player2.setChessRoom(this, false); // Black
-            }else{
+            } else {
                 this.player1.setChessRoom(this, false);
                 this.player2.setChessRoom(this, true);
             }
@@ -157,11 +163,11 @@ class ChessRoom {
         }
     }
 
-    public void choosePiece(int piece,ClientHandler sender) {
-        if(sender.isWhite()){
+    public void choosePiece(int piece, ClientHandler sender) {
+        if (sender.isWhite()) {
             game.choosePiece(piece);
-        }else{
-            game.choosePiece(piece*-1);
+        } else {
+            game.choosePiece(piece * -1);
         }
         broadcast(piece);
     }
@@ -181,12 +187,12 @@ class ClientHandler implements Runnable {
         this.out = out;
     }
 
-    public void setSentReset(boolean sentReset) {
-        this.hasSentReset = sentReset;
-    }
-
     public boolean isSentReset() {
         return hasSentReset;
+    }
+
+    public void setSentReset(boolean sentReset) {
+        this.hasSentReset = sentReset;
     }
 
     public boolean isWhite() {
@@ -220,11 +226,11 @@ class ClientHandler implements Runnable {
                     room.processMove(this, move);
                 }
                 if (receivedObject instanceof String resetString) {
-                    if(resetString.equals("Reset"))
+                    if (resetString.equals("Reset"))
                         room.countResetRequests(this);
                 }
-                if(receivedObject instanceof Integer piece) {
-                    room.choosePiece(piece,this);
+                if (receivedObject instanceof Integer piece) {
+                    room.choosePiece(piece, this);
                 }
             }
         } catch (Exception e) {
@@ -233,7 +239,8 @@ class ClientHandler implements Runnable {
             try {
                 socket.close();
                 room.broadcast("DISCONNECT");
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 }

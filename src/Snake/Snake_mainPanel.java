@@ -8,22 +8,18 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Snake_mainPanel extends JPanel implements KeyListener, MouseListener, MouseMotionListener {
+    private final int scale = 4;
     Snake snake = new Snake();
     Apple apples = new Apple();
-    private int score = 0;
-    private boolean paused = false;
-    private final int scale = 4;
-
-    private int highlighted=-1;
-
     EventListenerList listenerList = new EventListenerList();
-
-
     Image gameOver = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/gameOver.png");
     Image pausedImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/paused.png");
     Image quitImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/quit.png");
     Image resumeImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/resume.png");
     Image returnImg = ImageLoader.loadImage(this.getClass(), "SpaceInvaders/return.png");
+    private int score = 0;
+    private boolean paused = false;
+    private int highlighted = -1;
 
     public Snake_mainPanel(ActionListener a) {
         listenerList.add(ActionListener.class, a);
@@ -46,7 +42,7 @@ public class Snake_mainPanel extends JPanel implements KeyListener, MouseListene
         timer.start();
     }
 
-    public void pause(){
+    public void pause() {
         paused = true;
     }
 
@@ -107,12 +103,13 @@ public class Snake_mainPanel extends JPanel implements KeyListener, MouseListene
                 g.drawImage(returnImg, (int) ((double) getWidth() / 2 + 6 * scale), 100 + 12 * scale, 9 * scale, 9 * scale, null);
         }
     }
-    public void reset(){
+
+    public void reset() {
         snake.reset();
-        paused =false;
+        paused = false;
         snake.setGameOver(false);
         score = 0;
-        apples=new Apple();
+        apples = new Apple();
     }
 
     @Override

@@ -22,17 +22,17 @@ public class Gamepanel extends JPanel implements MouseListener, ActionListener {
     boolean won = false;
     int Time = 0;
 
-    Map<Integer ,Image> tiles=new HashMap<>();
+    Map<Integer, Image> tiles = new HashMap<>();
 
     Timer timer;
 
-    JLabel timelabel = new JLabel("Time: "+Time);
+    JLabel timelabel = new JLabel("Time: " + Time);
 
     difficulty diff = difficulty.EASY;
 
     Gamepanel() {
         for (int i = -5; i <= 8; i++) {
-            if(i==-2)
+            if (i == -2)
                 continue;
             tiles.put(i, new ImageIcon(Objects.requireNonNull(getClass().getResource("/minesweeper/Tile" + i + ".png"))).getImage());
         }
@@ -46,10 +46,10 @@ public class Gamepanel extends JPanel implements MouseListener, ActionListener {
         restart = true;
 
         addMouseListener(this);
-        timer = new Timer(1000,this);
+        timer = new Timer(1000, this);
     }
 
-    public void addTimerlabel(){
+    public void addTimerlabel() {
         add(timelabel);
     }
 
@@ -118,7 +118,7 @@ public class Gamepanel extends JPanel implements MouseListener, ActionListener {
                     if (field[col][row] == -2) {
                         imageInt = 0;
                     } else {
-                        imageInt =field[col][row];
+                        imageInt = field[col][row];
                     }
                 } else {
                     if (fieldmask[col][row] == 2) {
@@ -146,7 +146,6 @@ public class Gamepanel extends JPanel implements MouseListener, ActionListener {
             g.drawImage(win.getImage(), getWidth() / 4, 30, getWidth() / 2, (int) (imgheight * scale), null);
         }
     }
-
 
 
     private void randomizeMines(int firstX, int firstY) {

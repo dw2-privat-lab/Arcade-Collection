@@ -4,7 +4,8 @@ public class connect4_gameLogic {
     public int[][] gameField = new int[7][6];
     boolean firstPlayerPlaying = true;
     int won = 0;
-    public void resetField(){
+
+    public void resetField() {
         won = 0;
         firstPlayerPlaying = true;
         for (int x = 0; x < gameField.length; x++) {
@@ -14,13 +15,13 @@ public class connect4_gameLogic {
         }
     }
 
-    public void move(int pos){
+    public void move(int pos) {
         if (won != 0) return;
         if (pos < 0 || pos >= gameField.length) return;
-        if(gameField[pos][0] != 0)return;
+        if (gameField[pos][0] != 0) return;
 
         int y = gameField[0].length - 1;
-        while(gameField[pos][y] != 0){
+        while (gameField[pos][y] != 0) {
             y--;
         }
 
@@ -51,7 +52,7 @@ public class connect4_gameLogic {
         int curX = x + dX;
         int curY = y + dY;
 
-        while (curX >= 0 && curX < gameField.length&& curY >= 0 && curY < gameField[0].length&& gameField[curX][curY] == color) {
+        while (curX >= 0 && curX < gameField.length && curY >= 0 && curY < gameField[0].length && gameField[curX][curY] == color) {
             count++;
             curX += dX;
             curY += dY;

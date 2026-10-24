@@ -4,18 +4,20 @@ import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class MessageHandler implements Runnable {
-    private Socket socket;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
     private final String host;
     private final int port;
     private final String code;
     private final boolean isHost;
     private final EventListenerList listenerList = new EventListenerList();
+    private Socket socket;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
     public MessageHandler(String host, int port, String code, boolean isHost, ActionListener actionListener) {
         this.host = host;
@@ -44,7 +46,7 @@ public class MessageHandler implements Runnable {
                     String roomCode = CodeMessage.substring(5);
                     System.out.println("Hosted room with code: " + roomCode);
                     fireEvent(new ActionEvent(roomCode, ActionEvent.ACTION_PERFORMED, "RoomCodeGenerated"));
-                    String friendJoined = (String)in.readObject();
+                    String friendJoined = (String) in.readObject();
                     if (friendJoined.equals("FRIEND_JOINED")) {
                         fireEvent(new ActionEvent(friendJoined, ActionEvent.ACTION_PERFORMED, "FriendJoined"));
                     }
@@ -55,7 +57,7 @@ public class MessageHandler implements Runnable {
                 out.writeObject(code);
                 out.flush();
                 String response = (String) in.readObject();
-                if(response.equals("JOINED")) {
+                if (response.equals("JOINED")) {
                     fireEvent(new ActionEvent("joined", ActionEvent.ACTION_PERFORMED, "IncomingMessage"));
                 }
             }
@@ -88,6 +90,7 @@ public class MessageHandler implements Runnable {
             }
         });
     }
+
     public void sendChosenPiece(int piece) {
         Integer Piece = piece;
         try {
@@ -127,6 +130,7 @@ public class MessageHandler implements Runnable {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
     }
 }
