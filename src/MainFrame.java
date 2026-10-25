@@ -9,7 +9,6 @@ import minesweeper.MinesweeperMainpanel;
 import twentyfourtyeight.TwentyfourtyeightPanel;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,10 +22,10 @@ public class MainFrame extends JFrame implements ActionListener {
     connect4MainPanel connect4MainPanel = new connect4MainPanel(this);
     TwentyfourtyeightPanel game_2048 = new TwentyfourtyeightPanel(this);
     TetrisMainPanel tetris = new TetrisMainPanel(this);
-    PacMan_MainPanel m = new PacMan_MainPanel();
+    PacMan_MainPanel pacManMainPanel = new PacMan_MainPanel(this);
 
     public MainFrame() {
-        add(m);
+        add(mainPanel);
         stopAllRunning();
 
         pack();
@@ -42,6 +41,7 @@ public class MainFrame extends JFrame implements ActionListener {
         if (e.getActionCommand().equals("return")) {
             setTitle("Game Selection");
             stopAllRunning();
+            pacManMainPanel.stopGame();
             renderPanel(mainPanel);
         } else if (e.getActionCommand().equals("resize")) {
             pack();
@@ -80,6 +80,10 @@ public class MainFrame extends JFrame implements ActionListener {
                 tetris.reset();
                 tetris.startGame();
                 renderPanel(tetris);
+            }
+            if (e.getActionCommand().equals("Pac-Man")) {
+                pacManMainPanel.startGame();
+                renderPanel(pacManMainPanel);
             }
         }
     }

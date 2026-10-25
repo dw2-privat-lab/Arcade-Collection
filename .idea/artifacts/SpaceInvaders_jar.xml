@@ -6,6 +6,10 @@
         <element id="file-copy" path="$PROJECT_DIR$/resources/META-INF/Main/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="SpaceInvaders" />
+      <element id="directory" name="resources">
+        <element id="directory" name="Sounds" />
+        <element id="directory" name="PacMan" />
+      </element>
     </root>
   </artifact>
 </component>

@@ -237,7 +237,7 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
             if (!online) {
                 gameLogic.move(col);
                 if (!muted)
-                    SoundPlayer.playSound("resources/click.wav");
+                    SoundPlayer.playSound("resources/Sounds/lick.wav");
             } else if (gameLogic.firstPlayerPlaying == isYellow) onlineHandler.sendMove(col);
             repaint();
         }

@@ -5,4 +5,8 @@
   "Tetris": {
     "highscore": 5240
   }
+,
+  "PACMAN": {
+    "highscore": 5190
+  }
 }

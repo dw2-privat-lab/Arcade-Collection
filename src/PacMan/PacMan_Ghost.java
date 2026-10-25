@@ -7,22 +7,22 @@ import java.util.ArrayList;
 import static PacMan.Directions.*;
 
 public class PacMan_Ghost {
+    final int type;
     private final float originalStepSize;
     private final float originX;
     private final float originY;
+    private final PacMan_player player;
+    private final Directions[] tryDirections = {UP, RIGHT, LEFT, DOWN};
+    private final Board board;
+    private final int[][] gamefield;
     float x;
     float y;
     float x2;
     float y2;
-    final int type;
-    private final PacMan_player player;
-    private boolean isScatterMode = true;
     boolean isFrightend = false;
-    private final Directions[] tryDirections = {UP, RIGHT, LEFT, DOWN};
     Directions current_direction = Directions.LEFT;
-    private final Board board;
+    private boolean isScatterMode = true;
     private float stepSize;
-
     private boolean moveBack = false;
     private boolean forceMoveDown = false;
     private boolean forceMoveOut = true;
@@ -30,8 +30,6 @@ public class PacMan_Ghost {
     private boolean waitingAnimationDown = false;
     private ArrayList<Point> homeRoute = new ArrayList<>();
     private int homeRouteIndex = 1;
-
-    private final int[][] gamefield;
 
     public PacMan_Ghost(float x, float y, float stepSize, int type, Board board) {
         this.x = x;
@@ -53,8 +51,10 @@ public class PacMan_Ghost {
         moveBack = false;
         homeRoute.clear();
         homeRouteIndex = 1;
-        waiting = false;
+        waiting = type != 1;
+        waitingAnimationDown = false;
         isFrightend = false;
+        isScatterMode = false;
         current_direction = Directions.LEFT;
         stepSize = originalStepSize;
         x = originX;
@@ -102,6 +102,7 @@ public class PacMan_Ghost {
                 forceMoveOut = true;
                 forceMoveDown = false;
                 board.releaseGhosts();
+                isFrightend = false;
             }
             return;
         }
@@ -153,6 +154,8 @@ public class PacMan_Ghost {
                 }
                 homeRoute = calculateHomeRoute();
                 homeRouteIndex = 1;
+                board.addScore(200);
+                board.ghostEaten();
                 if (!homeRoute.isEmpty() && homeRoute.size() > 1) {
                     current_direction = directionTo(homeRoute.get(0), homeRoute.get(1));
                 }
@@ -220,11 +223,24 @@ public class PacMan_Ghost {
 
         if (isScatterMode) {
             switch (type) {
-                case 1 -> { targetX = 27; targetY = 0; }
-                case 2 -> { targetX = 0; targetY = 0; }
-                case 3 -> { targetX = 27; targetY = 30; }
-                case 4 -> { targetX = 0; targetY = 30; }
-                default -> { }
+                case 1 -> {
+                    targetX = 27;
+                    targetY = 0;
+                }
+                case 2 -> {
+                    targetX = 0;
+                    targetY = 0;
+                }
+                case 3 -> {
+                    targetX = 27;
+                    targetY = 30;
+                }
+                case 4 -> {
+                    targetX = 0;
+                    targetY = 30;
+                }
+                default -> {
+                }
             }
         } else {
             double dx;
@@ -260,7 +276,8 @@ public class PacMan_Ghost {
                         targetY = 30;
                     }
                 }
-                default -> { }
+                default -> {
+                }
             }
         }
         current_direction = getDirectionToFollowPoint(targetX, targetY);
@@ -372,8 +389,8 @@ public class PacMan_Ghost {
                 }
             }
         }
-        if(preferredDirections.isEmpty()){
-            if(canMove(reverse)) preferredDirections.add(reverse);
+        if (preferredDirections.isEmpty()) {
+            if (canMove(reverse)) preferredDirections.add(reverse);
             if (preferredDirections.isEmpty()) {
                 return current_direction;
             }
@@ -434,9 +451,6 @@ public class PacMan_Ghost {
     public void setFrightend(boolean frightend) {
         if (this.isFrightend == frightend) return;
         this.isFrightend = frightend;
-
-        // A ghost already eaten is following its saved route; the frightened
-        // timer expiring must not reverse it away from the house.
         if (!moveBack) {
             current_direction = opposite(current_direction);
         }
@@ -455,14 +469,15 @@ public class PacMan_Ghost {
         return ghostBounds.intersects(playerBounds);
     }
 
+    public boolean isWaiting() {
+        return waiting;
+    }
+
     public void setWaiting(boolean waiting) {
         this.waiting = waiting;
     }
 
-    public boolean isWaiting() {
-        return waiting;
-    }
-    public boolean isDead(){
+    public boolean isDead() {
         return moveBack;
     }
 }

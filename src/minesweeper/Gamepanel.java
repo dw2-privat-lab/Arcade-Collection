@@ -15,7 +15,7 @@ public class Gamepanel extends JPanel implements MouseListener, ActionListener {
     int[][] fieldmask;
     int mouseX;
     int mouseY;
-    boolean restart = false;
+    boolean restart = true;
     int totaltiles;
     int openedTiles;
     int minesFlagged;
@@ -43,8 +43,6 @@ public class Gamepanel extends JPanel implements MouseListener, ActionListener {
         totaltiles = Settings.getArraywidth(diff) * Settings.getArrayheight(diff);
         minesFlagged = Settings.getNumberOfMines(diff);
         setPreferredSize(new Dimension(Settings.getArraywidth(diff) * Settings.tilesize + 2 * Settings.Xoffset, Settings.getArrayheight(diff) * Settings.tilesize + Settings.Yoffset));
-        restart = true;
-
         addMouseListener(this);
         timer = new Timer(1000, this);
     }
@@ -87,10 +85,8 @@ public class Gamepanel extends JPanel implements MouseListener, ActionListener {
         Time = 0;
         timer.start();
 
-        // The generation loop now handles creating and validating the board
         randomizeMines(firstX, firstY);
 
-        // Reset the visible field mask once a valid board is generated
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[0].length; j++) {
                 fieldmask[i][j] = 0;
