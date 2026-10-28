@@ -1,9 +1,9 @@
 package minesweeper;
 
 public class Settings {
-    public static int tilesize = 34;
-    public static int Xoffset = 0;
-    public static int Yoffset = 30;
+    public static int tilesize = 30;
+    public static int Xoffset = 16;
+    public static int Yoffset = 0;
 
     public static int getArraywidth(difficulty diff) {
         return switch (diff) {

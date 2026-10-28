@@ -69,6 +69,8 @@ public class Board {
     private Timer deathFinishTimer;
     private Timer secondDeathSoundTimer;
     private boolean started = false;
+    private boolean playerMoving = false;
+
     public Board() {
         resetBoard();
         float stepsize = 0.125f;
@@ -99,7 +101,6 @@ public class Board {
                 return;
             }
 
-            // Read older files that used the score itself as the JSON key.
             Matcher legacyFormat = Pattern.compile("\"(\\d+)\"\\s*:\\s*(\\d+)").matcher(data);
             while (legacyFormat.find()) {
                 highscore = Math.max(highscore, Integer.parseInt(legacyFormat.group(2)));
@@ -323,20 +324,19 @@ public class Board {
     private void finishDeath() {
         if (!started) return;
         player.lives--;
-        player.reset();
-        waveStep = 0;
-        isScatter = false;
-        resetGhosts();
         if (player.lives == 0) {
             score = 0;
-            player.lives = 3;
+            level = 1;
+            player.resetForNewGame();
             resetBoard();
         }
+        player.reset();
+        resetGhosts();
+        resetModeSchedule();
         playDeathAnimaton = false;
         deathInProgress = false;
         if (moveTimer != null) moveTimer.start();
         start();
-        restartModeTimer();
     }
 
     public boolean playDeathAnimaton() {
@@ -354,6 +354,7 @@ public class Board {
         startDelayTimer = new Timer(4210, e -> {
             if (started) {
                 running = true;
+                restartModeTimer();
                 releaseGhosts();
                 updateLoopingSounds();
             }
@@ -370,7 +371,9 @@ public class Board {
         if (moveTimer == null) {
             moveTimer = new Timer(16, e -> {
                 if (running) {
+                    float temp = player.x + player.y;
                     player.move();
+                    playerMoving = (temp != player.x + player.y);
                     for (PacMan_Ghost ghost : ghosts) ghost.move();
                     updateLoopingSounds();
                 }
@@ -388,26 +391,33 @@ public class Board {
             });
         }
         moveTimer.start();
-        if (!modeTimer.isRunning() && waveDurations[waveStep] != -1) modeTimer.start();
         start();
     }
 
     private void resetForNewGame() {
         running = false;
         score = 0;
-        waveStep = 0;
-        isScatter = false;
+        level = 1;
         deathInProgress = false;
         playDeathAnimaton = false;
+        playerMoving = false;
+        frightenedModeActive = false;
 
         if (ghostReleaseTimer != null) ghostReleaseTimer.stop();
         if (frightenedtimer != null) frightenedtimer.stop();
+        if (modeTimer != null) modeTimer.stop();
         stopLoopingSounds();
 
         resetBoard();
         player.resetForNewGame();
         resetGhosts();
-        for (PacMan_Ghost ghost : ghosts) ghost.setScatterMode(false);
+        resetModeSchedule();
+    }
+
+    private void resetModeSchedule() {
+        waveStep = 0;
+        isScatter = true;
+        for (PacMan_Ghost ghost : ghosts) ghost.setScatterMode(true);
     }
 
     public void stopGame() {
@@ -430,22 +440,40 @@ public class Board {
 
     private void restartModeTimer() {
         if (modeTimer == null || waveDurations[waveStep] == -1) return;
-        modeTimer.setInitialDelay(waveDurations[waveStep] * 1000);
-        modeTimer.setDelay(waveDurations[waveStep] * 1000);
-        modeTimer.start();
+        int duration = waveDurations[waveStep] * 1000;
+        modeTimer.setInitialDelay(duration);
+        modeTimer.setDelay(duration);
+        modeTimer.restart();
     }
 
     public void wonLevel() {
+        if (!started || !running) return;
         running = false;
+        level++;
+        if (frightenedtimer != null) frightenedtimer.stop();
+        frightenedModeActive = false;
+        for (PacMan_Ghost ghost : ghosts) ghost.setFrightend(false);
+        stopLoopingSounds();
+
         resetBoard();
         resetGhosts();
         player.reset();
+        if (ghostReleaseTimer != null) ghostReleaseTimer.stop();
+        releaseGhosts();
+
         Timer delay = new Timer(4000, e -> {
-            if (started) running = true;
+            if (started) {
+                running = true;
+                updateLoopingSounds();
+            }
             ((Timer) e.getSource()).stop();
         });
         delay.setRepeats(false);
         delay.start();
+    }
+
+    public boolean isPlayerMoving() {
+        return playerMoving;
     }
 
     private enum LoopingSound {NONE, SIREN, FRIGHTENED, EYES}

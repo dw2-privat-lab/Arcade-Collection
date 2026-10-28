@@ -55,7 +55,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
 
         if (menu == 1) {
             g.setColor(c4Yellow);
-            g.setFont(new Font("Arial", Font.BOLD, 42));
+            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 42));
             FontMetrics fm = g.getFontMetrics();
             g.drawString("Connect4", (getWidth() - fm.stringWidth("Connect4")) / 2, 140);
 
@@ -67,7 +67,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             fillRoundRect(btnLeave, arc, arc, g);
 
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 22));
+            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 22));
             fm = g.getFontMetrics();
             g.drawString("Play Locally", btnLocally.x + (btnLocally.width - fm.stringWidth("Play Locally")) / 2, btnLocally.y + 37);
             g.drawString("Play Online", btnOnline.x + (btnOnline.width - fm.stringWidth("Play Online")) / 2, btnOnline.y + 37);
@@ -96,7 +96,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
 
     private void paintErrors(Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+        g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         for (int i = 0; i < 3; i++) {
             if (i < renderMessage.getMessages().size()) {
                 g2d.setColor(c4Red);
@@ -130,7 +130,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.setColor(c4BoardBlue);
         drawRoundRect(windowBounds, Arc, Arc, g);
 
-        g.setFont(new Font("Arial", Font.BOLD, 26));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 26));
         FontMetrics fontMetrics = g.getFontMetrics();
         String title = "Play Online";
         g.setColor(c4Yellow);
@@ -142,13 +142,13 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             g.setColor(c4Yellow);
             drawRoundRect(hostGameHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String hostText = "Host Game";
         g.drawString(hostText, hostGameHitbox.x + (hostGameHitbox.width - fontMetrics.stringWidth(hostText)) / 2, hostGameHitbox.y + 28);
 
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         fontMetrics = g.getFontMetrics();
         g.setColor(new Color(180, 180, 200));
         g.drawString("— OR —", windowBounds.x + (windowBounds.width - fontMetrics.stringWidth("— OR —")) / 2, 235);
@@ -159,7 +159,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             g.setColor(c4Yellow);
             drawRoundRect(ipAddressHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         FontMetrics fm = g.getFontMetrics();
 
         String textToDraw = ipAddress + (ipAddressFocussed ? "|" : "");
@@ -189,7 +189,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             g.setColor(c4Yellow);
             drawRoundRect(gameCodeHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         if (gameCode.isEmpty() && !gameCodeFocused) {
             g.setColor(new Color(130, 140, 160));
             g.drawString("Code", gameCodeHitbox.x + 10, gameCodeHitbox.y + 27);
@@ -204,7 +204,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             g.setColor(c4Yellow);
             drawRoundRect(joinGameHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String joinText = "Join Game";
@@ -216,7 +216,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             g.setColor(Color.WHITE);
             drawRoundRect(closeHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String backText = "Back";
@@ -238,7 +238,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
         g.setColor(c4BoardBlue);
         drawRoundRect(windowBounds, Arc, Arc, g);
 
-        g.setFont(new Font("Arial", Font.BOLD, 26));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 26));
         FontMetrics fontMetrics = g.getFontMetrics();
         String title = "Host Game";
         g.setColor(c4Yellow);
@@ -250,13 +250,13 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             g.setColor(c4Yellow);
             drawRoundRect(hostGameHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String hostText = "Host server locally";
         g.drawString(hostText, hostGameHitbox.x + (hostGameHitbox.width - fontMetrics.stringWidth(hostText)) / 2, hostGameHitbox.y + 28);
 
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         fontMetrics = g.getFontMetrics();
         g.setColor(new Color(180, 180, 200));
         g.drawString("— OR —", windowBounds.x + (windowBounds.width - fontMetrics.stringWidth("— OR —")) / 2, 235);
@@ -267,7 +267,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             g.setColor(c4Yellow);
             drawRoundRect(HostIpAddressHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         FontMetrics fm = g.getFontMetrics();
 
         String textToDraw = ipAddress + (ipAddressFocussed ? "|" : "");
@@ -297,7 +297,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             g.setColor(c4Yellow);
             drawRoundRect(joinGameHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String joinText = "Host server on external server";
@@ -309,7 +309,7 @@ public class connect4MainPanel extends JPanel implements MouseListener, MouseMot
             g.setColor(Color.WHITE);
             drawRoundRect(closeHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String backText = "Back";

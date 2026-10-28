@@ -11,12 +11,8 @@ public class SoundPlayer {
         try {
             Clip clip = loadClip(filePath);
             clip.start();
-        } catch (UnsupportedAudioFileException e) {
-            System.err.println("Unsupported audio file: " + filePath);
-        } catch (IOException e) {
-            System.err.println("Could not read audio file: " + filePath);
-        } catch (LineUnavailableException e) {
-            System.err.println("Audio playback line is unavailable.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -25,18 +21,13 @@ public class SoundPlayer {
             Clip clip = loadClip(filePath);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
             return clip;
-        } catch (UnsupportedAudioFileException e) {
-            System.err.println("Unsupported audio file: " + filePath);
-        } catch (IOException e) {
-            System.err.println("Could not read audio file: " + filePath);
-        } catch (LineUnavailableException e) {
-            System.err.println("Audio playback line is unavailable.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    private static Clip loadClip(String filePath)
-            throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    private static Clip loadClip(String filePath) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         String resourcePath = filePath.replace('\\', '/');
         while (resourcePath.startsWith("/")) {
             resourcePath = resourcePath.substring(1);
@@ -47,9 +38,7 @@ public class SoundPlayer {
             resource = SoundPlayer.class.getClassLoader().getResource(resourcePath.substring("resources/".length()));
         }
 
-        AudioInputStream audioStream = resource != null
-                ? AudioSystem.getAudioInputStream(resource)
-                : AudioSystem.getAudioInputStream(new File(filePath));
+        AudioInputStream audioStream = resource != null ? AudioSystem.getAudioInputStream(resource) : AudioSystem.getAudioInputStream(new File(filePath));
         Clip clip = AudioSystem.getClip();
         clip.open(audioStream);
         audioStream.close();

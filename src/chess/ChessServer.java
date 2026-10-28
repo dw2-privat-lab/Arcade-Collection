@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChessServer implements Runnable {
-    private static final int PORT = 55555;
+    private static final int PORT = 25565;
     private ServerSocket serverSocket;
     private volatile boolean running = false;
 

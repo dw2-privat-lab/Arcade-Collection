@@ -19,10 +19,10 @@ public class TwentyfourtyeightPanel extends JPanel implements KeyListener, Mouse
     private final Rectangle scoreBoundingBox = new Rectangle(Xoffset + 4 * tilesize - 195, 15, 95, 35);
     private final Rectangle highscoreBoundingBox = new Rectangle(Xoffset + 4 * tilesize - 95, 15, 95, 35);
     private final Rectangle sizeSelectionHitbox = new Rectangle(Xoffset + 4 * tilesize - 20, 60, 20, 20);
-    int animationFrame = 10;
-    EventListenerList listenerList = new EventListenerList();
     private final Rectangle keepGoingHitbox = new Rectangle(Xoffset + 40, Yoffset + 2 * tilesize + 30, 113, 30);
     private final Rectangle startOverHitbox = new Rectangle(Xoffset + 40 + tilesize + tilesize / 2, Yoffset + 2 * tilesize + 30, 113, 30);
+    int animationFrame = 10;
+    EventListenerList listenerList = new EventListenerList();
     private int highlighted = 0;
     private int sizeSelectionHovered = 0;
     private boolean sizeSelectionHitboxFocused = false;
@@ -79,10 +79,10 @@ public class TwentyfourtyeightPanel extends JPanel implements KeyListener, Mouse
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setFont(new Font("Arial", Font.BOLD, 55));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 55));
         g.setColor(new Color(118, 109, 100));
         g.drawString("2048", Xoffset - arc, 55);
-        g.setFont(new Font("Arial", Font.PLAIN, 11));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 11));
         FontMetrics fm = g.getFontMetrics();
         if (gameLogic.getCustomSize() > 3) {
 
@@ -102,7 +102,7 @@ public class TwentyfourtyeightPanel extends JPanel implements KeyListener, Mouse
         g.drawString("Best", highscoreBoundingBox.x + (highscoreBoundingBox.width - fm.stringWidth("Best")) / 2, highscoreBoundingBox.y + 12);
         g.drawString("Return", returnHitbox.x + (returnHitbox.width - fm.stringWidth("Return")) / 2, returnHitbox.y + 14);
         g.drawString("new Game", newGameHitbox.x + (newGameHitbox.width - fm.stringWidth("new Game")) / 2, newGameHitbox.y + 14);
-        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         fm = g.getFontMetrics();
         g.drawString(gameLogic.getScore() + "", scoreBoundingBox.x + (scoreBoundingBox.width - fm.stringWidth(gameLogic.getScore() + "")) / 2, scoreBoundingBox.y + 30);
         g.drawString(gameLogic.getHighscore() + "", highscoreBoundingBox.x + (highscoreBoundingBox.width - fm.stringWidth(gameLogic.getHighscore() + "")) / 2, highscoreBoundingBox.y + 30);
@@ -149,7 +149,7 @@ public class TwentyfourtyeightPanel extends JPanel implements KeyListener, Mouse
     private void drawGameOver(Graphics2D g) {
         g.setColor(new Color(234, 234, 234, 123));
         g.fillRoundRect(Xoffset - arc, Yoffset - arc, gameLogic.getCustomSize() * tilesize + arc, gameLogic.getCustomSize() * tilesize + arc, arc, arc);
-        g.setFont(new Font("Arial", Font.BOLD, gameLogic.getCustomSize() == 3 ? 45 : 50));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, gameLogic.getCustomSize() == 3 ? 45 : 50));
         FontMetrics fm = g.getFontMetrics();
         g.setColor(new Color(112, 112, 112));
         g.drawString("Game Over!", (getWidth() - fm.stringWidth("Game Over!")) / 2, Yoffset + gameLogic.getCustomSize() / 3 * tilesize + 20);
@@ -159,7 +159,7 @@ public class TwentyfourtyeightPanel extends JPanel implements KeyListener, Mouse
             g.setColor(Color.white);
             g.drawRoundRect((getWidth() - startOverHitbox.width) / 2, startOverHitbox.y, startOverHitbox.width, startOverHitbox.height, 5, 5);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 15));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         fm = g.getFontMetrics();
         g.setColor(new Color(255, 255, 255));
         g.drawString("Try again", (getWidth() - fm.stringWidth("Try again")) / 2, startOverHitbox.y + startOverHitbox.height - fm.getHeight() / 2);
@@ -175,7 +175,7 @@ public class TwentyfourtyeightPanel extends JPanel implements KeyListener, Mouse
                 }
             }
         }
-        g.setFont(new Font("Arial", Font.BOLD, 40));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
         FontMetrics fm = g.getFontMetrics();
         g.setColor(new Color(255, 250, 238));
         g.drawString("You Win!", (getWidth() - fm.stringWidth("You Win!")) / 2, Yoffset + gameLogic.getCustomSize() / 3 * tilesize + 20);
@@ -187,7 +187,7 @@ public class TwentyfourtyeightPanel extends JPanel implements KeyListener, Mouse
             g.drawRoundRect(startOverHitbox.x, startOverHitbox.y, startOverHitbox.width, startOverHitbox.height, 5, 5);
         if (highlighted == 2)
             g.drawRoundRect(keepGoingHitbox.x, keepGoingHitbox.y, keepGoingHitbox.width, keepGoingHitbox.height, 5, 5);
-        g.setFont(new Font("Arial", Font.BOLD, 15));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         fm = g.getFontMetrics();
         g.setColor(new Color(255, 255, 255));
         g.drawString("Keep going", keepGoingHitbox.x + (keepGoingHitbox.width - fm.stringWidth("Keep going")) / 2, keepGoingHitbox.y + keepGoingHitbox.height - fm.getHeight() / 2);
@@ -201,7 +201,7 @@ public class TwentyfourtyeightPanel extends JPanel implements KeyListener, Mouse
         if (value == 2 || value == 4) g.setColor(new Color(119, 110, 101));
         else g.setColor(new Color(249, 246, 242));
 
-        g.setFont(new Font("Arial", Font.BOLD, tilesize / 3));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, tilesize / 3));
         String text = String.valueOf(value);
 
         FontMetrics fm = g.getFontMetrics();
@@ -214,7 +214,7 @@ public class TwentyfourtyeightPanel extends JPanel implements KeyListener, Mouse
     private void drawSizeSelection(Graphics g) {
         g.setColor(new Color(181, 181, 181));
         g.fillRoundRect(sizeSelectionHitbox.x, sizeSelectionHitbox.y, sizeSelectionHitbox.width, sizeSelectionHitbox.height, arc, arc);
-        g.setFont(new Font("Arial", Font.BOLD, 12));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
         if (sizeSelectionHitboxFocused || highlighted == 5) {
             g.fillRoundRect(sizeSelectionHitbox.x, sizeSelectionHitbox.y, sizeSelectionHitbox.width, 6 * sizeSelectionHitbox.height, arc, arc);
             g.setColor(Color.white);

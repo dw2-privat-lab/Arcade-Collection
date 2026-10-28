@@ -14,61 +14,86 @@ public class Ball extends Rectangle {
         super(x, y, Settings.BallSize, Settings.BallSize);
         startX = x;
         startY = y;
-
-        this.exactX = x;
-        this.exactY = y;
-
-        direction = Math.random() * 240;
-        if (direction > 60) {
-            direction += 60;
-        }
-        if (direction > 240) {
-            direction += 60;
-        }
+        exactX = x;
+        exactY = y;
+        resetDirection();
     }
 
     public void move() {
         double radians = Math.toRadians(direction);
-
         exactX += Math.cos(radians) * speed;
         exactY += Math.sin(radians) * speed;
-
-        this.x = (int) exactX;
-        this.y = (int) exactY;
-
+        x = (int) exactX;
+        y = (int) exactY;
         bounce();
     }
 
     private void bounce() {
         int ballSize = Settings.BallSize;
-
         if (exactY <= 0) {
             exactY = 0;
             direction = -direction;
-        }
-
-        if (exactY >= Settings.GameSize - ballSize) {
+        } else if (exactY >= Settings.GameSize - ballSize) {
             exactY = Settings.GameSize - ballSize;
             direction = -direction;
         }
-        direction = (direction + 360) % 360;
+        direction = normalize(direction);
+        x = (int) exactX;
+        y = (int) exactY;
+    }
+
+    private void resetDirection() {
+        double horizontalAngle = 25 + Math.random() * 35;
+        boolean movingRight = Math.random() < 0.5;
+        boolean movingDown = Math.random() < 0.5;
+        if (movingRight) {
+            direction = movingDown ? horizontalAngle : 360 - horizontalAngle;
+        } else {
+            direction = movingDown ? 180 - horizontalAngle : 180 + horizontalAngle;
+        }
+    }
+
+    public void bounceFromPaddle(Paddle paddle, boolean leftPaddle) {
+        double ballCenter = exactY + Settings.BallSize / 2.0;
+        double paddleCenter = paddle.getCenterY();
+        double halfHeight = paddle.height / 2.0;
+        double impact = Math.clamp((ballCenter - paddleCenter) / halfHeight, -1.0, 1.0);
+        double verticalAngle = impact * 60.0;
+        direction = leftPaddle ? verticalAngle : 180.0 - verticalAngle;
+        direction = normalize(direction);
+        exactX = leftPaddle ? paddle.x + paddle.width : paddle.x - Settings.BallSize;
+        x = (int) exactX;
     }
 
     void reset() {
         exactX = startX;
         exactY = startY;
+        x = startX;
+        y = startY;
+        resetDirection();
+    }
 
-        direction = Math.random() * 240;
-        if (direction > 60) {
-            direction += 60;
-        }
-        if (direction > 240) {
-            direction += 60;
-        }
+    private double normalize(double angle) {
+        angle %= 360.0;
+        return angle < 0 ? angle + 360.0 : angle;
+    }
+
+    public double getExactX() {
+        return exactX;
     }
 
     public void setExactX(double exactX) {
         this.exactX = exactX;
+        x = (int) exactX;
+    }
+
+    public double getExactY() {
+        return exactY;
+    }
+
+    public void setExactY(double exactY) {
+        this.exactY = exactY;
+        y = (int) exactY;
     }
 
     public double getDirection() {
@@ -76,6 +101,6 @@ public class Ball extends Rectangle {
     }
 
     public void setDirection(double direction) {
-        this.direction = direction;
+        this.direction = normalize(direction);
     }
 }

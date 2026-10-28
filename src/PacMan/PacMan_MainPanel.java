@@ -134,6 +134,8 @@ public class PacMan_MainPanel extends JPanel implements MouseListener, MouseMoti
                 }
             }
         }
+        if (!board.isPlayerMoving())
+            pacManFrame = 0;
         if (!board.playDeathAnimaton()) {
             g.drawImage(pacmanFrames[player.current_direction.ordinal()][pacManFrame], (int) (player.x * tilesize - ghostOffset), (int) (player.y * tilesize - ghostOffset + Yoffset), ghostSize, ghostSize, null);
         } else {

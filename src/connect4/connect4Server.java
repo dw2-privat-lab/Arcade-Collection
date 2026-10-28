@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class connect4Server implements Runnable {
-    private static final int PORT = 55555;
+    private static final int PORT = 25566;
     private ServerSocket serverSocket;
     private volatile boolean running = false;
 
@@ -90,6 +90,7 @@ public class connect4Server implements Runnable {
             }
         } catch (SocketException e) {
             System.out.println("Socket closed");
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

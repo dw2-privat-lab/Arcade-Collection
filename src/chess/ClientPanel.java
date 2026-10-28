@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ClientPanel extends Chess_Singleplayer_panel implements ActionListener {
-    int port = 55555;
+    int port = 25565;
     MessageHandler messageHandler;
     private boolean playsAsWhite = true;
     private String GameCode;
@@ -46,20 +46,20 @@ public class ClientPanel extends Chess_Singleplayer_panel implements ActionListe
             g.setColor(new Color(53, 57, 57, 187));
             g.fillRect(0, 0, getWidth() - tileSize, getHeight());
             g.setColor(java.awt.Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 22));
+            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 22));
             FontMetrics fontMetrics = g.getFontMetrics();
             g.drawString("Your Friend has diconnected", (getWidth() - tileSize - fontMetrics.stringWidth("Your Friend has diconnected")) / 2, getHeight() / 2);
-            g.setFont(new Font("Arial", Font.BOLD, 15));
+            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
             fontMetrics = g.getFontMetrics();
             g.drawString("Leave this Game to start a new one", (getWidth() - tileSize - fontMetrics.stringWidth("Leave this Game to start a new one")) / 2, getHeight() / 2 + 37);
         } else if (waiting) {
             g.setColor(new Color(53, 57, 57, 187));
             g.fillRect(0, 0, getWidth() - tileSize, getHeight());
             g.setColor(java.awt.Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 22));
+            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 22));
             FontMetrics fontMetrics = g.getFontMetrics();
             g.drawString("Waiting for Second Player", (getWidth() - tileSize - fontMetrics.stringWidth("Waiting for Second Player")) / 2, getHeight() / 2);
-            g.setFont(new Font("Arial", Font.BOLD, 15));
+            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
             fontMetrics = g.getFontMetrics();
             g.drawString("This is your Room Code:" + GameCode, (getWidth() - tileSize - fontMetrics.stringWidth("This is your Room Code: " + GameCode)) / 2, getHeight() / 2 + 37);
             g.drawString("Share this code with your Friend", (getWidth() - tileSize - fontMetrics.stringWidth("Share this code with your Friend")) / 2, getHeight() / 2 + 54);
@@ -166,6 +166,8 @@ public class ClientPanel extends Chess_Singleplayer_panel implements ActionListe
 
     @Override
     protected void checkMoveClick(int MouseX, int MouseY) {
+        if (disconnect)
+            return;
         if (waiting || spiel.whiteMoves != playsAsWhite)
             return;
 

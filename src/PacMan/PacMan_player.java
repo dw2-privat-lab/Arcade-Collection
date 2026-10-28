@@ -7,6 +7,7 @@ public class PacMan_player {
     private final float originX;
     private final float originY;
     private final Board board;
+    private final int[][] gamefield;
     float x;
     float y;
     float x2;
@@ -15,7 +16,6 @@ public class PacMan_player {
     Directions next_direction = Directions.LEFT;
     int lives = 3;
     int remaininDots = 244;
-    private final int[][] gamefield;
     private boolean firstDot = true;
 
     public PacMan_player(float x, float y, float stepSize, Board board) {
@@ -58,16 +58,18 @@ public class PacMan_player {
             if (tiles[tileY][tileX] > 1) {
                 board.setFrightened();
             }
-            if (tiles[tileY][tileX] <= 2) {
+            int eatenTile = tiles[tileY][tileX];
+            board.setTile(tileX, tileY, 0);
+
+            if (eatenTile <= 2) {
                 SoundPlayer.playSound("resources/Sounds/pacman_eat_dot_" + (firstDot ? 0 : 1) + ".wav");
                 firstDot = !firstDot;
                 remaininDots--;
-                board.addScore(tiles[tileY][tileX] == 1 ? 10 : 50);
+                board.addScore(eatenTile == 1 ? 10 : 50);
                 if (remaininDots == 0) {
                     board.wonLevel();
                 }
             }
-            board.setTile(tileX, tileY, 0);
         }
     }
 

@@ -1,6 +1,7 @@
 package Tetris;
 
 import commonTools.ImageLoader;
+import commonTools.SoundPlayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,6 +29,7 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
     Thread gameThread = new Thread(game);
     int[][] renderField;
     private int hoveredElement = 0;
+    private javax.sound.sampled.Clip activeLoopSound;
 
     public TetrisMainPanel(ActionListener actionListener) {
         listenerList.add(ActionListener.class, actionListener);
@@ -46,11 +48,13 @@ public class TetrisMainPanel extends JPanel implements KeyListener, MouseListene
     public void startGame() {
         repaintTimer.start();
         game.unpause();
+        activeLoopSound = SoundPlayer.playLoopingSound("resources/Sounds/tetris_theme.wav");
     }
 
     public void stopGame() {
         repaintTimer.stop();
         game.pauseGame();
+        SoundPlayer.stopSound(activeLoopSound);
     }
 
     public void reset() {

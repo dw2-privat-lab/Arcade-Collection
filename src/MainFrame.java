@@ -104,5 +104,6 @@ public class MainFrame extends JFrame implements ActionListener {
         snake_panel.pause();
         pong_panel.pause();
         tetris.stopGame();
+        pacManMainPanel.stopGame();
     }
 }

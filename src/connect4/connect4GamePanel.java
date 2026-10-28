@@ -51,7 +51,7 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
 
     public void joinAsHostGame(String host) {
         reset();
-        onlineHandler = new onlineHandler(host, 55555, true, null, this);
+        onlineHandler = new onlineHandler(host, 25566, true, null, this);
         Thread onlineThread = new Thread(onlineHandler);
         onlineThread.start();
         online = true;
@@ -61,7 +61,7 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
     public void joinGame(String host, String Code) {
         isWaiting = false;
         reset();
-        onlineHandler = new onlineHandler(host, 55555, false, Code, this);
+        onlineHandler = new onlineHandler(host, 25566, false, Code, this);
         Thread onlineThread = new Thread(onlineHandler);
         onlineThread.start();
         online = true;
@@ -130,7 +130,7 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
             g2d.fillRect(sideWidth, 0, boardWidth, boardHeight);
 
             g2d.setColor(Color.WHITE);
-            g2d.setFont(new Font("SansSerif", Font.BOLD, 28));
+            g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 28));
             String text;
             if (online)
                 text = (gameLogic.won == 1 ? isYellow ? "YOU WIN!" : "YOUR OPPONENT WINS!" : isYellow ? "YOUR OPPONENT WINS!" : "YOU WIN!");
@@ -149,7 +149,7 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         g2d.fillRoundRect(returnHitbox.x, returnHitbox.y, returnHitbox.width, returnHitbox.height, 10, 10);
 
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Arial", Font.BOLD, 15));
+        g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
         FontMetrics fmReturn = g2d.getFontMetrics();
         g2d.drawString("Return", returnHitbox.x + (returnHitbox.width - fmReturn.stringWidth("Return")) / 2, returnHitbox.y + 22);
         if (returnHitboxhovered) {
@@ -171,11 +171,11 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
 
     private void drawSide(Graphics2D g2d, int x, String name, int score, Color color, boolean active) {
         g2d.setColor(color);
-        g2d.setFont(new Font("SansSerif", Font.BOLD, 16));
+        g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
         g2d.drawString(name, x + 25, 50);
 
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         g2d.drawString("Score: " + score, x + 25, 80);
 
         if (active && gameLogic.won == 0) {
@@ -189,7 +189,7 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("SansSerif", Font.BOLD, 22));
+        g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 22));
         FontMetrics fm = g2d.getFontMetrics();
         g2d.drawString("Waiting for players!", (int) ((getWidth() - fm.getStringBounds("Waiting for players!", g2d).getWidth()) / 2), getHeight() / 2);
         g2d.drawString("This is your room Code: " + roomCode, (int) ((getWidth() - fm.getStringBounds("This is your room Code: " + roomCode, g2d).getWidth()) / 2), getHeight() / 2 + 35);
@@ -199,7 +199,7 @@ public class connect4GamePanel extends JPanel implements MouseListener, MouseMot
         g2d.setColor(new Color(0, 0, 0, 115));
         g2d.fillRect(0, 0, getWidth(), getHeight());
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("SansSerif", Font.BOLD, 22));
+        g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 22));
         FontMetrics fm = g2d.getFontMetrics();
         g2d.drawString("Your Opponent has disconnected", (int) ((getWidth() - fm.getStringBounds("Your Opponent has disconnected", g2d).getWidth()) / 2), getHeight() / 2);
         g2d.drawString("Exit to start a new game", (int) ((getWidth() - fm.getStringBounds("Exit to start a new game", g2d).getWidth()) / 2), getHeight() / 2 + 35);

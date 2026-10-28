@@ -59,7 +59,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
                 setBackground(defaultGray);
 
                 g.setColor(Color.WHITE);
-                g.setFont(new Font("Arial", Font.BOLD, 42));
+                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 42));
                 FontMetrics titleMetrics = g.getFontMetrics();
                 String title = "Chess";
                 g.drawString(title, (getWidth() - titleMetrics.stringWidth(title)) / 2, 140);
@@ -83,7 +83,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
                     drawRoundRect(leaveHitbox, arc, arc, g);
                 }
 
-                g.setFont(new Font("Arial", Font.BOLD, 22));
+                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 22));
                 FontMetrics fontMetrics = g.getFontMetrics();
                 g.drawString("Play locally", playLocallyHitbox.x + (playLocallyHitbox.width - fontMetrics.stringWidth("Play locally")) / 2, playLocallyHitbox.y + 37);
                 g.drawString("Play online", playOnlineHitbox.x + (playOnlineHitbox.width - fontMetrics.stringWidth("Play online")) / 2, playOnlineHitbox.y + 37);
@@ -102,7 +102,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
 
     private void paintErrors(Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+        g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
 
         List<String> messagesSnapshot = new ArrayList<>(renderMessage.getMessages());
         for (int i = 0; i < 3 && i < messagesSnapshot.size(); i++) {
@@ -133,7 +133,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
         g.setColor(Color.WHITE);
         drawRoundRect(windowBounds, Arc, Arc, g);
 
-        g.setFont(new Font("Arial", Font.BOLD, 26));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 26));
         FontMetrics fontMetrics = g.getFontMetrics();
         String title = "Play Online";
         g.drawString(title, windowBounds.x + (windowBounds.width - fontMetrics.stringWidth(title)) / 2, windowBounds.y + 42);
@@ -144,13 +144,13 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
             g.setColor(Color.WHITE);
             drawRoundRect(hostGameHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String hostText = "Host Game";
         g.drawString(hostText, hostGameHitbox.x + (hostGameHitbox.width - fontMetrics.stringWidth(hostText)) / 2, hostGameHitbox.y + 31);
 
-        g.setFont(new Font("Arial", Font.PLAIN, 15));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
         fontMetrics = g.getFontMetrics();
         g.setColor(new Color(180, 180, 180));
         g.drawString("— OR —", windowBounds.x + (windowBounds.width - fontMetrics.stringWidth("— OR —")) / 2, 238);
@@ -161,7 +161,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
             g.setColor(Color.WHITE);
             drawRoundRect(ipAddressHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         FontMetrics fm = g.getFontMetrics();
         String ipTextToDraw = ipAddress + (ipAddressFocussed ? "|" : "");
         int textWidth = fm.stringWidth(ipTextToDraw);
@@ -190,7 +190,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
             g.setColor(Color.WHITE);
             drawRoundRect(gameCodeHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         if (gameCode.isEmpty() && !gameCodeFocused) {
             g.setColor(new Color(150, 150, 150));
             g.drawString("Code", gameCodeHitbox.x + 10, gameCodeHitbox.y + 28);
@@ -205,7 +205,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
             g.setColor(Color.WHITE);
             drawRoundRect(joinGameHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String joinText = "Join Game";
@@ -217,7 +217,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
             g.setColor(Color.WHITE);
             drawRoundRect(closeHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String backText = "Back";
@@ -238,7 +238,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
         g.setColor(Color.WHITE);
         drawRoundRect(windowBounds, Arc, Arc, g);
 
-        g.setFont(new Font("Arial", Font.BOLD, 26));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 26));
         FontMetrics fontMetrics = g.getFontMetrics();
         String title = "Host Game";
         g.drawString(title, windowBounds.x + (windowBounds.width - fontMetrics.stringWidth(title)) / 2, windowBounds.y + 42);
@@ -249,13 +249,13 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
             g.setColor(Color.WHITE);
             drawRoundRect(hostGameHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String hostText = "Host server locally";
         g.drawString(hostText, hostGameHitbox.x + (hostGameHitbox.width - fontMetrics.stringWidth(hostText)) / 2, hostGameHitbox.y + 32);
 
-        g.setFont(new Font("Arial", Font.PLAIN, 15));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
         fontMetrics = g.getFontMetrics();
         g.setColor(new Color(180, 180, 200));
         g.drawString("— OR —", windowBounds.x + (windowBounds.width - fontMetrics.stringWidth("— OR —")) / 2, 238);
@@ -266,7 +266,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
             g.setColor(Color.WHITE);
             drawRoundRect(HostIpAddressHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         FontMetrics fm = g.getFontMetrics();
 
         String textToDraw = ipAddress + (ipAddressFocussed ? "|" : "");
@@ -296,7 +296,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
             g.setColor(Color.WHITE);
             drawRoundRect(joinGameHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String joinText = "Host server on external server";
@@ -308,7 +308,7 @@ public class Chess_MainMenu extends JPanel implements MouseListener, MouseMotion
             g.setColor(Color.WHITE);
             drawRoundRect(closeHitbox, elementArc, elementArc, g);
         }
-        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
         fontMetrics = g.getFontMetrics();
         g.setColor(Color.WHITE);
         String backText = "Back";

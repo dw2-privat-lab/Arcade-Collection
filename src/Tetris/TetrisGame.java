@@ -1,5 +1,7 @@
 package Tetris;
 
+import commonTools.SoundPlayer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -149,6 +151,10 @@ public class TetrisGame implements Runnable {
                 for (int line : linesToClear) {
                     clearLine(line);
                 }
+                if (temp != 0)
+                    SoundPlayer.playSound("resources/Sounds/tetris_ClearLine.wav");
+                else
+                    SoundPlayer.playSound("resources/Sounds/tetris_landPiece.wav");
                 if (score > highscore) {
                     highscore = score;
                     saveHighscore();
@@ -181,6 +187,8 @@ public class TetrisGame implements Runnable {
         center.x += dirX;
         center.y += dirY;
         placeCurrentPiece();
+        if (direction != directions.DOWN)
+            SoundPlayer.playSound("resources/Sounds/tetris_movePiece.wav");
     }
 
     private void setNewSpeed() {
@@ -340,10 +348,6 @@ public class TetrisGame implements Runnable {
         }
     }
 
-    public Point getCenter() {
-        return new Point(center.x, center.y);
-    }
-
     public void rotate() {
         if (gameOver) return;
 
@@ -369,6 +373,7 @@ public class TetrisGame implements Runnable {
 
         if (success) {
             doRotation();
+            SoundPlayer.playSound("resources/Sounds/tetris_rotatePiece.wav");
         } else {
             rotation = oldRotation;
             center.x = oldX;

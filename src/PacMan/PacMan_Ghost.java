@@ -23,6 +23,7 @@ public class PacMan_Ghost {
     Directions current_direction = Directions.LEFT;
     private boolean isScatterMode = true;
     private float stepSize;
+    private boolean lastStepWasFrightendSpeed = false;
     private boolean moveBack = false;
     private boolean forceMoveDown = false;
     private boolean forceMoveOut = true;
@@ -54,6 +55,7 @@ public class PacMan_Ghost {
         waiting = type != 1;
         waitingAnimationDown = false;
         isFrightend = false;
+        lastStepWasFrightendSpeed = false;
         isScatterMode = false;
         current_direction = Directions.LEFT;
         stepSize = originalStepSize;
@@ -107,7 +109,24 @@ public class PacMan_Ghost {
             return;
         }
 
-        stepSize = moveBack ? originalStepSize * 2.0f : isFrightend ? originalStepSize / 2.0f : originalStepSize;
+        boolean frightenedSpeed = isFrightend && !moveBack;
+        stepSize = moveBack
+                ? originalStepSize * 2.0f
+                : frightenedSpeed ? originalStepSize / 2.0f : originalStepSize;
+
+        if (frightenedSpeed != lastStepWasFrightendSpeed) {
+            float snappedX = Math.round(x * 2.0f) / 2.0f;
+            float snappedY = Math.round(y * 2.0f) / 2.0f;
+            float maximumSnapDistance = originalStepSize * 2.0f;
+            boolean closeEnough = Math.abs(snappedX - x) <= maximumSnapDistance
+                    && Math.abs(snappedY - y) <= maximumSnapDistance;
+
+            if (closeEnough && canOccupy(snappedX, snappedY)) {
+                x = snappedX;
+                y = snappedY;
+                lastStepWasFrightendSpeed = frightenedSpeed;
+            }
+        }
         updateBounds();
 
         if (isAtTileCenter()) {
@@ -139,6 +158,14 @@ public class PacMan_Ghost {
             case DOWN -> y += stepSize;
             case LEFT -> x -= stepSize;
             case RIGHT -> x += stepSize;
+        }
+
+        int tunnelRow = Math.round(y);
+        if (tunnelRow >= 0 && tunnelRow < gamefield.length
+                && gamefield[tunnelRow][0] >= 0 && gamefield[tunnelRow][gamefield[0].length - 1] >= 0) {
+            if (x < 0.0f) x = gamefield[0].length - 1;
+            else if (x > gamefield[0].length - 1) x = 0.0f;
+            updateBounds();
         }
 
         if (collidesWithPlayer()) {
@@ -199,6 +226,12 @@ public class PacMan_Ghost {
         int gridY1 = (int) Math.floor(targetY1);
         int gridX2 = (int) Math.floor(targetX2);
         int gridY2 = (int) Math.floor(targetY2);
+
+        int tunnelRow = Math.round(y);
+        boolean tunnelRowOpen = tunnelRow >= 0 && tunnelRow < gamefield.length
+                && gamefield[tunnelRow][0] >= 0 && gamefield[tunnelRow][gamefield[0].length - 1] >= 0;
+        if (tunnelRowOpen && direction == LEFT && x <= 0.0f) return true;
+        if (tunnelRowOpen && direction == RIGHT && x >= gamefield[0].length - 1) return true;
 
         return isOpen(gridX1, gridY1) && isOpen(gridX2, gridY1) && isOpen(gridX1, gridY2) && isOpen(gridX2, gridY2);
     }
@@ -336,6 +369,8 @@ public class PacMan_Ghost {
                 queue.addLast(new Point(nextX, nextY));
             }
         }
+
+        if (!visited[22][27]) return route;
 
         int nodeX = 27;
         int nodeY = 22;

@@ -14,13 +14,13 @@ import java.util.regex.Pattern;
 public class GameLogic {
     private static final Path SAVE_FILE = Path.of("highscores.json");
     private final Map<Integer, Integer> highscores = new HashMap<>();
+    private final ArrayList<TileAnimation> currentAnimations = new ArrayList<>();
     private int customSize = 4;
     private int[][] gameField = new int[customSize][customSize];
     private boolean gameOver = false;
     private int score = 0;
     private boolean renderWin = false;
     private boolean got2048 = false;
-    private final ArrayList<TileAnimation> currentAnimations = new ArrayList<>();
 
     public GameLogic() {
         loadHighscores();

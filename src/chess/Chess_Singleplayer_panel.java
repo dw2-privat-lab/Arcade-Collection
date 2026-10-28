@@ -135,22 +135,22 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         g.fillRoundRect((int) (2.5 * tileSize), (int) (2.5 * tileSize), 3 * tileSize, 2 * tileSize, arc, arc);
 
         g.setColor(java.awt.Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 3 * tileSize / 10));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 3 * tileSize / 10));
         if (spiel.checkmate) {
             String winner = spiel.whiteMoves ? "White" : "Black";
             g.drawString(winner + " Won!", (int) (3.175 * tileSize), 3 * tileSize);
-            g.setFont(new Font("Arial", Font.PLAIN, (int) (1.5 * tileSize / 10)));
+            g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, (int) (1.5 * tileSize / 10)));
             g.drawString("by Checkmate", (int) (3.5 * tileSize), (int) (3.25 * tileSize));
         } else {
             g.drawString("Draw", (int) (3.6 * tileSize), 3 * tileSize);
-            g.setFont(new Font("Arial", Font.PLAIN, (int) (1.5 * tileSize / 10)));
+            g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, (int) (1.5 * tileSize / 10)));
             g.drawString("by Stalemate", (int) (3.55 * tileSize), (int) (3.25 * tileSize));
         }
 
         g.setColor(new Color(72, 92, 59, 255));
         g.fillRoundRect((int) (2.8 * tileSize), (int) (3.5 * tileSize), (int) (2.4 * tileSize), (int) (0.75 * tileSize), arc, arc);
         g.setColor(new Color(255, 255, 255, 255));
-        g.setFont(new Font("Arial", Font.BOLD, 2 * tileSize / 10));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 2 * tileSize / 10));
         g.drawString("New Game", (int) (3.5 * tileSize), (int) (3.94 * tileSize));
         if (newGameHovered) {
             g.drawRoundRect((int) (2.8 * tileSize), (int) (3.5 * tileSize), (int) (2.4 * tileSize), (int) (0.75 * tileSize), arc, arc);
@@ -169,7 +169,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
         g.setColor(defaultGray);
         g.fillRoundRect(tileSize, tileSize, 6 * tileSize, 5 * tileSize, arc, arc);
 
-        g.setFont(new Font("Arial", Font.BOLD, 3 * tileSize / 10));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 3 * tileSize / 10));
         g.setColor(java.awt.Color.WHITE);
         g.drawString("Settings", (int) (1.5 * tileSize), (int) (1.6 * tileSize));
 
@@ -185,7 +185,7 @@ public class Chess_Singleplayer_panel extends JPanel implements MouseListener, M
             paintPieceSelector(g);
         }
 
-        g.setFont(new Font("Arial", Font.BOLD, tileSize / 5));
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, tileSize / 5));
         g.setColor(java.awt.Color.WHITE);
         g.drawString("Board", (int) (1.5 * tileSize), (int) (2.4 * tileSize));
 

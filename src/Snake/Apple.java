@@ -2,47 +2,51 @@ package Snake;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Apple {
     private final ArrayList<Rectangle> apples = new ArrayList<>();
 
-    public Apple() {
-        ArrayList<Rectangle> temp = new ArrayList<>();
-        for (int i = 0; i < GameOptions.snakeLengthAtStart; i++) {
-            temp.add(new Rectangle(GameOptions.originX + i * GameOptions.tileSize, GameOptions.originY, GameOptions.tileSize, GameOptions.tileSize));
-        }
+    public Apple(ArrayList<Rectangle> snakeElements) {
+        addApples(snakeElements);
+    }
+
+    private void addApples(ArrayList<Rectangle> snakeElements) {
         for (int i = 0; i < GameOptions.amountApples; i++) {
-            addApple(temp);
+            if (!addApple(snakeElements)) return;
         }
     }
 
-    boolean touches(Rectangle rectangle, ArrayList<Rectangle> list) {
-        for (Rectangle Element : list) {
-            if (Element.intersects(rectangle)) {
-                return true;
-            }
+    boolean touches(Rectangle rectangle, List<Rectangle> list) {
+        for (Rectangle element : list) {
+            if (element.intersects(rectangle)) return true;
         }
         return false;
     }
 
     int getTouchingApple(Rectangle rectangle) {
         for (int i = 0; i < apples.size(); i++) {
-            if (apples.get(i).intersects(rectangle)) {
-                return i;
-            }
+            if (apples.get(i).intersects(rectangle)) return i;
         }
         return -1;
     }
 
-    void addApple(ArrayList<Rectangle> snakeElements) {
-        int randomX;
-        int randomY;
-        do {
-            randomX = (int) (Math.random() * GameOptions.WIDTH) / GameOptions.tileSize * GameOptions.tileSize;
-            randomY = (int) (Math.random() * GameOptions.HEIGHT) / GameOptions.tileSize * GameOptions.tileSize;
-        } while (touches(new Rectangle(randomX, randomY, GameOptions.tileSize, GameOptions.tileSize), apples) || touches(new Rectangle(randomX, randomY, GameOptions.tileSize, GameOptions.tileSize), snakeElements));
-
-        apples.add(new Rectangle(randomX, randomY, GameOptions.tileSize, GameOptions.tileSize));
+    boolean addApple(List<Rectangle> snakeElements) {
+        ArrayList<Rectangle> freeCells = new ArrayList<>();
+        int minimumX = GameOptions.playfieldMargin;
+        int minimumY = GameOptions.playfieldMargin;
+        int maximumX = GameOptions.WIDTH - GameOptions.playfieldMargin;
+        int maximumY = GameOptions.HEIGHT - GameOptions.playfieldMargin;
+        for (int y = minimumY; y < maximumY; y += GameOptions.tileSize) {
+            for (int x = minimumX; x < maximumX; x += GameOptions.tileSize) {
+                Rectangle cell = new Rectangle(x, y, GameOptions.tileSize, GameOptions.tileSize);
+                if (!touches(cell, apples) && !touches(cell, snakeElements)) freeCells.add(cell);
+            }
+        }
+        if (freeCells.isEmpty()) return false;
+        apples.add(freeCells.get(ThreadLocalRandom.current().nextInt(freeCells.size())));
+        return true;
     }
 
     public ArrayList<Rectangle> getApples() {
