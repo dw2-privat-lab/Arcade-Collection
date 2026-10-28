@@ -59,6 +59,4 @@ The desktop interface and game screens are built with Java Swing. Swing panels h
 
 ## Usage of AI
 
-I use AI when I encounter bugs that I cannot figure out on my own. For example, I may ask for help with a Java exception that I have not encountered before and need to resolve. I do not use AI to generate entirely new game logic.
-
-I also use AI to create temporary UI textures. Since I build the interfaces in Swing, creating UI elements can take a lot of work. If I need a completely new UI element and do not yet have a design in mind, I may use AI to create a temporary visual that helps me explore the design.
+I used AI when I encountered bugs that I could not figure out on my own. For example, I may ask for help with a Java exception that I have not encountered before and need to resolve. I did not use AI to generate entirely new game logic.
